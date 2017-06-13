@@ -1,6 +1,7 @@
 package facade;
 
-import java.util.*;
+import java.io.File;
+import businesslogic.*;
 
 /**
  * 
@@ -16,16 +17,15 @@ public class Facade {
     /**
      * It is the current project
      */
-    public Project currentProject;
+    public static Project currentProject = null;
 
     /**
      * Open the project who is in parameters
      * @param project 
      * @return
      */
-    public void openProject(File project) {
+    public static void openProject(File project) {
         // TODO implement here
-        return null;
     }
 
     /**
@@ -33,9 +33,9 @@ public class Facade {
      * @param name 
      * @return
      */
-    public void newProject(String name) {
-        // TODO implement here
-        return null;
+    public static void newProject(String name) {
+        Project p = new Project(name);
+        Facade.currentProject = p;
     }
 
     /**
@@ -43,30 +43,32 @@ public class Facade {
      * @param path 
      * @return
      */
-    public void addImage(String path) {
-        // TODO implement here
-        return null;
+    public static void addImage(String path) {
+        ImageWing image = new ImageWing(path);
+        Facade.currentProject.addImage(image);
+        
+        
     }
 
     /**
      * Delete image to the current project. The image is given in parameter.
      * @param image
      */
-    public void deleteImage(Image image) {
-        // TODO implement here
-    }
+    public static void deleteImage(ImageWing image) {
+    	Facade.currentProject.deleteImage(image);
+        }
 
     /**
      * save the current Project
      */
-    public void saveProject() {
-        // TODO implement here
+    public static void saveProject() {
+    	Facade.currentProject.save();
     }
 
     /**
      * Save a copy of the current project
      */
-    public void saveAsProject() {
+    public static void saveAsProject() {
         // TODO implement here
     }
 
@@ -74,7 +76,7 @@ public class Facade {
      * Load an existing project, it becomes the current project
      * @param path
      */
-    public void loadProject(String path) {
+    public static void loadProject(String path) {
         // TODO implement here
     }
 

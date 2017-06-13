@@ -1,6 +1,8 @@
 package application;
 
-import java.util.*;
+
+import businesslogic.*;
+import facade.Facade;
 
 /**
  * 
@@ -25,7 +27,7 @@ public class ControlDashboard {
      * delete image to the current project
      * @param image
      */
-    public void deleteImage(Image image) {
+    public void deleteImage(ImageWing image) {
         // TODO implement here
     }
 
@@ -33,8 +35,8 @@ public class ControlDashboard {
      * Save the current project
      */
     public void saveProject() {
-        // TODO implement here
-    }
+        Facade.saveProject();
+        }
 
     /**
      * Save a copy of the current project

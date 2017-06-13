@@ -1,6 +1,7 @@
 package application;
 
-import java.util.*;
+import java.io.File;
+import facade.Facade;
 
 /**
  * 
@@ -18,7 +19,7 @@ public class ControlHome {
      * @param projectName
      */
     public void newProject(String projectName) {
-        // TODO implement here
+    	Facade.newProject(projectName);
     }
 
     /**

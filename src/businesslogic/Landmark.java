@@ -1,7 +1,5 @@
 package businesslogic;
 
-import java.util.*;
-
 /**
  * 
  */
@@ -16,17 +14,31 @@ public class Landmark {
     /**
      * X position of the landmark
      */
-    public float posX;
+    public float posX = 0;
 
     /**
      * Y position of the landmark
      */
-    public float posY;
+    public float posY = 0;
 
     /**
      * True : this crosspoint is a landmark
      * False : this crosspoint is not a landmark
      */
-    public Boolean isLandmark;
+    public Boolean isLandmark = false;
+    
+    public float getPosX()
+    {
+    	return this.posX;
+    }
 
+    public float getPosY()
+    {
+    	return this.posY;
+    }
+    
+    public Boolean getIsLandmark()
+    {
+    	return this.isLandmark;
+    }
 }
