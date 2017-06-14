@@ -1,7 +1,13 @@
 package facade;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.util.ArrayList;
+
 import businesslogic.*;
+import helper.ProjectFile;
 
 /**
  * 
@@ -20,22 +26,16 @@ public class Facade {
     public static Project currentProject = null;
 
     /**
-     * Open the project who is in parameters
-     * @param project 
-     * @return
-     */
-    public static void openProject(File project) {
-        // TODO implement here
-    }
-
-    /**
      * Create a new empty project. Just the project's path is available.
      * @param name 
      * @return
      */
-    public static void newProject(String name) {
+    public static void newProject(String path) {
+    	String[] tab = path.split("\\\\");
+    	String name = tab[tab.length - 1];
         Project p = new Project(name);
         Facade.currentProject = p;
+        Facade.saveProject();
     }
 
     /**
@@ -62,7 +62,7 @@ public class Facade {
      * save the current Project
      */
     public static void saveProject() {
-    	Facade.currentProject.save();
+    	ProjectFile.saveProject(Facade.currentProject);
     }
 
     /**
@@ -76,8 +76,13 @@ public class Facade {
      * Load an existing project, it becomes the current project
      * @param path
      */
-    public static void loadProject(String path) {
-        // TODO implement here
-    }
+    public static void loadProject(File file) {
+    	
+
+    	Project p = ProjectFile.reader(file);
+    	Facade.currentProject = p;
+
+
+        }
 
 }

@@ -60,49 +60,5 @@ public class Project {
 		this.images.remove(image);
 	}
 
-	public void save() {
-		String dataSave = "PROJECT_NAME=" + this.name + ";";
-		if(!this.images.isEmpty())
-		{
-			Iterator<ImageWing> it = this.images.iterator();
-
-			while(it.hasNext())
-			{
-				ImageWing image = it.next();
-				dataSave = dataSave + "IMAGE_PATH=" + image.getPath() + ";";
-				if(!image.getLandmarks().isEmpty())
-				{
-					Iterator<Landmark> it2 = image.getLandmarks().iterator();
-					while(it.hasNext())
-					{
-						Landmark landmark = it2.next();
-						dataSave = dataSave + landmark.getPosX() + "-" + landmark.getPosY() + "-" + landmark.getIsLandmark() + ";"; 
-					}
-				}
-			}
-		}
-
-		if(this.pathProject == "")
-		{
-			this.pathProject = "D:\\Documents\\" + this.name + ".project";
-		}
-		BufferedWriter writer = null;
-		try {
-			//create a temporary file
-			File logFile = new File(this.pathProject);
-
-			writer = new BufferedWriter(new FileWriter(logFile));
-			writer.write(dataSave);
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			try {
-				// Close the writer regardless of what happens...
-				writer.close();
-			} catch (Exception e) {
-			}
-		}
-
-	}
 
 }

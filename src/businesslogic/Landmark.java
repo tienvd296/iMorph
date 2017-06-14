@@ -7,8 +7,14 @@ public class Landmark {
 
     /**
      * Default constructor
+     * @param isLandmark2 
+     * @param posY2 
+     * @param posX2 
      */
-    public Landmark() {
+    public Landmark(float posX2, float posY2, Boolean isLandmark2) {
+    	this.posX = posX2;
+    	this.posY = posY2;
+    	this.isLandmark = isLandmark2;
     }
 
     /**

@@ -20,7 +20,7 @@ public class ControlDashboard {
      * @param path
      */
     public void addImage(String path) {
-        // TODO implement here
+        Facade.addImage(path);
     }
 
     /**

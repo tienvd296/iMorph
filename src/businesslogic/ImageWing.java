@@ -12,9 +12,17 @@ public class ImageWing {
      */
     public ImageWing(String path) {
     	this.path = path;
+    	String[] filename = path.split("\\\\");
+    	this.properties.put("FILENAME", filename[filename.length-1]);
     }
 
-    /**
+    public ImageWing(String pathImage, Map properties, ArrayList<Landmark> landmarks) {
+		this.path = pathImage;
+		this.properties = properties;
+		this.landmarks = landmarks;
+	}
+
+	/**
      * This string is the path of the image.
      */
     public String path = null;
@@ -22,7 +30,7 @@ public class ImageWing {
     /**
      * List of properties, key is the properties and value the value of the properties
      */
-    public Map<String, String> properties = null;
+    public Map<String, String> properties = new HashMap();
 
     /**
      * 
