@@ -4,11 +4,15 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.io.PrintWriter;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -23,11 +27,6 @@ public class ProjectFile {
 		try {
 			BufferedReader reader = new BufferedReader(new FileReader(file));
 			
-			/*FileInputStream fi = new FileInputStream(file);
-			ObjectInputStream oi = new ObjectInputStream(fi);
-			String content = oi.readObject().toString();
-			oi.close();*/
-			
 			String content = reader.readLine();
 			String[] skeleton = content.split("IMAGES;");
 			
@@ -36,6 +35,8 @@ public class ProjectFile {
 			String[] tab = projectSection.split(";");
 			String[] nameID = tab[0].split("=");
 			String name = nameID[1];
+			String[] ls = tab[1].split("=");
+			String lastSave = ls[1];
 			String path = file.getAbsolutePath().toString();
 			ArrayList<ImageWing> images = new ArrayList<ImageWing>();
 			if(skeleton.length>1)
@@ -44,7 +45,7 @@ public class ProjectFile {
 				
 			}
 					
-			return new Project(name, path, images);
+			return new Project(name, lastSave, path, images);
         
         
 	} catch (IOException e) {
@@ -102,7 +103,13 @@ public class ProjectFile {
 
 	public static void saveProject(Project p)
 	{
-		String dataSave = "PROJECT_NAME=" + p.name + ";";
+		String separator = System.getProperty("file.separator");
+		String originalPath = System.getProperty("user.dir");
+		Date d = new Date();
+		SimpleDateFormat sm = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+		String dataSave = "PROJECT_NAME=" + p.getName() + ";";
+		p.setLastSave(sm.format(d));
+		dataSave = dataSave + "LAST_EDIT=" + sm.format(d) + ";";
 		dataSave = dataSave + "IMAGES;";
 		if(!p.images.isEmpty())
 		{
@@ -134,25 +141,72 @@ public class ProjectFile {
 
 		if(p.pathProject == "")
 		{
-			p.pathProject = "D:\\Documents\\" + p.name + ".project";
+			p.pathProject = "D:"+ separator +"Documents"+ separator + p.getName() + ".project";
 		}
+		
 		BufferedWriter writer = null;
+		BufferedWriter writer2 = null;
 		try {
 			//create a temporary file
-			File logFile = new File(p.pathProject);
+			File logFile = new File(p.getPathProject());
+			File lastSaveFile = new File(originalPath + separator + "assets" + separator + "lastProject.data");
 
 			writer = new BufferedWriter(new FileWriter(logFile));
+			writer2 = new BufferedWriter(new FileWriter(lastSaveFile));
+			PrintWriter out = new PrintWriter(writer2);
 			writer.write(dataSave);
+			out.println(p.getName() + "#" + p.getPathProject() + "#" + p.getLastSave());
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
 			try {
 				// Close the writer regardless of what happens...
 				writer.close();
+				writer2.close();
 			} catch (Exception e) {
 			}
 		}
 
 	}
 	
+	public static ArrayList<Project> histProject()
+	{
+		String separator = System.getProperty("file.separator");
+		String originalPath = System.getProperty("user.dir");
+		String path = originalPath + separator + "assets" + separator + "lastProject.data";
+		File file = new File(path);
+		BufferedReader reader;
+		ArrayList<Project> listProj = new ArrayList<Project>();
+
+			
+			try {
+				reader = new BufferedReader(new FileReader(file));
+
+			try {
+				String content;
+				while((content = reader.readLine()) != null)
+				{
+					Project p1 = new Project(content.split("#")[0], content.split("#")[1], content.split("#")[2]);
+					listProj.add(p1);
+				}
+				return listProj;
+				
+			
+			
+			
+			
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return listProj;
+				
+			}
+			} catch (FileNotFoundException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+				return listProj;
+			}
+			
+		
+	}
 }

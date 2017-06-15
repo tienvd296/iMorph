@@ -31,9 +31,11 @@ public class Facade {
      * @return
      */
     public static void newProject(String path) {
+    	String separator = System.getProperty("file.separator");
     	String[] tab = path.split("\\\\");
     	String name = tab[tab.length - 1];
         Project p = new Project(name);
+        p.setPathProject(path);
         Facade.currentProject = p;
         Facade.saveProject();
     }
@@ -84,5 +86,10 @@ public class Facade {
 
 
         }
+
+	public static ArrayList<Project> getHistProject() {
+		// TODO Auto-generated method stub
+		return ProjectFile.histProject();
+	}
 
 }

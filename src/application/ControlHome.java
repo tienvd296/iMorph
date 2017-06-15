@@ -1,18 +1,25 @@
 package application;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.Optional;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import businesslogic.Project;
 import facade.Facade;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextInputDialog;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 
 /**
@@ -28,8 +35,17 @@ public class ControlHome {
 
     
     @FXML
-    private TableView<String> lastProject;
+    private TableView<Project> lastProject;
     
+    @FXML
+    private TableColumn<Project, String> projectName;
+
+    @FXML
+    private TableColumn<Project, String> projectPath;
+
+    @FXML
+    private TableColumn<Project, Date> projectDate;
+
 
     @FXML
     void newProject(MouseEvent event) {
@@ -82,6 +98,19 @@ public class ControlHome {
 			alert.setContentText("Please, try again !");
 			alert.showAndWait();
 		}
+    }
+    
+    public void initialize() {
+    	
+    	ArrayList<Project> listProj = Facade.getHistProject();
+    	
+    	projectName.setCellValueFactory(new PropertyValueFactory<>("name"));
+    	projectPath.setCellValueFactory(new PropertyValueFactory<>("pathProject"));
+    	projectDate.setCellValueFactory(new PropertyValueFactory<>("lastSave"));
+    	
+    	ObservableList<Project> list = FXCollections.observableArrayList(listProj);
+    	lastProject.setItems(list);
+
     }
 
 }

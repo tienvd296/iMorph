@@ -54,9 +54,12 @@
             <TableView fx:id="lastProject" prefHeight="280.0" prefWidth="600.0" BorderPane.alignment="CENTER">
               <columns>
                 <TableColumn fx:id="projectName" prefWidth="124.0" text="Name" />
-                <TableColumn fx:id="projectPath" prefWidth="365.0" text="Project path" />
-                  <TableColumn fx:id="projectDate" prefWidth="110.0" text="Last edit" />
+                <TableColumn fx:id="projectPath" prefWidth="354.0" text="Project path" />
+                  <TableColumn fx:id="projectDate" minWidth="0.0" prefWidth="121.0" text="Last edit" />
               </columns>
+               <columnResizePolicy>
+                  <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+               </columnResizePolicy>
             </TableView>
          </bottom>
       </BorderPane>
