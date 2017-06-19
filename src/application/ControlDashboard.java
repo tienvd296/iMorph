@@ -29,6 +29,10 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
+import javafx.scene.text.TextAlignment;
 
 /**
  * 
@@ -237,27 +241,56 @@ public class ControlDashboard {
 		this.currentView = 1;
 
 		GridPane grid = new GridPane();
-		BorderPane border1 = new BorderPane();
 
 		ImageView im1 = new ImageView();
 		
-		final int y = this.page;
-		im1.setOnMouseClicked(e -> imageEditor(pathTab[y]));
+		double width = this.table.getWidth() - 120;
+		double height = this.table.getHeight() - 25;
 		
+		final int y = this.page;
+		
+		
+		//------IMAGE-----//
+		im1.setOnMouseClicked(e -> imageEditor(pathTab[y]));
 		im1.setPreserveRatio(true);
 		im1.setImage(images[this.page]);
-		im1.setFitWidth(this.table.getWidth() - 100);
-		border1.setCenter(im1);
-
+		im1.setFitWidth(width - 10);
+		Pane pane = new Pane();
+		double ratioImg = images[this.page].getHeight()/images[this.page].getWidth();
+		pane.setPrefHeight(im1.getFitWidth() * ratioImg);
+		pane.setPrefWidth(im1.getFitWidth());
+		pane.getChildren().add(0, im1);
+		im1.setX(5);
+		im1.setY((height - im1.getFitWidth()*ratioImg) / 2);
+		
+		
+		//-------LABEL------//
 		Label lb1 = new Label();
 		lb1.setText(names[this.page]);
-		border1.setBottom(lb1);
-		BorderPane.setAlignment(lb1, Pos.CENTER);
+		pane.getChildren().add(1, lb1);
+		lb1.setLayoutX(width/2 - 50);
+		lb1.setLayoutY(height-30);
 
+		
+		this.displayLandmark(pane, im1, ratioImg);
 		this.table.setCenter(grid);
-		grid.add(border1, 0, 0);	
+		grid.add(pane, 0, 0);	
 
 	}  
+
+	private void displayLandmark(Pane pane, ImageView image, double ratio) {
+		double originX = image.getX();
+		double height = image.getFitWidth() * ratio;
+		double width = image.getFitWidth();
+		double originY = image.getY();
+	    Circle c = new Circle();
+	    c.setCenterX(originX + 1*width);
+	    c.setCenterY(originY + 1*height);
+	    c.setRadius(3.0);
+	    c.setFill(Color.RED);
+	    pane.getChildren().add(2, c);
+		
+	}
 
 	public void view4()
 	{
@@ -266,6 +299,9 @@ public class ControlDashboard {
 		String[] names = this.nameTab;
 
 		this.currentView = 4;
+		
+		double width = (this.table.getWidth() - 120) / 2;
+		double height = (this.table.getHeight() - 25) / 2;
 
 
 		GridPane grid = new GridPane();
@@ -274,40 +310,46 @@ public class ControlDashboard {
 
 		for(int i = marge; i<marge+4; i++)
 		{
-			BorderPane border = new BorderPane();
+			Pane pane = new Pane();
 			if(images.length > i)
 			{
 				ImageView im1 = new ImageView();
 				
 				final int y = i;
 				im1.setOnMouseClicked(e -> imageEditor(pathTab[y]));
-				
 				im1.setPreserveRatio(true);
 				im1.setImage(images[i]);
-				im1.setFitWidth(this.table.getWidth()/2 - 60);
-				border.setCenter(im1);
-				//BorderPane.setMargin(im1, new Insets(0,10,0,0));
+				im1.setFitWidth(width - 20);
+				double ratioImg = images[i].getHeight()/images[i].getWidth();
+				pane.setPrefHeight(im1.getFitWidth() * ratioImg + 40);
+				pane.setPrefWidth(im1.getFitWidth()+10);
+				pane.getChildren().add(0, im1);
+				im1.setX(5);
+				im1.setY((height - im1.getFitWidth()*ratioImg) / 2);
 
 				Label lb1 = new Label();
 				lb1.setText(names[i]);
-				border.setBottom(lb1);
-				BorderPane.setAlignment(lb1, Pos.CENTER);
+				pane.getChildren().add(1, lb1);
+				lb1.setLayoutX(width/2 - 50);
+				lb1.setLayoutY(height-25);
+				
+				this.displayLandmark(pane, im1, ratioImg);
 			}
 			if(i == marge)
 			{
-				grid.add(border, 0, 0);
+				grid.add(pane, 0, 0);
 			}
 			else if(i == marge + 1)
 			{
-				grid.add(border, 0, 1);
+				grid.add(pane, 0, 1);
 			}
 			else if(i == marge + 2)
 			{
-				grid.add(border, 1, 0);
+				grid.add(pane, 1, 0);
 			}
 			else
 			{
-				grid.add(border, 1, 1);
+				grid.add(pane, 1, 1);
 			}
 
 		}
