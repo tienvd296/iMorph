@@ -12,6 +12,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import businesslogic.Project;
 import facade.Facade;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -132,6 +133,7 @@ public class ControlHome {
  		    stage.show();
  		    
  			ControlDashboard myController = loader.getController();
+
  			
  			//myController.setDataOptions();
  			
