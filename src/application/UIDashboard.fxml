@@ -59,15 +59,8 @@
                                             </menus>
                                           </MenuBar>
                                        </top>
-                                       <right>
-                                          <ImageView fitHeight="150.0" fitWidth="50.0" onMouseClicked="#next" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER">
-                                             <image>
-                                                <Image url="@../../assets/right-arrow.png" />
-                                             </image>
-                                          </ImageView>
-                                       </right>
                                        <left>
-                                          <ImageView fitHeight="150.0" fitWidth="50.0" onMouseClicked="#previous" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER">
+                                          <ImageView fitHeight="74.0" fitWidth="67.0" onMouseClicked="#previous" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER">
                                              <image>
                                                 <Image url="@../../assets/left-arrow.png" />
                                              </image>

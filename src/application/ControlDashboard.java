@@ -15,7 +15,6 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
@@ -57,11 +56,13 @@ public class ControlDashboard {
 			{
 				String result = files[i].getAbsolutePath().toString();
 				this.addImage(result);
+				this.initImage();
 			}
 
 		} else { 
 			//writeConsole("Open command cancelled by user."); 
 		} 
+		
 
 	} 
 
@@ -103,6 +104,9 @@ public class ControlDashboard {
 
     @FXML
     void previous(MouseEvent event) {
+    	
+    	System.out.println("PREVIOUS");
+    	
     	if(this.page > 0)
     	{
     		this.page--;
@@ -156,6 +160,7 @@ public class ControlDashboard {
 			
 			ImageWing im = it.next();
 			File file = new File(im.getPath());
+			System.out.println(im.getPath());
 			Image temp = new Image(file.toURI().toString());
 			imageTab[i] = temp;
 			nameTab[i] = im.getProperties().get("FILENAME");
