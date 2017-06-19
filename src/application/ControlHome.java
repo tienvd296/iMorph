@@ -115,10 +115,20 @@ public class ControlHome {
     	projectName.setCellValueFactory(new PropertyValueFactory<>("name"));
     	projectPath.setCellValueFactory(new PropertyValueFactory<>("pathProject"));
     	projectDate.setCellValueFactory(new PropertyValueFactory<>("lastSave"));
+    	projectDate.setSortType(TableColumn.SortType.DESCENDING);
     	
     	ObservableList<Project> list = FXCollections.observableArrayList(listProj);
     	lastProject.setItems(list);
 
+    }
+    
+    
+    @FXML
+    public void clickItem(MouseEvent event)
+    {
+    	Facade.loadProject(new File (this.lastProject.getSelectionModel().getSelectedItem().getPathProject()));
+    	this.moveToDashboard();
+        
     }
     
     void moveToDashboard() {

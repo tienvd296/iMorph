@@ -152,10 +152,9 @@ public class ProjectFile {
 			File lastSaveFile = new File(originalPath + separator + "assets" + separator + "lastProject.data");
 
 			writer = new BufferedWriter(new FileWriter(logFile));
-			writer2 = new BufferedWriter(new FileWriter(lastSaveFile));
-			PrintWriter out = new PrintWriter(writer2);
-			writer.write(dataSave);
-			out.println(p.getName() + "#" + p.getPathProject() + "#" + p.getLastSave());
+			writer2 = new BufferedWriter(new FileWriter(lastSaveFile, true));
+			writer.write(dataSave);	
+			writer2.append(p.getName() + "#" + p.getPathProject() + "#" + p.getLastSave());
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
