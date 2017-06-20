@@ -94,6 +94,8 @@ public class ControlDashboard {
 
 	@FXML
 	void next(MouseEvent event) {
+		
+		System.out.println("2 : " + this.currentView);
 
 		if(this.page < (this.imageTab.length))
 		{
@@ -104,7 +106,7 @@ public class ControlDashboard {
 		{
 			this.view1();
 		}
-		if(this.currentView == 4)
+		else if(this.currentView == 4)
 		{
 			this.view4();
 		}
@@ -143,6 +145,7 @@ public class ControlDashboard {
 	@FXML
 	void view1(ActionEvent event) {
 		this.view1();
+		System.out.println(this.currentView);
 
 	}
 
@@ -187,7 +190,6 @@ public class ControlDashboard {
 		this.nameTab = nameTab;
 		this.imageTab = imageTab;
 		this.pathTab = pathTab;
-		this.view4();
 	}
 
 
@@ -257,19 +259,35 @@ public class ControlDashboard {
 		im1.setFitWidth(width - 10);
 		Pane pane = new Pane();
 		double ratioImg = images[this.page].getHeight()/images[this.page].getWidth();
-		pane.setPrefHeight(im1.getFitWidth() * ratioImg);
-		pane.setPrefWidth(im1.getFitWidth());
+		if(ratioImg > height/width)
+		{
+			im1.setFitHeight(height-20);
+			im1.setX((width - im1.getFitHeight()/ratioImg) / 2);
+			im1.setY((height - im1.getFitHeight()) / 2);
+		}
+		else
+		{
+			im1.setFitWidth(width - 20);
+			im1.setX((width - im1.getFitWidth()) / 2);
+			im1.setY((height - im1.getFitWidth()*ratioImg) / 2);
+		}
+		pane.setPrefHeight(height);
+		pane.setPrefWidth(width);
 		pane.getChildren().add(0, im1);
-		im1.setX(5);
-		im1.setY((height - im1.getFitWidth()*ratioImg) / 2);
+
 		
-		
-		//-------LABEL------//
 		Label lb1 = new Label();
 		lb1.setText(names[this.page]);
 		pane.getChildren().add(1, lb1);
-		lb1.setLayoutX(width/2 - 50);
-		lb1.setLayoutY(height-30);
+		lb1.setLayoutX(im1.getX());
+		if(ratioImg > height/width)
+		{
+			lb1.setLayoutY(im1.getY() + im1.getFitHeight());
+		}
+		else
+		{
+			lb1.setLayoutY(im1.getY() + im1.getFitWidth()*ratioImg);
+		}
 
 		
 		this.displayLandmark(pane, im1, ratioImg);
@@ -284,8 +302,8 @@ public class ControlDashboard {
 		double width = image.getFitWidth();
 		double originY = image.getY();
 	    Circle c = new Circle();
-	    c.setCenterX(originX + 1*width);
-	    c.setCenterY(originY + 1*height);
+	    c.setCenterX(originX + 0.8*width);
+	    c.setCenterY(originY + 0.6*height);
 	    c.setRadius(3.0);
 	    c.setFill(Color.RED);
 	    pane.getChildren().add(2, c);
@@ -301,7 +319,7 @@ public class ControlDashboard {
 		this.currentView = 4;
 		
 		double width = (this.table.getWidth() - 120) / 2;
-		double height = (this.table.getHeight() - 25) / 2;
+		double height = (this.table.getHeight() - 40) / 2;
 
 
 		GridPane grid = new GridPane();
@@ -319,19 +337,38 @@ public class ControlDashboard {
 				im1.setOnMouseClicked(e -> imageEditor(pathTab[y]));
 				im1.setPreserveRatio(true);
 				im1.setImage(images[i]);
-				im1.setFitWidth(width - 20);
+				
 				double ratioImg = images[i].getHeight()/images[i].getWidth();
-				pane.setPrefHeight(im1.getFitWidth() * ratioImg + 40);
-				pane.setPrefWidth(im1.getFitWidth()+10);
+				if(ratioImg > height/width)
+				{
+					im1.setFitHeight(height-20);
+					im1.setX((width - im1.getFitHeight()/ratioImg) / 2);
+					im1.setY((height - im1.getFitHeight()) / 2);
+				}
+				else
+				{
+					im1.setFitWidth(width - 20);
+					im1.setX((width - im1.getFitWidth()) / 2);
+					im1.setY((height - im1.getFitWidth()*ratioImg) / 2);
+				}
+				pane.setPrefHeight(height);
+				pane.setPrefWidth(width);
 				pane.getChildren().add(0, im1);
-				im1.setX(5);
-				im1.setY((height - im1.getFitWidth()*ratioImg) / 2);
 
+				
 				Label lb1 = new Label();
 				lb1.setText(names[i]);
 				pane.getChildren().add(1, lb1);
-				lb1.setLayoutX(width/2 - 50);
-				lb1.setLayoutY(height-25);
+				lb1.setLayoutX(im1.getX());
+				if(ratioImg > height/width)
+				{
+					lb1.setLayoutY(im1.getY() + im1.getFitHeight());
+				}
+				else
+				{
+					lb1.setLayoutY(im1.getY() + im1.getFitWidth()*ratioImg);
+				}
+				
 				
 				this.displayLandmark(pane, im1, ratioImg);
 			}
@@ -366,74 +403,106 @@ public class ControlDashboard {
 		Image[] images = this.imageTab;
 		String[] names = this.nameTab;
 
-		int marge = this.page*3;
-		this.currentView = 8;
+		this.currentView = 9;
+		
+		double width = (this.table.getWidth() - 120) / 3;
+		double height = (this.table.getHeight() - 40) / 3;
 
 
 		GridPane grid = new GridPane();
 
-		for(int i = marge; i<marge +9; i++)
+		int marge = this.page*3;
+
+		for(int i = marge; i<marge+9; i++)
 		{
-			BorderPane border = new BorderPane();
+			Pane pane = new Pane();
 			if(images.length > i)
 			{
 				ImageView im1 = new ImageView();
 				
 				final int y = i;
-				
 				im1.setOnMouseClicked(e -> imageEditor(pathTab[y]));
-
-
 				im1.setPreserveRatio(true);
 				im1.setImage(images[i]);
-				im1.setFitWidth(this.table.getWidth()/3 - 60);
-				border.setCenter(im1);
-				//BorderPane.setMargin(im1, new Insets(0,10,0,0));
+				
+				double ratioImg = images[i].getHeight()/images[i].getWidth();
+				if(ratioImg > height/width)
+				{
+					im1.setFitHeight(height-20);
+					im1.setX((width - im1.getFitHeight()/ratioImg) / 2);
+					im1.setY((height - im1.getFitHeight()) / 2);
+				}
+				else
+				{
+					im1.setFitWidth(width - 20);
+					im1.setX((width - im1.getFitWidth()) / 2);
+					im1.setY((height - im1.getFitWidth()*ratioImg) / 2);
+				}
+				pane.setPrefHeight(height);
+				pane.setPrefWidth(width);
+				pane.getChildren().add(0, im1);
 
+				
 				Label lb1 = new Label();
 				lb1.setText(names[i]);
-				border.setBottom(lb1);
-				BorderPane.setAlignment(lb1, Pos.CENTER);
+				pane.getChildren().add(1, lb1);
+				lb1.setLayoutX(im1.getX());
+				if(ratioImg > height/width)
+				{
+					lb1.setLayoutY(im1.getY() + im1.getFitHeight());
+				}
+				else
+				{
+					lb1.setLayoutY(im1.getY() + im1.getFitWidth()*ratioImg);
+				}
+				
+				
+				this.displayLandmark(pane, im1, ratioImg);
 			}
 			if(i == marge)
 			{
-				grid.add(border, 0, 0);
+				grid.add(pane, 0, 0);
 			}
 			else if(i == marge + 1)
 			{
-				grid.add(border, 0, 1);
+				grid.add(pane, 0, 1);
 			}
 			else if(i == marge + 2)
 			{
-				grid.add(border, 0, 2);
+				grid.add(pane, 0, 2);
 			}
 			else if(i == marge + 3)
 			{
-				grid.add(border, 1, 0);
+				grid.add(pane, 1, 0);
 			}
 			else if(i == marge + 4)
 			{
-				grid.add(border, 1, 1);
+				grid.add(pane, 1, 1);
 			}
 			else if(i == marge + 5)
 			{
-				grid.add(border, 1, 2);
+				grid.add(pane, 1, 2);
 			}
 			else if(i == marge + 6)
 			{
-				grid.add(border, 2, 0);
+				grid.add(pane, 2, 0);
 			}
 			else if(i == marge + 7)
 			{
-				grid.add(border, 2, 1);
+				grid.add(pane, 2, 1);
 			}
 			else
 			{
-				grid.add(border, 2, 2);
+				grid.add(pane, 2, 2);
 			}
+
 		}
 
 		this.table.setCenter(grid);
+
+
+
+
 
 
 	}
