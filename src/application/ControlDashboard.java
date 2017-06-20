@@ -94,8 +94,6 @@ public class ControlDashboard {
 
 	@FXML
 	void next(MouseEvent event) {
-		
-		System.out.println("2 : " + this.currentView);
 
 		if(this.page < (this.imageTab.length))
 		{
@@ -145,7 +143,6 @@ public class ControlDashboard {
 	@FXML
 	void view1(ActionEvent event) {
 		this.view1();
-		System.out.println(this.currentView);
 
 	}
 
@@ -290,23 +287,44 @@ public class ControlDashboard {
 		}
 
 		
-		this.displayLandmark(pane, im1, ratioImg);
+		this.displayLandmark(pane, im1, ratioImg, height/width, this.page);
 		this.table.setCenter(grid);
 		grid.add(pane, 0, 0);	
 
 	}  
 
-	private void displayLandmark(Pane pane, ImageView image, double ratio) {
-		double originX = image.getX();
-		double height = image.getFitWidth() * ratio;
-		double width = image.getFitWidth();
-		double originY = image.getY();
-	    Circle c = new Circle();
-	    c.setCenterX(originX + 0.8*width);
-	    c.setCenterY(originY + 0.6*height);
-	    c.setRadius(3.0);
-	    c.setFill(Color.RED);
-	    pane.getChildren().add(2, c);
+	private void displayLandmark(Pane pane, ImageView image, double ratio1, double ratio2, int i) {
+		
+		ImageWing im = Facade.currentProject.getImages().get(i);
+		ArrayList<Landmark> landmarks = im.getLandmarks();
+		Iterator<Landmark> it = landmarks.iterator();
+		int y = 0;
+		while(it.hasNext())
+		{
+			Landmark landmark = it.next();
+			double originX = image.getX();
+			
+			double height = 0;
+			double width = 0;
+			if(ratio1 > ratio2)
+			{
+				height = image.getFitHeight();
+				width = image.getFitHeight() / ratio1;
+			}
+			else
+			{
+				height = image.getFitWidth() * ratio1;
+				width = image.getFitWidth();
+			}
+			double originY = image.getY();
+		    Circle c = new Circle();
+		    c.setCenterX(originX + landmark.getPosX()*width);
+		    c.setCenterY(originY + landmark.getPosY()*height);
+		    c.setRadius(3.0);
+		    c.setFill(Color.RED);
+		    pane.getChildren().add(y+2, c);
+		    y++;
+		}
 		
 	}
 
@@ -370,7 +388,7 @@ public class ControlDashboard {
 				}
 				
 				
-				this.displayLandmark(pane, im1, ratioImg);
+				this.displayLandmark(pane, im1, ratioImg, height/width, i);
 			}
 			if(i == marge)
 			{
@@ -457,7 +475,7 @@ public class ControlDashboard {
 				}
 				
 				
-				this.displayLandmark(pane, im1, ratioImg);
+				this.displayLandmark(pane, im1, ratioImg, height/width, i);
 			}
 			if(i == marge)
 			{
