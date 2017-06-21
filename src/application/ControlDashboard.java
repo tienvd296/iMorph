@@ -5,7 +5,10 @@ package application;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
+import java.util.Optional;
 
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -14,25 +17,24 @@ import businesslogic.*;
 import facade.Facade;
 import ij.ImagePlus;
 import ij.io.Opener;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
-import javafx.scene.text.TextAlignment;
 
 /**
  * 
@@ -50,11 +52,22 @@ public class ControlDashboard {
 	private Image[] imageTab = null;
 	private String[] nameTab = null;
 	private String[] pathTab = null;
+	private Map<String, ImageWing> imageMap = new HashMap();; 
 
 	@FXML
 	private BorderPane table;
 
+	@FXML
+	private TextArea console;
 
+	@FXML
+	private AnchorPane metadataPane;
+
+	@FXML
+	private AnchorPane propertiesPane;
+
+	@FXML
+	private AnchorPane landmarksPane;
 
 
 	@FXML
@@ -95,7 +108,7 @@ public class ControlDashboard {
 	@FXML
 	void next(MouseEvent event) {
 
-		if(this.page < (this.imageTab.length))
+		if(this.page < (this.imageTab.length - 1))
 		{
 			this.page++;
 		}
@@ -128,7 +141,7 @@ public class ControlDashboard {
 		{
 			this.view1();
 		}
-		if(this.currentView == 4)
+		else if(this.currentView == 4)
 		{
 			this.view4();
 		}
@@ -168,7 +181,8 @@ public class ControlDashboard {
 		String[] nameTab = new String[nbImage];
 		String[] pathTab = new String[nbImage];
 
-		ArrayList<ImageWing> images = Facade.currentProject.getImages();
+
+		ArrayList<ImageWing> images = Facade.getImages();
 		Iterator<ImageWing> it = images.iterator();
 		int i = 0;
 		while(it.hasNext())
@@ -179,6 +193,7 @@ public class ControlDashboard {
 			BufferedImage bufferedImage = imagePlus.getBufferedImage();
 			Image temp = SwingFXUtils.toFXImage(bufferedImage, null);
 			pathTab[i] = im.getPath();
+			this.imageMap.put(pathTab[i], im);
 			imageTab[i] = temp;
 			nameTab[i] = im.getProperties().get("FILENAME");
 			i++;
@@ -242,13 +257,13 @@ public class ControlDashboard {
 		GridPane grid = new GridPane();
 
 		ImageView im1 = new ImageView();
-		
+
 		double width = this.table.getWidth() - 120;
 		double height = this.table.getHeight() - 25;
-		
+
 		final int y = this.page;
-		
-		
+
+
 		//------IMAGE-----//
 		im1.setOnMouseClicked(e -> imageEditor(pathTab[y]));
 		im1.setPreserveRatio(true);
@@ -272,10 +287,10 @@ public class ControlDashboard {
 		pane.setPrefWidth(width);
 		pane.getChildren().add(0, im1);
 
-		
+
 		Label lb1 = new Label();
 		lb1.setText(names[this.page]);
-		pane.getChildren().add(1, lb1);
+		//pane.getChildren().add(1, lb1);
 		lb1.setLayoutX(im1.getX());
 		if(ratioImg > height/width)
 		{
@@ -286,7 +301,7 @@ public class ControlDashboard {
 			lb1.setLayoutY(im1.getY() + im1.getFitWidth()*ratioImg);
 		}
 
-		
+
 		this.displayLandmark(pane, im1, ratioImg, height/width, this.page);
 		this.table.setCenter(grid);
 		grid.add(pane, 0, 0);	
@@ -294,16 +309,16 @@ public class ControlDashboard {
 	}  
 
 	private void displayLandmark(Pane pane, ImageView image, double ratio1, double ratio2, int i) {
-		
-		ImageWing im = Facade.currentProject.getImages().get(i);
-		ArrayList<Landmark> landmarks = im.getLandmarks();
+
+		ImageWing im = this.imageMap.get(pathTab[i]);
+		ArrayList<Landmark> landmarks = Facade.getAllLandmark(im);
 		Iterator<Landmark> it = landmarks.iterator();
 		int y = 0;
 		while(it.hasNext())
 		{
 			Landmark landmark = it.next();
 			double originX = image.getX();
-			
+
 			double height = 0;
 			double width = 0;
 			if(ratio1 > ratio2)
@@ -317,15 +332,15 @@ public class ControlDashboard {
 				width = image.getFitWidth();
 			}
 			double originY = image.getY();
-		    Circle c = new Circle();
-		    c.setCenterX(originX + landmark.getPosX()*width);
-		    c.setCenterY(originY + landmark.getPosY()*height);
-		    c.setRadius(3.0);
-		    c.setFill(Color.RED);
-		    pane.getChildren().add(y+2, c);
-		    y++;
+			Circle c = new Circle();
+			c.setCenterX(originX + landmark.getPosX()*width);
+			c.setCenterY(originY + landmark.getPosY()*height);
+			c.setRadius(3.0);
+			c.setFill(Color.RED);
+			pane.getChildren().add(y+1, c);
+			y++;
 		}
-		
+
 	}
 
 	public void view4()
@@ -335,7 +350,7 @@ public class ControlDashboard {
 		String[] names = this.nameTab;
 
 		this.currentView = 4;
-		
+
 		double width = (this.table.getWidth() - 120) / 2;
 		double height = (this.table.getHeight() - 40) / 2;
 
@@ -350,12 +365,12 @@ public class ControlDashboard {
 			if(images.length > i)
 			{
 				ImageView im1 = new ImageView();
-				
+
 				final int y = i;
 				im1.setOnMouseClicked(e -> imageEditor(pathTab[y]));
 				im1.setPreserveRatio(true);
 				im1.setImage(images[i]);
-				
+
 				double ratioImg = images[i].getHeight()/images[i].getWidth();
 				if(ratioImg > height/width)
 				{
@@ -373,10 +388,10 @@ public class ControlDashboard {
 				pane.setPrefWidth(width);
 				pane.getChildren().add(0, im1);
 
-				
+
 				Label lb1 = new Label();
 				lb1.setText(names[i]);
-				pane.getChildren().add(1, lb1);
+				//pane.getChildren().add(1, lb1);
 				lb1.setLayoutX(im1.getX());
 				if(ratioImg > height/width)
 				{
@@ -386,8 +401,8 @@ public class ControlDashboard {
 				{
 					lb1.setLayoutY(im1.getY() + im1.getFitWidth()*ratioImg);
 				}
-				
-				
+
+
 				this.displayLandmark(pane, im1, ratioImg, height/width, i);
 			}
 			if(i == marge)
@@ -422,7 +437,7 @@ public class ControlDashboard {
 		String[] names = this.nameTab;
 
 		this.currentView = 9;
-		
+
 		double width = (this.table.getWidth() - 120) / 3;
 		double height = (this.table.getHeight() - 40) / 3;
 
@@ -437,12 +452,12 @@ public class ControlDashboard {
 			if(images.length > i)
 			{
 				ImageView im1 = new ImageView();
-				
+
 				final int y = i;
 				im1.setOnMouseClicked(e -> imageEditor(pathTab[y]));
 				im1.setPreserveRatio(true);
 				im1.setImage(images[i]);
-				
+
 				double ratioImg = images[i].getHeight()/images[i].getWidth();
 				if(ratioImg > height/width)
 				{
@@ -460,10 +475,10 @@ public class ControlDashboard {
 				pane.setPrefWidth(width);
 				pane.getChildren().add(0, im1);
 
-				
+
 				Label lb1 = new Label();
 				lb1.setText(names[i]);
-				pane.getChildren().add(1, lb1);
+				//pane.getChildren().add(1, lb1);
 				lb1.setLayoutX(im1.getX());
 				if(ratioImg > height/width)
 				{
@@ -473,8 +488,8 @@ public class ControlDashboard {
 				{
 					lb1.setLayoutY(im1.getY() + im1.getFitWidth()*ratioImg);
 				}
-				
-				
+
+
 				this.displayLandmark(pane, im1, ratioImg, height/width, i);
 			}
 			if(i == marge)
@@ -527,11 +542,87 @@ public class ControlDashboard {
 
 	public void imageEditor(String path)
 	{
-		Alert alert = new Alert(AlertType.WARNING);
-		alert.setTitle("Error");
-		alert.setHeaderText(null);
-		alert.setContentText(path);
-		alert.showAndWait();
+		ImageWing image = this.imageMap.get(path);
+		this.propertiesPane.getChildren().clear();
+		if(Facade.hasProperties(image))
+		{
+			int i = 0;
+			GridPane grid = new GridPane();
+
+			// Setting columns size in percent
+			ColumnConstraints column = new ColumnConstraints();
+			column.setPercentWidth(50);
+			grid.getColumnConstraints().add(column);
+
+			column = new ColumnConstraints();
+			column.setPercentWidth(50);
+			grid.getColumnConstraints().add(column);
+
+			grid.setPrefSize(this.propertiesPane.getWidth(), this.propertiesPane.getHeight()); // Default width and height
+
+			for (Map.Entry<String, String> entry : image.getProperties().entrySet())
+			{
+
+				Label key = new Label(entry.getKey());
+				Label value = new Label(entry.getValue());
+				value.setOnMouseClicked(e -> propertiesEditor(image, entry.getKey()));
+
+				grid.add(key, 0, i);
+				grid.add(value, 1, i);
+
+				i++;
+
+			}
+
+			Label add = new Label("Add a new property");
+			add.setOnMouseClicked(e -> propertiesAdd(image));
+
+			grid.add(add, 0, i);
+
+			this.propertiesPane.getChildren().add(0, grid);
+
+
+		}
+	}
+
+	private void propertiesAdd(ImageWing image) {
+		TextInputDialog dialog = new TextInputDialog("Name of property");
+		dialog.setTitle("Add property");
+		dialog.setHeaderText("Add property");
+		dialog.setContentText("Write a new property name :");
+
+		// Traditional way to get the response value.
+		Optional<String> result = dialog.showAndWait();
+
+		if (result.isPresent())
+		{
+
+			TextInputDialog dialog2 = new TextInputDialog("Value of "+ result.get());
+			dialog2.setTitle("Add property");
+			dialog2.setHeaderText("Add property");
+			dialog2.setContentText("Write a property value for "+ result.get() +":");
+
+			// Traditional way to get the response value.
+			Optional<String> result2 = dialog2.showAndWait();
+
+			if (result2.isPresent()){
+				Facade.addProperties(image, result.get(), result2.get());
+
+			}	
+		}
+	}
+
+	private void propertiesEditor(ImageWing image, String key) {
+		TextInputDialog dialog = new TextInputDialog("properties");
+		dialog.setTitle("Edit properties");
+		dialog.setHeaderText("Edit " + key);
+		dialog.setContentText("Write a new value for " + key + " :");
+
+		// Traditional way to get the response value.
+		Optional<String> result = dialog.showAndWait();
+		if (result.isPresent()){
+			Facade.setProperties(image, key, result.get());
+		}
 	}
 
 	public void initialize() {

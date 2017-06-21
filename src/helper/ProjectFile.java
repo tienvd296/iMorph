@@ -130,7 +130,7 @@ public class ProjectFile {
 				if(!image.getLandmarks().isEmpty())
 				{
 					Iterator<Landmark> it2 = image.getLandmarks().iterator();
-					while(it.hasNext())
+					while(it2.hasNext())
 					{
 						Landmark landmark = it2.next();
 						dataSave = dataSave + landmark.getPosX() + " " + landmark.getPosY() + " " + landmark.getIsLandmark() + ";"; 
@@ -154,7 +154,7 @@ public class ProjectFile {
 			writer = new BufferedWriter(new FileWriter(logFile));
 			writer2 = new BufferedWriter(new FileWriter(lastSaveFile, true));
 			writer.write(dataSave);	
-			writer2.append(p.getName() + "#" + p.getPathProject() + "#" + p.getLastSave());
+			writer2.append("\n" + p.getName() + "#" + p.getPathProject() + "#" + p.getLastSave());
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {

@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.ArrayList;
 
+import com.sun.javafx.collections.MappingChange.Map;
+
 import businesslogic.*;
 import helper.ProjectFile;
 
@@ -88,8 +90,34 @@ public class Facade {
         }
 
 	public static ArrayList<Project> getHistProject() {
-		// TODO Auto-generated method stub
 		return ProjectFile.histProject();
+	}
+
+	public static ArrayList<ImageWing> getImages() {
+		return Facade.currentProject.getImages();
+	}
+
+	public static ArrayList<Landmark> getAllLandmark(ImageWing im) {
+		return im.getLandmarks();
+	}
+
+	public static boolean hasProperties(ImageWing image) {
+		return !image.getProperties().isEmpty();
+
+	}
+
+	public static void setProperties(ImageWing image, String key, String value) {
+		image.getProperties().replace(key, value);
+		
+	}
+
+	public static void addProperties(ImageWing image, String key, String value) {
+		Map<String, String> temp = (Map<String, String>) image.getProperties();
+		image.getProperties().clear();
+		image.getProperties().put(key, value);
+		image.getProperties().putAll(temp);
+		
+		
 	}
 
 }
