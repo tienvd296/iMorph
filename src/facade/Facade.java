@@ -6,8 +6,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.ArrayList;
 
-import com.sun.javafx.collections.MappingChange.Map;
-
 import businesslogic.*;
 import helper.ProjectFile;
 
@@ -112,10 +110,7 @@ public class Facade {
 	}
 
 	public static void addProperties(ImageWing image, String key, String value) {
-		Map<String, String> temp = (Map<String, String>) image.getProperties();
-		image.getProperties().clear();
 		image.getProperties().put(key, value);
-		image.getProperties().putAll(temp);
 		
 		
 	}
