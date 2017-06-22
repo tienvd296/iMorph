@@ -183,6 +183,7 @@ public class ProjectFile {
 
 			try {
 				String content;
+				reader.readLine();
 				while((content = reader.readLine()) != null)
 				{
 					Project p1 = new Project(content.split("#")[0], content.split("#")[1], content.split("#")[2]);

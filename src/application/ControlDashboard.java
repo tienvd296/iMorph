@@ -79,6 +79,22 @@ public class ControlDashboard {
 	private AnchorPane landmarksPane;
 
 
+/*    @FXML
+    void reloadView(MouseEvent event) {
+    	if(this.currentView == 1)
+		{
+			this.view1();
+		}
+		else if(this.currentView == 4)
+		{
+			this.view4();
+		}
+		else
+		{
+			this.view9();
+		}
+    }*/
+
 	@FXML
 	void loadImages(ActionEvent event) {
 
@@ -95,11 +111,12 @@ public class ControlDashboard {
 				String result = files[i].getAbsolutePath().toString();
 				ImagePlus im = new Opener().openTiff(result, "");
 				this.addImage(result, im.getHeight(), im.getWidth());
-				this.initImage();
 			}
+			writeConsole(files.length + " images added to the project", "ImageBrowser");
+			this.initImage();
 
 		} else { 
-			//writeConsole("Open command cancelled by user."); 
+			writeConsole("Open command cancelled by user.", "ImageBrowser"); 
 		} 
 
 
@@ -224,6 +241,7 @@ public class ControlDashboard {
 	@FXML
 	void saveProject(ActionEvent event) {
 		Facade.saveProject();
+		writeConsole("Save project: Success", "Project");
 	}
 
 	/**
@@ -726,14 +744,24 @@ public class ControlDashboard {
 		Optional<String> result = dialog.showAndWait();
 		if (result.isPresent()){
 			Facade.setProperties(image, key, result.get());
+			writeConsole("Editing to the properties of " + image.getProperties().get("FILENAME"), "Project");
 		}
+	}
+	
+	public void writeConsole(String msg, String auteur)
+	{
+		String old = this.console.getText();
+		this.console.setText(old + auteur + ">> " + msg + "\n");
 	}
 
 	public void initialize() {
 		
+		if(Facade.currentProject != null)
+		{
+			this.initImage();
+			writeConsole("Opening of the project: " + Facade.currentProject.name, "Project");
+		}
 		
-
-		this.initImage();
 
 	}
 
