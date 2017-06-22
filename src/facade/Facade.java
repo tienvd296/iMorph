@@ -45,8 +45,10 @@ public class Facade {
      * @param path 
      * @return
      */
-    public static void addImage(String path) {
+    public static void addImage(String path, double height, double width) {
         ImageWing image = new ImageWing(path);
+        image.getProperties().put("HEIGHT", Double.toString(height));
+        image.getProperties().put("WIDTH", Double.toString(width));
         Facade.currentProject.addImage(image);
         
         
@@ -113,6 +115,24 @@ public class Facade {
 		image.getProperties().put(key, value);
 		
 		
+	}
+
+	public static boolean hasLandmarks(ImageWing image) {
+		return !image.getLandmarks().isEmpty();
+	}
+
+	public static double getX_ratio(Landmark landmark, ImageWing im) {
+		double a = landmark.getPosX();
+		double b = Double.parseDouble(im.getProperties().get("WIDTH"));
+		
+		return a/b;
+	}
+	
+	public static double getY_ratio(Landmark landmark, ImageWing im) {
+		double a = landmark.getPosY();
+		double b = Double.parseDouble(im.getProperties().get("HEIGHT"));
+		
+		return a/b;
 	}
 
 }

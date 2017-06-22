@@ -4,14 +4,15 @@
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.RadioMenuItem?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.Pane?>
 
 <AnchorPane prefHeight="800.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.ControlDashboard">
    <children>
@@ -65,7 +66,38 @@
                                           </ImageView>
                                        </right>
                                        <top>
-                                          <Pane maxHeight="25.0" minHeight="25.0" prefHeight="25.0" prefWidth="200.0" style="-fx-background-color: blue;" BorderPane.alignment="CENTER" />
+                                          <MenuBar style="-fx-background-color: blue;" BorderPane.alignment="CENTER">
+                                            <menus>
+                                                <Menu mnemonicParsing="false" text="File">
+                                                   <items>
+                                                      <MenuItem mnemonicParsing="false" text="Delete" />
+                                                   </items>
+                                                </Menu>
+                                              <Menu mnemonicParsing="false" text="Edit">
+                                                <items>
+                                                  <MenuItem mnemonicParsing="false" text="Delete" />
+                                                </items>
+                                              </Menu>
+                                              <Menu mnemonicParsing="false" text="Help">
+                                                <items>
+                                                  <MenuItem mnemonicParsing="false" text="About" />
+                                                </items>
+                                              </Menu>
+                                              <Menu fx:id="viewChoice" mnemonicParsing="false" text="View">
+                                                <items>
+                                                      <RadioMenuItem mnemonicParsing="false" onAction="#view1" selected="true" text="Simple">
+                                                         <toggleGroup>
+                                                            <ToggleGroup fx:id="a" />
+                                                         </toggleGroup>
+                                                      </RadioMenuItem>
+                                                      <RadioMenuItem mnemonicParsing="false" onAction="#view4" text="4" toggleGroup="$a" />
+                                                      <RadioMenuItem mnemonicParsing="false" onAction="#view9" text="9" toggleGroup="$a" />
+                                                      <RadioMenuItem mnemonicParsing="false" text="16" toggleGroup="$a" />
+                                                      <RadioMenuItem mnemonicParsing="false" text="25" toggleGroup="$a" />
+                                                </items>
+                                              </Menu>
+                                            </menus>
+                                          </MenuBar>
                                        </top>
                                     </BorderPane>
                                  </children>

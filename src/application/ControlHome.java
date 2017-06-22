@@ -12,6 +12,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import businesslogic.Project;
 import facade.Facade;
+import helper.Keyboard;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -25,6 +26,8 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 
@@ -138,6 +141,13 @@ public class ControlHome {
  		    root = loader.load();
  		    
  			Scene scene = new Scene(root);
+ 			
+ 			scene.addEventHandler(KeyEvent.KEY_PRESSED, (key) -> {
+			      if(key.getCode()==KeyCode.CONTROL) {
+			          Keyboard.setCtrl();
+			      }
+			});
+ 			
  		    Stage stage = new Stage();
  		    stage.setScene(scene);
  		    stage.show();

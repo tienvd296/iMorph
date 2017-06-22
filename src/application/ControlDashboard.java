@@ -15,6 +15,8 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import businesslogic.*;
 import facade.Facade;
+import helper.Keyboard;
+import ij.ImageJ;
 import ij.ImagePlus;
 import ij.io.Opener;
 import javafx.embed.swing.SwingFXUtils;
@@ -22,11 +24,14 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
+import javafx.scene.control.Menu;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextInputDialog;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
@@ -48,14 +53,18 @@ public class ControlDashboard {
 	}
 
 	private int page=0;
-	private int currentView=4;
+	private int currentView=1;
 	private Image[] imageTab = null;
 	private String[] nameTab = null;
 	private String[] pathTab = null;
-	private Map<String, ImageWing> imageMap = new HashMap();; 
+	private Map<String, ImageWing> imageMap = new HashMap();
+	private ArrayList<ImageView> selected = new ArrayList<ImageView>();
 
 	@FXML
 	private BorderPane table;
+	
+    @FXML
+    private Menu viewChoice;
 
 	@FXML
 	private TextArea console;
@@ -84,7 +93,8 @@ public class ControlDashboard {
 			for(int i = 0; i < files.length; i++)
 			{
 				String result = files[i].getAbsolutePath().toString();
-				this.addImage(result);
+				ImagePlus im = new Opener().openTiff(result, "");
+				this.addImage(result, im.getHeight(), im.getWidth());
 				this.initImage();
 			}
 
@@ -156,6 +166,7 @@ public class ControlDashboard {
 	@FXML
 	void view1(ActionEvent event) {
 		this.view1();
+		this.viewChoice.setText("Simple");
 
 	}
 
@@ -163,12 +174,14 @@ public class ControlDashboard {
 	@FXML
 	void view4(ActionEvent event) {
 		this.view4();
+		this.viewChoice.setText("4");
 	}
 
 
 	@FXML
 	void view9(ActionEvent event) {
 		this.view9();
+		this.viewChoice.setText("9");
 	}
 
 
@@ -217,8 +230,8 @@ public class ControlDashboard {
 	 * Add image to the current project
 	 * @param path
 	 */
-	public void addImage(String path) {
-		Facade.addImage(path);
+	public void addImage(String path, double height, double width) {
+		Facade.addImage(path, height, width);
 	}
 
 	/**
@@ -265,7 +278,7 @@ public class ControlDashboard {
 
 
 		//------IMAGE-----//
-		im1.setOnMouseClicked(e -> imageEditor(pathTab[y]));
+		im1.setOnMouseClicked(e -> imageEditor(pathTab[y], im1));
 		im1.setPreserveRatio(true);
 		im1.setImage(images[this.page]);
 		im1.setFitWidth(width - 10);
@@ -288,21 +301,8 @@ public class ControlDashboard {
 		pane.getChildren().add(0, im1);
 
 
-		Label lb1 = new Label();
-		lb1.setText(names[this.page]);
-		//pane.getChildren().add(1, lb1);
-		lb1.setLayoutX(im1.getX());
-		if(ratioImg > height/width)
-		{
-			lb1.setLayoutY(im1.getY() + im1.getFitHeight());
-		}
-		else
-		{
-			lb1.setLayoutY(im1.getY() + im1.getFitWidth()*ratioImg);
-		}
-
-
 		this.displayLandmark(pane, im1, ratioImg, height/width, this.page);
+		this.imageEditor(pathTab[y], im1);
 		this.table.setCenter(grid);
 		grid.add(pane, 0, 0);	
 
@@ -333,8 +333,8 @@ public class ControlDashboard {
 			}
 			double originY = image.getY();
 			Circle c = new Circle();
-			c.setCenterX(originX + landmark.getPosX()*width);
-			c.setCenterY(originY + landmark.getPosY()*height);
+			c.setCenterX(originX + Facade.getX_ratio(landmark, im)*width);
+			c.setCenterY(originY + Facade.getY_ratio(landmark, im)*height);
 			c.setRadius(3.0);
 			c.setFill(Color.RED);
 			pane.getChildren().add(y+1, c);
@@ -367,7 +367,7 @@ public class ControlDashboard {
 				ImageView im1 = new ImageView();
 
 				final int y = i;
-				im1.setOnMouseClicked(e -> imageEditor(pathTab[y]));
+				im1.setOnMouseClicked(e -> imageEditor(pathTab[y], im1));
 				im1.setPreserveRatio(true);
 				im1.setImage(images[i]);
 
@@ -454,7 +454,7 @@ public class ControlDashboard {
 				ImageView im1 = new ImageView();
 
 				final int y = i;
-				im1.setOnMouseClicked(e -> imageEditor(pathTab[y]));
+				im1.setOnMouseClicked(e -> imageEditor(pathTab[y], im1));
 				im1.setPreserveRatio(true);
 				im1.setImage(images[i]);
 
@@ -540,9 +540,56 @@ public class ControlDashboard {
 
 	}
 
-	public void imageEditor(String path)
+	public void imageEditor(String path, ImageView imageView)
 	{
+		if(!Keyboard.isCtrl())
+		{
+	    	deselectAll();
+	  		this.selected.clear();
+	  		selected.add(imageView);
+		}
+		else
+		{
+			if(selected.contains(imageView))
+			{
+				selected.remove(imageView);
+				imageView.setEffect(null);
+			}
+			else
+			{
+				selected.add(imageView);
+			}
+		}
+		displaySelected();
+
+		
 		ImageWing image = this.imageMap.get(path);
+		displayProperties(image);
+		displayLandmarks(image);
+		
+	}
+	
+	private void deselectAll() {
+		Iterator<ImageView> it = this.selected.iterator();
+		while(it.hasNext())
+		{
+			it.next().setEffect( null );
+		}
+	}
+
+	private void displaySelected() {
+		Iterator<ImageView> it = this.selected.iterator();
+		while(it.hasNext())
+		{
+			DropShadow ds = new DropShadow( 20, Color.AQUA );
+			it.next().setEffect( ds );
+		}
+		
+		
+	}
+
+	private void displayProperties(ImageWing image)
+	{
 		this.propertiesPane.getChildren().clear();
 		if(Facade.hasProperties(image))
 		{
@@ -584,7 +631,64 @@ public class ControlDashboard {
 
 		}
 	}
+	
+	private void displayLandmarks(ImageWing image)
+	{
+		this.landmarksPane.getChildren().clear();
+		if(Facade.hasLandmarks(image))
+		{
+			int i = 1;
+			GridPane grid = new GridPane();
 
+			// Setting columns size in percent
+			ColumnConstraints column = new ColumnConstraints();
+			column.setPercentWidth(10);
+			grid.getColumnConstraints().add(column);
+
+			column = new ColumnConstraints();
+			column.setPercentWidth(30);
+			grid.getColumnConstraints().add(column);
+			
+			column = new ColumnConstraints();
+			column.setPercentWidth(30);
+			grid.getColumnConstraints().add(column);
+			
+			column = new ColumnConstraints();
+			column.setPercentWidth(30);
+			grid.getColumnConstraints().add(column);
+
+			grid.setPrefSize(this.landmarksPane.getWidth(), this.landmarksPane.getHeight()); // Default width and height
+
+			Iterator<Landmark> it = Facade.getAllLandmark(image).iterator();
+						
+			while (it.hasNext())
+			{
+
+				Landmark l = it.next();
+				
+				Label nb = new Label(Integer.toString(i));
+				Label x = new Label(Float.toString(l.getPosX()));
+				Label y = new Label(Float.toString(l.getPosY()));
+				Label bool = new Label(Boolean.toString(l.getIsLandmark()));
+
+				grid.add(nb, 0, i-1);
+				grid.add(x, 1, i-1);
+				grid.add(y, 2, i-1);
+				grid.add(bool, 3, i-1);
+
+				i++;
+
+			}
+
+			this.landmarksPane.getChildren().add(0, grid);
+
+
+		}
+	}
+
+	
+	
+	
 	private void propertiesAdd(ImageWing image) {
 		TextInputDialog dialog = new TextInputDialog("Name of property");
 		dialog.setTitle("Add property");
@@ -626,6 +730,8 @@ public class ControlDashboard {
 	}
 
 	public void initialize() {
+		
+		
 
 		this.initImage();
 
