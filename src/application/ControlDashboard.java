@@ -79,21 +79,7 @@ public class ControlDashboard {
 	private AnchorPane landmarksPane;
 
 
-/*    @FXML
-    void reloadView(MouseEvent event) {
-    	if(this.currentView == 1)
-		{
-			this.view1();
-		}
-		else if(this.currentView == 4)
-		{
-			this.view4();
-		}
-		else
-		{
-			this.view9();
-		}
-    }*/
+
 
 	@FXML
 	void loadImages(ActionEvent event) {
@@ -101,16 +87,24 @@ public class ControlDashboard {
 		JFileChooser image = new JFileChooser();
 		image.setMultiSelectionEnabled(true);
 		FileNameExtensionFilter filter = new FileNameExtensionFilter(
-				"TIF, JPG & PNG Images", "jpg", "png", "jpeg", "tif");
+				"TIF Images", "tif");
 		image.setFileFilter(filter);
+		writeConsole("STEP1", "DEBUG");
 		int returnVal = image.showOpenDialog(null);
+		writeConsole("STEP2", "DEBUG");
 		if(returnVal == JFileChooser.APPROVE_OPTION) {
+			writeConsole("STEP3", "DEBUG");
 			File[] files = image.getSelectedFiles();
+			writeConsole("STEP4", "DEBUG");
 			for(int i = 0; i < files.length; i++)
 			{
+				writeConsole("STEP5", "DEBUG");
 				String result = files[i].getAbsolutePath().toString();
+				writeConsole("STEP6", "DEBUG");
 				ImagePlus im = new Opener().openTiff(result, "");
+				writeConsole("STEP7", "DEBUG");
 				this.addImage(result, im.getHeight(), im.getWidth());
+				writeConsole("STEP8", "DEBUG");
 			}
 			writeConsole(files.length + " images added to the project", "ImageBrowser");
 			this.initImage();
@@ -750,8 +744,9 @@ public class ControlDashboard {
 	
 	public void writeConsole(String msg, String auteur)
 	{
-		String old = this.console.getText();
-		this.console.setText(old + auteur + ">> " + msg + "\n");
+		
+		
+		this.console.appendText(auteur + ">> " + msg + "\n");
 	}
 
 	public void initialize() {

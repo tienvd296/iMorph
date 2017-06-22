@@ -3,6 +3,6 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.fx.ide.jdt.core.JAVAFX_CONTAINER"/>
-	<classpathentry kind="lib" path="D:/Documents/IG4/Vietnam/PhleboMorph/lib/IJ/ij.jar"/>
+	<classpathentry kind="lib" path="lib/IJ/ij.jar" sourcepath="lib/IJ"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
