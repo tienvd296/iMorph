@@ -3,6 +3,7 @@ package affichage;
 
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -21,6 +22,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
+import javax.swing.JSplitPane;
 import javax.swing.JToolBar;
 
 
@@ -31,27 +33,27 @@ public class Affichage extends JPanel  {
 
 	
 	private JToolBar toolBar = new JToolBar();
-
+	
 	
 	BufferedImage monImage = null;
 	public Affichage() {
-		super();
-
+		
+		this.setBackground(Color.red);
+		
 	}
+	
+	
+	
+			
+		
+	
 
 	protected void correctionImage() {
 		
 		
-	this.setLayout(new BorderLayout());	
+		
 	
-	
-	
-	JPanel pan = new JPanel();
-	
-	this.setLayout(new GridLayout(1, 2));
-    //On ajoute le bouton au content pane de la JFrame
-	this.getRootPane().add(pan);
-    this.setVisible(true);
+
 	
 		/*pan.add(toolBar);
 		pan.add(slide);

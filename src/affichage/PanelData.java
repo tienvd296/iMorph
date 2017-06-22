@@ -3,10 +3,11 @@ package affichage;
 import java.awt.Color;
 
 import javax.swing.JPanel;
-import javax.swing.WindowConstants;
+import javax.swing.JSplitPane;
 
 public class PanelData extends JPanel{
 
+	
 	
 	public PanelData() {
 		super();
@@ -25,10 +26,17 @@ public class PanelData extends JPanel{
 		//
 	}
 
-	private void creerPanel() {
+	 void creerPanel() {
 		
+		/*
+		 * Partie du Panel qui va accepter les Metadata et la matrice des positions des landmarks
+		 */
+			
+		 
 		this.setBackground(Color.BLUE);
 		
+		
+	
 		
 	}
 	

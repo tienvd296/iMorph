@@ -7,11 +7,15 @@ package affichage;
 
 import java.awt.AWTException;
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Graphics;
 import java.awt.Rectangle;
 import  java.awt.Robot;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -43,8 +47,7 @@ import drawing.JCanvas;
 
 
 
-@SuppressWarnings("restriction")
-public class Cadre2 extends JFrame implements ActionListener {
+public class Cadre2 extends JFrame implements ActionListener, MouseListener {
 
 	/**
 	 * 
@@ -54,7 +57,9 @@ public class Cadre2 extends JFrame implements ActionListener {
 	private final JMenu fichierMenu = new JMenu();
 	private final JMenuItem ouvrirMenu = new JMenuItem();
 	private final JMenu filtreMenu = new JMenu();
+	
 	public final static Affichage panneau = new Affichage();
+	
 	private final JMenuItem enregistrerMenu = new JMenuItem();
 	
 	private final JMenuItem correctionImageMenu = new JMenuItem();
@@ -62,6 +67,10 @@ public class Cadre2 extends JFrame implements ActionListener {
 	private final JMenuItem agrandirMenu = new JMenuItem();
 	private final JMenuItem reduireMenu = new JMenuItem();
 	private JToolBar toolBar = new JToolBar();
+	
+	
+	
+	
 	
 	public static JSlider slide = new JSlider();
 	//Redimmensionnement d'images pour faire une toolBar fine
@@ -86,14 +95,19 @@ public class Cadre2 extends JFrame implements ActionListener {
 	  private static List drawables = new LinkedList();
 	
 	  
-	public PanelData panData = new PanelData();	
+	public static PanelData panData = new PanelData();	
 	 
 	private JButton squareButton = new JButton(square);
 	private JButton circleButton = new JButton(circle);
 
 	BufferedImage monImage = null;
-	  private JSplitPane split;
+	  
 
+	public static JSplitPane split;
+	
+	
+	
+	
 
 	public Cadre2() {
 		super();
@@ -124,7 +138,7 @@ public class Cadre2 extends JFrame implements ActionListener {
 			e.printStackTrace();
 		}
 		
-		
+		this.addMouseListener(this);
 		
 		// construction du menu
 		setJMenuBar(menuBar);	
@@ -209,10 +223,15 @@ public class Cadre2 extends JFrame implements ActionListener {
 		add(toolBar, BorderLayout.PAGE_START);
 		
 		
+
 		
 		
 		
 		
+		
+		
+	
+		 
 		
 		// ajouter le panneau de dessin
 		getContentPane().add(panneau);
@@ -224,7 +243,18 @@ public class Cadre2 extends JFrame implements ActionListener {
 	}
 	
 	
-	
+
+/*	public void CreerSplit(boolean t) {
+		
+		if(t == true){
+		split.setVisible(true);
+		
+		}
+		else if(t== false){
+			split.setVisible(false);
+			
+		}
+	}*/
 	
 	  class FormeListener implements ActionListener{
 		    public void actionPerformed(ActionEvent e) {
@@ -292,24 +322,48 @@ public class Cadre2 extends JFrame implements ActionListener {
 			}
 				
 		
-		if(squareButton.isEnabled()) {
+		if(cliqueMenu.getSource() == squareButton) {
 			System.out.println("squareButton");
+			
 			combo.setVisible(true);
 			slide.setVisible(true);
 			
+			split.setVisible(false);
+			panData.setVisible(false);
+			frame.add(panneau);
+		//	frame.CreerSplit(false);
 			
 		} 
-		if(circleButton.isEnabled()) {
+		if(cliqueMenu.getSource() == circleButton) {
 			System.out.println("circleButton");
-			panneau.add(panData, BorderLayout.EAST);
-			split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, panneau, panData);
-			split.setOneTouchExpandable(true);
 			
-			frame.add(split);
+			combo.setVisible(false);
+			slide.setVisible(false);
+			
+			
+			panneau.add(panData, BorderLayout.EAST);
+			panData.setBounds(panneau.getX(), panneau.getY(), panneau.getWidth(), panneau.getHeight());
+			panData.setVisible(true);
+			
+			split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,panneau, Cadre2.panData);
+			split.setOneTouchExpandable(true);
+			frame.add(split, BorderLayout.CENTER);
+			
+			
+			split.setVisible(true);
+		//	frame.CreerSplit(true);
+			
+			
 			
 		}
 		
+		
+		
 	}
+	
+	
+
+
 	
 	public void sauverImage() throws IOException, AWTException 
 	{ 
@@ -324,7 +378,31 @@ public class Cadre2 extends JFrame implements ActionListener {
 
 
 
+	public static void Go() {
+		
+		 
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setSize(1100,650);
+		jc.setBounds(frame.getX(), frame.getY(),950, 650);
+		
+		new TestML(jc);
+		
+		panData.setVisible(false);
+		panneau.add(jc);
+		
+		jc.setBackground(Color.green);
+		jc.setVisible(true);
+		panneau.setVisible(true);
+		
+		frame.add(panneau);
 	
+		
+		frame.setVisible(true);
+		
+		
+		
+		
+	}
 
 
 
@@ -333,44 +411,63 @@ public class Cadre2 extends JFrame implements ActionListener {
 	public static void main(String args[]) 
 	{
 		try {
-			
-			 
-			 
-			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-			frame.setSize(1100,650);
-			jc.setSize(950, 650);
-			
-		
-			/*panShape.setBackground(Color.RED);
-			panShape.setPreferredSize(new Dimension(550, panShape.getHeight() + 100));
-			panShape.setVisible(true);
-			*/
-			
-		//	GUIHelper.showOnFrame(jc,"test JCanvas");
-			
-			new TestML(jc);
-			
-	
-			panneau.setVisible(true);
-			
-			jc.add(panneau);
-			
-
-			
-			jc.setVisible(true);
-			
-			frame.add(jc);
-		
-			
-		
-			frame.setVisible(true);
-			
-			
-			
+			Go();
 			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		
+	}
+
+
+
+
+	@Override
+	public void mouseClicked(MouseEvent e) {
+
+		System.out.println("X : "+e.getX()+ " Y = "+getY());
+		draw(null, e.getX(), e.getY(), 1,1);
+	}
+
+	public void draw(Graphics g, int x, int y, int height, int width) {
+		Color c = g.getColor();
+		g.setColor(Color.RED);
+		g.fillOval(x,y,height,width);
+		g.setColor(c);
+	}
+
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+
+
+	@Override
+	public void mouseExited(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
 	}
 
 
