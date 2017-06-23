@@ -1,9 +1,6 @@
 package facade;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.util.ArrayList;
 
 import businesslogic.*;
@@ -31,7 +28,7 @@ public class Facade {
      * @return
      */
     public static void newProject(String path) {
-    	String separator = System.getProperty("file.separator");
+    	//String separator = System.getProperty("file.separator");
     	String[] tab = path.split("\\\\");
     	String name = tab[tab.length - 1];
         Project p = new Project(name);

@@ -3,13 +3,10 @@ package helper;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -44,6 +41,7 @@ public class ProjectFile {
 				images = ProjectFile.readImage(skeleton[1]);				
 				
 			}
+			reader.close();
 					
 			return new Project(name, lastSave, path, images);
         
@@ -62,7 +60,7 @@ public class ProjectFile {
 		for(int i = 1; i < tab.length; i++)
 		{
 			String pathImage = "UN";
-			Map<String, String> properties = new HashMap();
+			Map<String, String> properties = new HashMap<String, String>();
 			ArrayList<Landmark> landmarks = new ArrayList<Landmark>();
 			
 			String[] tab2 = tab[i].split(";");
@@ -189,6 +187,7 @@ public class ProjectFile {
 					Project p1 = new Project(content.split("#")[0], content.split("#")[1], content.split("#")[2]);
 					listProj.add(p1);
 				}
+				reader.close();
 				return listProj;
 				
 			
@@ -206,6 +205,7 @@ public class ProjectFile {
 				e1.printStackTrace();
 				return listProj;
 			}
+			
 			
 		
 	}

@@ -16,22 +16,18 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import businesslogic.*;
 import facade.Facade;
 import helper.Keyboard;
-import ij.ImageJ;
 import ij.ImagePlus;
 import ij.io.Opener;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.effect.DropShadow;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
@@ -57,7 +53,7 @@ public class ControlDashboard {
 	private Image[] imageTab = null;
 	private String[] nameTab = null;
 	private String[] pathTab = null;
-	private Map<String, ImageWing> imageMap = new HashMap();
+	private Map<String, ImageWing> imageMap = new HashMap<String, ImageWing>();
 	private ArrayList<ImageView> selected = new ArrayList<ImageView>();
 
 	@FXML
@@ -102,7 +98,7 @@ public class ControlDashboard {
 				String result = files[i].getAbsolutePath().toString();
 				writeConsole("STEP6", "DEBUG");
 				ImagePlus im = new Opener().openTiff(result, "");
-				writeConsole("STEP7", "DEBUG");
+				writeConsole("STEP7 " + im.getHeight(), "DEBUG");
 				this.addImage(result, im.getHeight(), im.getWidth());
 				writeConsole("STEP8", "DEBUG");
 			}
@@ -275,7 +271,6 @@ public class ControlDashboard {
 	public void view1()
 	{
 		Image[] images = this.imageTab;
-		String[] names = this.nameTab;
 
 		this.currentView = 1;
 

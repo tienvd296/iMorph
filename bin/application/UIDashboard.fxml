@@ -54,14 +54,14 @@
                                        <left>
                                           <ImageView fitHeight="70.0" fitWidth="60.0" onMouseClicked="#previous" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER">
                                              <image>
-                                                <Image url="@../../assets/left-arrow.png" />
+                                                <Image url="@../left-arrow.png" />
                                              </image>
                                           </ImageView>
                                        </left>
                                        <right>
                                           <ImageView fitHeight="70.0" fitWidth="60.0" onMouseClicked="#next" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER">
                                              <image>
-                                                <Image url="@../../assets/right-arrow.png" />
+                                                <Image url="@../right-arrow.png" />
                                              </image>
                                           </ImageView>
                                        </right>

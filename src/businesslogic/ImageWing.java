@@ -16,7 +16,7 @@ public class ImageWing {
     	this.properties.put("FILENAME", filename[filename.length-1]);
     }
 
-    public ImageWing(String pathImage, Map properties, ArrayList<Landmark> landmarks) {
+    public ImageWing(String pathImage, Map<String,String> properties, ArrayList<Landmark> landmarks) {
 		this.path = pathImage;
 		this.properties = properties;
 		this.landmarks = landmarks;
@@ -30,7 +30,7 @@ public class ImageWing {
     /**
      * List of properties, key is the properties and value the value of the properties
      */
-    public Map<String, String> properties = new HashMap();
+    public Map<String, String> properties = new HashMap<String, String>();
 
     /**
      * 

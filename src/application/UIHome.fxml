@@ -39,12 +39,12 @@
                <children>
                   <ImageView fitHeight="183.0" fitWidth="180.0" layoutX="317.0" layoutY="48.0" onMouseClicked="#openProject" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@../../assets/open-folder-outline.png" />
+                        <Image url="@../open-folder-outline.png" />
                      </image>
                   </ImageView>
                   <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="96.0" layoutY="63.0" onMouseClicked="#newProject" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@../../assets/add-new-page.png" />
+                        <Image url="@../add-new-page.png" />
                      </image>
                   </ImageView>
                </children>
