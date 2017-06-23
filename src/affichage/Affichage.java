@@ -2,14 +2,11 @@ package affichage;
 
 
 
-import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.GridLayout;
-import java.awt.Rectangle;
-import java.awt.Robot;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
@@ -17,19 +14,16 @@ import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
-import javax.imageio.stream.ImageOutputStream;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
-import javax.swing.JSplitPane;
 import javax.swing.JToolBar;
 
 
 
 
 
-public class Affichage extends JPanel  {
+public class Affichage extends JPanel implements MouseListener {
 
 	
 	private JToolBar toolBar = new JToolBar();
@@ -40,6 +34,8 @@ public class Affichage extends JPanel  {
 		
 		this.setBackground(Color.red);
 		
+		
+		this.addMouseListener(this);
 	}
 	
 	
@@ -71,6 +67,10 @@ public class Affichage extends JPanel  {
 		 
 		*/
 	    }
+	
+
+
+
 	
 	 private void initToolBar(JButton square, JButton circle){
 		   
@@ -182,6 +182,66 @@ public class Affichage extends JPanel  {
 			e.printStackTrace();
 		}
 
+	}
+
+
+
+
+
+
+	@Override
+	public void mouseClicked(MouseEvent e) {
+
+		System.out.println("X : "+e.getX()+ " Y = "+getY());
+		//draw(null, e.getX(), e.getY(), 1,1);
+	}
+
+
+
+
+
+
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+
+
+
+
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+
+
+
+
+
+	@Override
+	public void mouseExited(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+
+
+
+
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
 	}
 
 	
