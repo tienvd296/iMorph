@@ -92,8 +92,8 @@
                                                       </RadioMenuItem>
                                                       <RadioMenuItem mnemonicParsing="false" onAction="#view4" text="4" toggleGroup="$a" />
                                                       <RadioMenuItem mnemonicParsing="false" onAction="#view9" text="9" toggleGroup="$a" />
-                                                      <RadioMenuItem mnemonicParsing="false" text="16" toggleGroup="$a" />
-                                                      <RadioMenuItem mnemonicParsing="false" text="25" toggleGroup="$a" />
+                                                      <RadioMenuItem mnemonicParsing="false" onAction="#view16" text="16" toggleGroup="$a" />
+                                                      <RadioMenuItem mnemonicParsing="false" onAction="#view25" text="25" toggleGroup="$a" />
                                                 </items>
                                               </Menu>
                                             </menus>
