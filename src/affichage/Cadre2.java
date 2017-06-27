@@ -49,6 +49,7 @@ import drawing.JCanvas;
 
 
 public class Cadre2 extends JFrame implements ActionListener {
+	
 
 	/**
 	 * 
@@ -263,16 +264,17 @@ public class Cadre2 extends JFrame implements ActionListener {
 	    slide.setFocusable(true);
 		toolBar.setFloatable(false);
 		
+		this.add(panneau);
 		
-		
-		panneau.add(panData);
 		panData.setBounds(panneau.getX(), panneau.getY(), panneau.getWidth(), panneau.getHeight());
-		split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,panneau, panData);
-		split.setOneTouchExpandable(true);
-		this.add(split, BorderLayout.CENTER);
+	
 		
-		// ajouter le panneau de dessin
-		c.add(panneau);
+		split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, panneau, panData);
+		split.setOneTouchExpandable(true);
+		this.getContentPane().add(split, BorderLayout.CENTER);
+		
+	
+		
 		
 		
 		
@@ -290,7 +292,7 @@ public class Cadre2 extends JFrame implements ActionListener {
 		if(b==true) {
 			System.out.println("toolBarLandMark(true)");
 
-			panneau.setVisible(true);
+		//	panneau.setVisible(true);
 			panData.setVisible(true);
 			split.setVisible(true);
 			
@@ -315,20 +317,21 @@ public class Cadre2 extends JFrame implements ActionListener {
 			
 			System.out.println("toolBarEditing true");
 			toolBarLandMark(false);
-			
+			//c.add(panneau);
 			toolBar.setVisible(true);
 			
 		    slide.setVisible(true);
 		    combo.setVisible(true);
 		    
 		
-			//frame.add(panneau);
+		
 			
 		} else if(b == false)  {
 			
 			toolBar.setVisible(false);
+			
 			System.out.println("Toolbar Correction refusée");
-			//frame.add(panneau);
+			
 		}
 		
 	}
@@ -445,7 +448,7 @@ public class Cadre2 extends JFrame implements ActionListener {
 	    panData = new PanelData();
 	    panneau = new Affichage();
 	    
-	    
+	    panData.setVisible(false);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setSize(1100,650);
 		jc.setBounds(this.getX(), this.getY(),950, 650);
@@ -454,7 +457,7 @@ public class Cadre2 extends JFrame implements ActionListener {
 		
 	
 		panneau.add(jc);
-	
+		
 		//panData.setVisible(true);
 		
 		jc.setBackground(Color.green);

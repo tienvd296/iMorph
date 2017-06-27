@@ -36,10 +36,19 @@ public class Affichage extends JPanel implements MouseListener {
 		
 		
 		this.addMouseListener(this);
+		
+	
+		
+		 
 	}
 	
 	
-	
+	 public static void addLandMark(int x, int y ){
+		 String texte = PanelData.jText.getText();
+			PanelData.jText.setText(texte+ "\n X : "+x+ " Y = "+y);
+			
+		 }
+		 
 			
 		
 	
@@ -192,7 +201,9 @@ public class Affichage extends JPanel implements MouseListener {
 	@Override
 	public void mouseClicked(MouseEvent e) {
 
-		System.out.println("X : "+e.getX()+ " Y = "+getY());
+
+		addLandMark(e.getX(), e.getY());
+		System.out.println("X lol : "+e.getX()+ " Y = "+e.getY());
 		//draw(null, e.getX(), e.getY(), 1,1);
 	}
 
