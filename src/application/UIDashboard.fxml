@@ -70,7 +70,7 @@
                                             <menus>
                                                 <Menu mnemonicParsing="false" text="File">
                                                    <items>
-                                                      <MenuItem mnemonicParsing="false" text="Delete" />
+                                                      <MenuItem mnemonicParsing="false" onAction="#newFolder" text="New folder" />
                                                    </items>
                                                 </Menu>
                                               <Menu mnemonicParsing="false" text="Edit">

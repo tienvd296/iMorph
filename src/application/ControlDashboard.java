@@ -10,6 +10,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Optional;
 
+import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
@@ -53,8 +54,10 @@ public class ControlDashboard {
 	private Image[] imageTab = null;
 	private String[] nameTab = null;
 	private String[] pathTab = null;
+	private Folder[] folderTab = null;
 	private Map<String, ImageWing> imageMap = new HashMap<String, ImageWing>();
 	private ArrayList<ImageView> selected = new ArrayList<ImageView>();
+	private Folder currentFolder = null;
 
 	@FXML
 	private BorderPane table;
@@ -73,6 +76,7 @@ public class ControlDashboard {
 
 	@FXML
 	private AnchorPane landmarksPane;
+
 
 
 
@@ -103,14 +107,26 @@ public class ControlDashboard {
 				writeConsole("STEP8", "DEBUG");
 			}
 			writeConsole(files.length + " images added to the project", "ImageBrowser");
-			this.initImage();
+			this.initImage(this.currentFolder);
 
 		} else { 
 			writeConsole("Open command cancelled by user.", "ImageBrowser"); 
 		} 
+		this.reloadView();
 
 
 	} 
+
+	private void reloadView() {
+		if(this.currentView == 1)
+		{
+			this.view1();
+		}
+		else
+		{
+			this.view((int) Math.sqrt(currentView));
+		}
+	}
 
 	@FXML
 	void newProject(ActionEvent event) {
@@ -128,18 +144,8 @@ public class ControlDashboard {
 		if(this.page <= ((this.imageTab.length - 1) / (Math.sqrt(this.currentView))-1))
 		{
 			this.page++;
-		}
-
-		if(this.currentView == 1)
-		{
-			this.view1();
-		}
-		else
-		{
-			this.view((int) Math.sqrt(currentView));
-		}
-		
-
+		}		
+		this.reloadView();
 	}
 
 
@@ -151,18 +157,7 @@ public class ControlDashboard {
 			this.page--;
 		}
 
-		if(this.currentView == 1)
-		{
-			this.view1();
-		}
-		else if(this.currentView == 4)
-		{
-			this.view(2);
-		}
-		else
-		{
-			this.view(3);
-		}
+		this.reloadView();
 
 	}
 
@@ -207,18 +202,45 @@ public class ControlDashboard {
 
 
 
-	void initImage() {
+	void initImage(Folder folder) {
 
-		int nbImage = Facade.currentProject.getImages().size();
+		int nbImage = 0;
+		ArrayList<ImageWing> images = new ArrayList<ImageWing>();
+		int nbFolder = 0;
+		ArrayList<Folder> folders = new ArrayList<Folder>();
+		
+		if(folder == null)
+		{
+			nbImage = Facade.currentProject.getImages().size();
+			images = Facade.getImages();
+			nbFolder = Facade.currentProject.getFolders().size();
+			folders = Facade.currentProject.getFolders();
+		}
+		else
+		{
+			nbImage = folder.getImages().size();
+			images = folder.getImages();
+			nbFolder = folder.getFolders().size();
+			folders = folder.getFolders();
+		}
+		
 
 		Image[] imageTab = new Image[nbImage];
 		String[] nameTab = new String[nbImage];
 		String[] pathTab = new String[nbImage];
+		Folder[] folderTab = new Folder[nbFolder];
 
 
-		ArrayList<ImageWing> images = Facade.getImages();
-		Iterator<ImageWing> it = images.iterator();
+		Iterator<Folder> it2 = folders.iterator();
+		int x = 0;
+		while(it2.hasNext())
+		{
+			Folder fd = it2.next();
+			folderTab[x] = fd;
+		}
+		
 		int i = 0;
+		Iterator<ImageWing> it = images.iterator();
 		while(it.hasNext())
 		{
 
@@ -236,6 +258,7 @@ public class ControlDashboard {
 		this.nameTab = nameTab;
 		this.imageTab = imageTab;
 		this.pathTab = pathTab;
+		this.folderTab = folderTab;
 	}
 
 
@@ -371,6 +394,17 @@ public class ControlDashboard {
 
 		Image[] images = this.imageTab;
 		String[] names = this.nameTab;
+		Folder[] folder = this.folderTab;
+		int sizeFolder = 0;
+		
+		if(folderTab != null)
+		{
+		sizeFolder = this.folderTab.length;
+		}
+
+		
+		String separator = System.getProperty("file.separator");
+		String originalPath = System.getProperty("user.dir");
 
 		this.currentView = (int) Math.pow(nbImg, 2);
 		
@@ -383,19 +417,48 @@ public class ControlDashboard {
 
 		int marge = this.page*nbImg;
 
+		
 		for(int i = marge; i<marge+Math.pow(nbImg, 2); i++)
 		{
 			Pane pane = new Pane();
-			if(images.length > i)
+			if(sizeFolder > i)
 			{
 				ImageView im1 = new ImageView();
 
 				final int y = i;
-				im1.setOnMouseClicked(e -> imageEditor(pathTab[y], im1));
+				im1.setOnMouseClicked(e -> clickFolder(folder[y]));
 				im1.setPreserveRatio(true);
-				im1.setImage(images[i]);
+				Image folderImage = new Image("open-folder-outline.png");
+				im1.setImage(folderImage);
 
-				double ratioImg = images[i].getHeight()/images[i].getWidth();
+				double ratioImg = folderImage.getHeight()/folderImage.getWidth();
+				if(ratioImg > height/width)
+				{
+					im1.setFitHeight(height-20);
+					im1.setX((width - im1.getFitHeight()/ratioImg) / 2);
+					im1.setY((height - im1.getFitHeight()) / 2);
+				}
+				else
+				{
+					im1.setFitWidth(width - 20);
+					im1.setX((width - im1.getFitWidth()) / 2);
+					im1.setY((height - im1.getFitWidth()*ratioImg) / 2);
+				}
+				pane.setPrefHeight(height);
+				pane.setPrefWidth(width);
+				pane.getChildren().add(0, im1);
+			}
+			else if(images.length + sizeFolder > i)
+			{
+				ImageView im1 = new ImageView();
+
+				final int y = i;
+				final int s = sizeFolder;
+				im1.setOnMouseClicked(e -> imageEditor(pathTab[y - s], im1));
+				im1.setPreserveRatio(true);
+				im1.setImage(images[i - sizeFolder]);
+
+				double ratioImg = images[i - sizeFolder].getHeight()/images[i - sizeFolder].getWidth();
 				if(ratioImg > height/width)
 				{
 					im1.setFitHeight(height-20);
@@ -413,20 +476,6 @@ public class ControlDashboard {
 				pane.getChildren().add(0, im1);
 
 
-				Label lb1 = new Label();
-				lb1.setText(names[i]);
-				//pane.getChildren().add(1, lb1);
-				lb1.setLayoutX(im1.getX());
-				if(ratioImg > height/width)
-				{
-					lb1.setLayoutY(im1.getY() + im1.getFitHeight());
-				}
-				else
-				{
-					lb1.setLayoutY(im1.getY() + im1.getFitWidth()*ratioImg);
-				}
-
-
 				this.displayLandmark(pane, im1, ratioImg, height/width, i);
 			}
 				grid.add(pane, i/nbImg, i%nbImg);
@@ -438,6 +487,11 @@ public class ControlDashboard {
 
 
 
+	}
+
+	private void clickFolder(Folder folder) {
+		//INFO
+		//double click => open
 	}
 
 	public void imageEditor(String path, ImageView imageView)
@@ -680,16 +734,26 @@ public class ControlDashboard {
 		
 		this.console.appendText(auteur + ">> " + msg + "\n");
 	}
+	
+	
+
+    @FXML
+    void newFolder(ActionEvent event) {
+    	Facade.addFolder("test1");
+    	writeConsole("1 folder added to the project", "ImageBrowser");
+    	this.initImage(this.currentFolder);
+    }
+	
 
 	public void initialize() {
 		
 		if(Facade.currentProject != null)
 		{
-			this.initImage();
+			this.initImage(this.currentFolder);
 			writeConsole("Opening of the project: " + Facade.currentProject.name, "Project");
 		}
 		
-
+		
 	}
 
 

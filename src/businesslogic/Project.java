@@ -83,6 +83,17 @@ public class Project {
 	 */
 	public ArrayList<ImageWing> images = new ArrayList<ImageWing>();
 
+
+	public ArrayList<Folder> folders = new ArrayList<Folder>();
+
+	public ArrayList<Folder> getFolders() {
+		return folders;
+	}
+
+	public void setFolders(ArrayList<Folder> folders) {
+		this.folders = folders;
+	}
+
 	/**
 	 * 
 	 */

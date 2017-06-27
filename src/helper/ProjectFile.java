@@ -55,11 +55,9 @@ public class ProjectFile {
 	} catch (IOException e) {
 		// TODO Auto-generated catch block
 		e.printStackTrace();
-		System.out.println("ERREUR0");
 		return null;
 	} catch (NullPointerException e){
 		e.printStackTrace();
-		System.out.println("ERREUR0");
 		return null;
 	}
 	}
@@ -81,7 +79,6 @@ public class ProjectFile {
 			
 			while (!tab2[n].equals("LANDMARKS"))
 			{
-				System.out.println(tab2[n]);
 				String[] prop = tab2[n].split("=");
 				properties.put(prop[0], prop[1]);
 				n++;

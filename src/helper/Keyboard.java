@@ -24,6 +24,7 @@ public class Keyboard {
 	public static void setMaj(boolean maj) {
 		Keyboard.maj = maj;
 	}
+
 	
 	
 }

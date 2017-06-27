@@ -101,7 +101,6 @@ public class ControlHome {
 			File proj = file.getSelectedFile();
 			if(Facade.loadProject(proj))
 			{
-				System.out.println("OK" + Facade.currentProject.name);
 				this.moveToDashboard();
 			}
 			else
@@ -165,7 +164,11 @@ public class ControlHome {
 			Scene scene = new Scene(root);
 
 			scene.addEventHandler(KeyEvent.KEY_PRESSED, (key) -> {
-				if(key.getCode()==KeyCode.CONTROL) {
+				if(key.getCode()==KeyCode.CONTROL && key.getCode()==KeyCode.A)
+				{
+					
+				}
+				else if(key.getCode()==KeyCode.CONTROL) {
 					Keyboard.setCtrl();
 				}
 			});
@@ -184,11 +187,11 @@ public class ControlHome {
 		} 
 
 	}
-	
-    @FXML
-    void clearHistoric(ActionEvent event) {
-    	Facade.clearHistoric();
 
-    }
+	@FXML
+	void clearHistoric(ActionEvent event) {
+		Facade.clearHistoric();
+
+	}
 
 }

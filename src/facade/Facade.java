@@ -153,4 +153,9 @@ public class Facade {
 		return MetadataExtractor.metadataExtractor(file);
 	}
 
+	public static void addFolder(String string) {
+    	Folder folder = new Folder(string);
+		Facade.currentProject.getFolders().add(folder);
+	}
+
 }
