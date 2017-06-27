@@ -2,8 +2,10 @@ package facade;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import businesslogic.*;
+import helper.MetadataExtractor;
 import helper.ProjectFile;
 
 /**
@@ -77,11 +79,20 @@ public class Facade {
      * Load an existing project, it becomes the current project
      * @param path
      */
-    public static void loadProject(File file) {
+    public static boolean loadProject(File file) {
     	
 
     	Project p = ProjectFile.reader(file);
-    	Facade.currentProject = p;
+    	if(p != null)
+    	{
+    		Facade.currentProject = p;
+    		return true;
+    	}
+    	else
+    	{
+    		return false;
+    	}
+    	
 
 
         }
@@ -130,6 +141,16 @@ public class Facade {
 		double b = Double.parseDouble(im.getProperties().get("HEIGHT"));
 		
 		return a/b;
+	}
+
+	public static void clearHistoric() {
+		ProjectFile.clearHistoric();
+		
+	}
+	
+	public static HashMap<String, String> metadataExtractor(File file)
+	{
+		return MetadataExtractor.metadataExtractor(file);
 	}
 
 }

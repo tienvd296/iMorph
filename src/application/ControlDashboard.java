@@ -125,7 +125,7 @@ public class ControlDashboard {
 	@FXML
 	void next(MouseEvent event) {
 
-		if(this.page < (this.imageTab.length - 1))
+		if(this.page <= ((this.imageTab.length - 1) / (Math.sqrt(this.currentView))-1))
 		{
 			this.page++;
 		}
@@ -273,6 +273,7 @@ public class ControlDashboard {
 		Image[] images = this.imageTab;
 
 		this.currentView = 1;
+		this.page = 0;
 
 		GridPane grid = new GridPane();
 
@@ -357,6 +358,7 @@ public class ControlDashboard {
 		String[] names = this.nameTab;
 
 		this.currentView = 4;
+		this.page = 0;
 
 		double width = (this.table.getWidth() - 120) / 2;
 		double height = (this.table.getHeight() - 40) / 2;
@@ -444,6 +446,7 @@ public class ControlDashboard {
 		String[] names = this.nameTab;
 
 		this.currentView = 9;
+		this.page = 0;
 
 		double width = (this.table.getWidth() - 120) / 3;
 		double height = (this.table.getHeight() - 40) / 3;
@@ -571,11 +574,55 @@ public class ControlDashboard {
 
 		
 		ImageWing image = this.imageMap.get(path);
+		displayMetadata(image);
 		displayProperties(image);
 		displayLandmarks(image);
 		
 	}
 	
+	private void displayMetadata(ImageWing image) {
+		
+		this.metadataPane.getChildren().clear();
+		
+		HashMap<String, String> map = Facade.metadataExtractor(new File(image.getPath()));
+		
+		int i = 0;
+		GridPane grid = new GridPane();
+
+		// Setting columns size in percent
+		ColumnConstraints column = new ColumnConstraints();
+		column.setPercentWidth(50);
+		grid.getColumnConstraints().add(column);
+
+		column = new ColumnConstraints();
+		column.setPercentWidth(50);
+		grid.getColumnConstraints().add(column);
+
+		grid.setPrefSize(this.propertiesPane.getWidth(), this.propertiesPane.getHeight()); // Default width and height
+
+		if(map != null)
+		{
+		
+		for (Map.Entry<String, String> entry : map.entrySet())
+		{
+
+			Label key = new Label(entry.getKey());
+			Label value = new Label(entry.getValue());
+
+			grid.add(key, 0, i);
+			grid.add(value, 1, i);
+
+			i++;
+
+		}
+		}
+		else{
+			Label mes = new Label("No metadata for this image.");
+			grid.add(mes, 0, i);
+		}
+		this.metadataPane.getChildren().add(0, grid);
+	}
+
 	private void deselectAll() {
 		Iterator<ImageView> it = this.selected.iterator();
 		while(it.hasNext())

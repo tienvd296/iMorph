@@ -14,6 +14,12 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import com.drew.imaging.ImageMetadataReader;
+import com.drew.imaging.ImageProcessingException;
+import com.drew.metadata.Directory;
+import com.drew.metadata.Metadata;
+import com.drew.metadata.Tag;
+
 import businesslogic.*;
 
 public class ProjectFile {
@@ -49,6 +55,11 @@ public class ProjectFile {
 	} catch (IOException e) {
 		// TODO Auto-generated catch block
 		e.printStackTrace();
+		System.out.println("ERREUR0");
+		return null;
+	} catch (NullPointerException e){
+		e.printStackTrace();
+		System.out.println("ERREUR0");
 		return null;
 	}
 	}
@@ -209,4 +220,21 @@ public class ProjectFile {
 			
 		
 	}
+
+	public static void clearHistoric() {
+		String separator = System.getProperty("file.separator");
+		String originalPath = System.getProperty("user.dir");
+		File lastSaveFile = new File(originalPath + separator + "assets" + separator + "lastProject.data");
+		BufferedWriter writer;
+		try {
+			writer = new BufferedWriter(new FileWriter(lastSaveFile));
+			writer.write("");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+	
+	
 }

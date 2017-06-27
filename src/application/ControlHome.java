@@ -16,6 +16,7 @@ import helper.Keyboard;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -36,30 +37,30 @@ import javafx.stage.Stage;
  */
 public class ControlHome {
 
-    /**
-     * Default constructor
-     */
-    public ControlHome() {
-    }
-
-    
-    @FXML
-    private TableView<Project> lastProject;
-    
-    @FXML
-    private TableColumn<Project, String> projectName;
-
-    @FXML
-    private TableColumn<Project, String> projectPath;
-
-    @FXML
-    private TableColumn<Project, Date> projectDate;
+	/**
+	 * Default constructor
+	 */
+	public ControlHome() {
+	}
 
 
-    @FXML
-    void newProject(MouseEvent event) {
-    	JFileChooser file = new JFileChooser();
-    	file.setMultiSelectionEnabled(false);
+	@FXML
+	private TableView<Project> lastProject;
+
+	@FXML
+	private TableColumn<Project, String> projectName;
+
+	@FXML
+	private TableColumn<Project, String> projectPath;
+
+	@FXML
+	private TableColumn<Project, Date> projectDate;
+
+
+	@FXML
+	void newProject(MouseEvent event) {
+		JFileChooser file = new JFileChooser();
+		file.setMultiSelectionEnabled(false);
 		FileNameExtensionFilter filter = new FileNameExtensionFilter(
 				"PhleboMorph Project", "project");
 		file.setFileFilter(filter);
@@ -69,38 +70,49 @@ public class ControlHome {
 			this.newProject(proj.getAbsolutePath().toString() + ".project");
 		}
 
-    }
+	}
 
-    @FXML
-    void openProject(MouseEvent event) {
-    		this.loadProject();
-    }
-    
-    /**
-     * Create a new empty project.
-     * @param projectName
-     */
-    public void newProject(String path) {
-    	Facade.newProject(path);
-    	this.moveToDashboard();
-    }
+	@FXML
+	void openProject(MouseEvent event) {
+		this.loadProject();
+	}
 
-    /**
-     * Load an existing project
-     * @param project
-     */
-    public void loadProject() {
-    	JFileChooser file = new JFileChooser();
-    	file.setMultiSelectionEnabled(false);
+	/**
+	 * Create a new empty project.
+	 * @param projectName
+	 */
+	public void newProject(String path) {
+		Facade.newProject(path);
+		this.moveToDashboard();
+	}
+
+	/**
+	 * Load an existing project
+	 * @param project
+	 */
+	public void loadProject() {
+		JFileChooser file = new JFileChooser();
+		file.setMultiSelectionEnabled(false);
 		FileNameExtensionFilter filter = new FileNameExtensionFilter(
 				"PhleboMorph Project", "project");
 		file.setFileFilter(filter);
 		int returnVal = file.showOpenDialog(null);
 		if(returnVal == JFileChooser.APPROVE_OPTION) {
 			File proj = file.getSelectedFile();
-			Facade.loadProject(proj);
-			System.out.println("OK" + Facade.currentProject.name);
-			this.moveToDashboard();
+			if(Facade.loadProject(proj))
+			{
+				System.out.println("OK" + Facade.currentProject.name);
+				this.moveToDashboard();
+			}
+			else
+			{
+				Alert alert = new Alert(AlertType.ERROR);
+				alert.setTitle("Error");
+				alert.setHeaderText(null);
+				alert.setContentText("Unable to open project !");
+				alert.showAndWait();
+			}
+
 		}
 		else{
 			Alert alert = new Alert(AlertType.WARNING);
@@ -109,57 +121,73 @@ public class ControlHome {
 			alert.setContentText("Please, try again !");
 			alert.showAndWait();
 		}
-    }
-    
-    public void initialize() {
-    	
-    	ArrayList<Project> listProj = Facade.getHistProject();
-    	
-    	projectName.setCellValueFactory(new PropertyValueFactory<>("name"));
-    	projectPath.setCellValueFactory(new PropertyValueFactory<>("pathProject"));
-    	projectDate.setCellValueFactory(new PropertyValueFactory<>("lastSave"));
-    	projectDate.setSortType(TableColumn.SortType.DESCENDING);
-    	
-    	ObservableList<Project> list = FXCollections.observableArrayList(listProj);
-    	lastProject.setItems(list);
+	}
 
-    }
-    
-    
-    @FXML
-    public void clickItem(MouseEvent event)
-    {
-    	Facade.loadProject(new File (this.lastProject.getSelectionModel().getSelectedItem().getPathProject()));
-    	this.moveToDashboard();
-        
-    }
-    
-    void moveToDashboard() {
-    	Parent root;	
- 		try {
- 			FXMLLoader loader = new FXMLLoader(getClass().getResource("UIDashboard.fxml"));
- 		    root = loader.load();
- 		    
- 			Scene scene = new Scene(root);
- 			
- 			scene.addEventHandler(KeyEvent.KEY_PRESSED, (key) -> {
-			      if(key.getCode()==KeyCode.CONTROL) {
-			          Keyboard.setCtrl();
-			      }
+	public void initialize() {
+
+		ArrayList<Project> listProj = Facade.getHistProject();
+
+		projectName.setCellValueFactory(new PropertyValueFactory<>("name"));
+		projectPath.setCellValueFactory(new PropertyValueFactory<>("pathProject"));
+		projectDate.setCellValueFactory(new PropertyValueFactory<>("lastSave"));
+		projectDate.setSortType(TableColumn.SortType.DESCENDING);
+
+		ObservableList<Project> list = FXCollections.observableArrayList(listProj);
+		lastProject.setItems(list);
+
+	}
+
+
+	@FXML
+	public void clickItem(MouseEvent event)
+	{
+		if(Facade.loadProject(new File (this.lastProject.getSelectionModel().getSelectedItem().getPathProject())))
+		{
+			this.moveToDashboard();
+		}
+		else
+		{
+			Alert alert = new Alert(AlertType.ERROR);
+			alert.setTitle("Error");
+			alert.setHeaderText(null);
+			alert.setContentText("Unable to open project !");
+			alert.showAndWait();
+		}
+
+	}
+
+	void moveToDashboard() {
+		Parent root;	
+		try {
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("UIDashboard.fxml"));
+			root = loader.load();
+
+			Scene scene = new Scene(root);
+
+			scene.addEventHandler(KeyEvent.KEY_PRESSED, (key) -> {
+				if(key.getCode()==KeyCode.CONTROL) {
+					Keyboard.setCtrl();
+				}
 			});
- 			
- 		    Stage stage = new Stage();
- 		    stage.setScene(scene);
- 		    stage.show();
- 		    
- 			ControlDashboard myController = loader.getController();
 
- 			
- 			//myController.setDataOptions();
- 			
-	    	} catch (IOException e) {
-	    		e.printStackTrace();
-	   		} 
+			Stage stage = new Stage();
+			stage.setScene(scene);
+			stage.show();
+
+			ControlDashboard myController = loader.getController();
+
+
+			//myController.setDataOptions();
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		} 
+
+	}
+	
+    @FXML
+    void clearHistoric(ActionEvent event) {
+    	Facade.clearHistoric();
 
     }
 
