@@ -23,7 +23,7 @@ public class TestML extends JCanvasMouseListener {
 	Double i = (double) affichage.Cadre2.slide.getValue(); 
 	public TestML(JCanvas canvas) {
 		super(canvas);
-
+		
 	}
 	 public void removeDrawable(IDrawable d) {
 	        JFrame drawables = null;

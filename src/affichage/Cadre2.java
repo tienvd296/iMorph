@@ -7,11 +7,16 @@ package affichage;
 
 import java.awt.AWTException;
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.Graphics;
 import java.awt.Rectangle;
 import  java.awt.Robot;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -43,8 +48,8 @@ import drawing.JCanvas;
 
 
 
-@SuppressWarnings("restriction")
 public class Cadre2 extends JFrame implements ActionListener {
+	
 
 	/**
 	 * 
@@ -53,15 +58,34 @@ public class Cadre2 extends JFrame implements ActionListener {
 	private final JMenuBar menuBar = new JMenuBar();
 	private final JMenu fichierMenu = new JMenu();
 	private final JMenuItem ouvrirMenu = new JMenuItem();
-	private final JMenu filtreMenu = new JMenu();
-	public final static Affichage panneau = new Affichage();
+	private final JMenu landMarkMenu = new JMenu();
+	
+	private Container c;
+	
+	
+	private final JMenu removeLandMarkMenu = new JMenu();
+	private final JMenu modifyLandMarkMenu = new JMenu();
+	
+	public static Affichage panneau;
+	
 	private final JMenuItem enregistrerMenu = new JMenuItem();
 	
-	private final JMenuItem correctionImageMenu = new JMenuItem();
-	private final JMenu retaillerMenu = new JMenu();
-	private final JMenuItem agrandirMenu = new JMenuItem();
-	private final JMenuItem reduireMenu = new JMenuItem();
+	
+	private final JMenuItem addLandMarkMenu = new JMenuItem();
+	private final JMenu EditingMenu = new JMenu();
+	private final JMenuItem editSubMenu = new JMenuItem();
+	private final JMenuItem cropMenu = new JMenuItem();
+	
+	
+	private final JMenuItem resizeMenu = new JMenu();
+	private final JMenuItem zoomIn = new JMenuItem();
+	private final JMenuItem zoomOut = new JMenuItem();
+	
+	
 	private JToolBar toolBar = new JToolBar();
+	
+	 static JCanvas jc ;	
+	
 	
 	public static JSlider slide = new JSlider();
 	//Redimmensionnement d'images pour faire une toolBar fine
@@ -75,9 +99,9 @@ public class Cadre2 extends JFrame implements ActionListener {
 	ImageIcon circle = new ImageIcon(circleT.getImage().getScaledInstance(40,40,java.awt.Image.SCALE_SMOOTH));
 	
 	
-	 public static Cadre2 frame = new Cadre2();
+//	 public static Cadre2 frame = new Cadre2();
 	 static JPanel panShape = new JPanel();
-	 static JCanvas jc = new JCanvas();
+	
 	 
 	 public  JComboBox combo = new JComboBox();
 	 public static JComboBox combo2 = new JComboBox();
@@ -86,19 +110,24 @@ public class Cadre2 extends JFrame implements ActionListener {
 	  private static List drawables = new LinkedList();
 	
 	  
-	public PanelData panData = new PanelData();	
+	public static PanelData panData;	
 	 
 	private JButton squareButton = new JButton(square);
 	private JButton circleButton = new JButton(circle);
 
 	BufferedImage monImage = null;
-	  private JSplitPane split;
+	  
 
+	public static JSplitPane split;
+	
+	
+	
+	
 
 	public Cadre2() {
 		super();
-		setBounds(100, 100, 500, 375);
-		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+		System.out.println("lololo");
+		Go();
 		try {
 			
 			
@@ -124,7 +153,7 @@ public class Cadre2 extends JFrame implements ActionListener {
 			e.printStackTrace();
 		}
 		
-		
+	
 		
 		// construction du menu
 		setJMenuBar(menuBar);	
@@ -137,34 +166,61 @@ public class Cadre2 extends JFrame implements ActionListener {
 		fichierMenu.add(enregistrerMenu);
 		enregistrerMenu.addActionListener((ActionListener)this);
 		enregistrerMenu.setText("enregistrer");
-		menuBar.add(filtreMenu);	
-		filtreMenu.setText("Filtre");
+		menuBar.add(landMarkMenu);	
+		landMarkMenu.setText("LandMark");
 
 	
 		
-		filtreMenu.add(correctionImageMenu);
-		correctionImageMenu.addActionListener((ActionListener)this);
-		correctionImageMenu.setText("Correction");
+		landMarkMenu.add(addLandMarkMenu);
+		addLandMarkMenu.addActionListener((ActionListener)this);
+		addLandMarkMenu.setText("Add LandMark");
 
-		menuBar.add(retaillerMenu);
-		retaillerMenu.setText("retailler");
-
-		retaillerMenu.add(agrandirMenu);
-		agrandirMenu.addActionListener((ActionListener)this);
-		agrandirMenu.setText("agrandir");
-		agrandirMenu.setAccelerator(KeyStroke.getKeyStroke('p'));
+		landMarkMenu.add(removeLandMarkMenu);
+		removeLandMarkMenu.addActionListener((ActionListener)this);
+		removeLandMarkMenu.setText("Remove LandMark");
 		
-		retaillerMenu.add(reduireMenu);
-		reduireMenu.addActionListener((ActionListener)this);
-		reduireMenu.setText("reduire");
-		reduireMenu.setAccelerator(KeyStroke.getKeyStroke('m'));
+		landMarkMenu.add(modifyLandMarkMenu);
+		modifyLandMarkMenu.addActionListener((ActionListener)this);
+		modifyLandMarkMenu.setText("Modify LandMark");
+		
+		menuBar.add(EditingMenu);
+		EditingMenu.setText("Image Editing");
 
+		EditingMenu.add(editSubMenu);
+		editSubMenu.addActionListener((ActionListener)this);
+		editSubMenu.setText("Edit Image");
+	
+		
+		EditingMenu.add(cropMenu);
+		cropMenu.addActionListener((ActionListener)this);
+		cropMenu.setText("Crop Image");
+		
+
+	
+		EditingMenu.add(resizeMenu);
+		resizeMenu.addActionListener((ActionListener)this);
+		resizeMenu.setText("Resize Image");
+	
+		
+		resizeMenu.add(zoomIn);
+		zoomIn.addActionListener((ActionListener)this);
+		zoomIn.setText("Zoom In");
+		zoomIn.setAccelerator(KeyStroke.getKeyStroke('p'));
+		
+		
+		resizeMenu.add(zoomOut);
+		zoomOut.addActionListener((ActionListener)this);
+		zoomOut.setText("Zoom Out");
+		zoomOut.setAccelerator(KeyStroke.getKeyStroke('m'));
 	
 		
 		
+		this.add(toolBar, BorderLayout.PAGE_START);
+	
 		
 		toolBar.add(squareButton);
 		toolBar.add(circleButton);
+
 		
 		
 		slide.setMaximum(100);
@@ -184,8 +240,9 @@ public class Cadre2 extends JFrame implements ActionListener {
 	          System.out.println("La valeur du Jslide "+i);
 	         	}
 	         });      
-	    slide.setVisible(false);
+		
 	    
+	    toolBar.add(slide);
 
 	    combo.addItem("CIRCLE");
 	    combo.addItem("SQUARE");
@@ -197,25 +254,31 @@ public class Cadre2 extends JFrame implements ActionListener {
 	    combo.setPreferredSize(new Dimension(180,50));
 	    combo.setMinimumSize(new Dimension(180,50));
 	    combo.setMaximumSize(new Dimension(180,50));
-	    combo.setVisible(false);
-	    
-	    toolBar.add(slide);
+		 
+	   
 	    toolBar.add(combo);
+	    
+	    
+	    
 	    combo.setFocusable(false);
 	    slide.setFocusable(true);
 		toolBar.setFloatable(false);
 		
+		this.add(panneau);
 		
-		add(toolBar, BorderLayout.PAGE_START);
+		panData.setBounds(panneau.getX(), panneau.getY(), panneau.getWidth(), panneau.getHeight());
+	
+		
+		split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, panneau, panData);
+		split.setOneTouchExpandable(true);
+		this.getContentPane().add(split, BorderLayout.CENTER);
+		
+	
 		
 		
 		
 		
-		
-		
-		
-		// ajouter le panneau de dessin
-		getContentPane().add(panneau);
+		toolBar.setVisible(false);
 		
 		
 		
@@ -224,8 +287,56 @@ public class Cadre2 extends JFrame implements ActionListener {
 	}
 	
 	
+	public void toolBarLandMark(Boolean b){
+		
+		if(b==true) {
+			System.out.println("toolBarLandMark(true)");
+
+		//	panneau.setVisible(true);
+			panData.setVisible(true);
+			split.setVisible(true);
+			
+			toolBarEditing(false);
+			
+		
+			
+		} else if(b == false) {
+			System.out.println("toolBarEditing False");
+
+			panData.setVisible(false);
+			split.setVisible(false);
+		}
+		
+		
+	}
 	
+	public void toolBarEditing(Boolean b) {
+		
+		
+		if(b==true){
+			
+			System.out.println("toolBarEditing true");
+			toolBarLandMark(false);
+			//c.add(panneau);
+			toolBar.setVisible(true);
+			
+		    slide.setVisible(true);
+		    combo.setVisible(true);
+		    
+		
+		
+			
+		} else if(b == false)  {
+			
+			toolBar.setVisible(false);
+			
+			System.out.println("Toolbar Correction refusée");
+			
+		}
+		
+	}
 	
+
 	  class FormeListener implements ActionListener{
 		    public void actionPerformed(ActionEvent e) {
 		    	if(combo.getSelectedItem() == "CIRCLE"){
@@ -259,7 +370,7 @@ public class Cadre2 extends JFrame implements ActionListener {
 			if (fileOuvrirImage.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
 				panneau.ajouterImage(new File(fileOuvrirImage.getSelectedFile().getAbsolutePath()));
 				
-				panneau.setBounds(0, 0, frame.getWidth(), frame.getHeight());
+				panneau.setBounds(0, 0, this.getWidth(), this.getHeight());
 			
 			}
 			
@@ -272,49 +383,52 @@ public class Cadre2 extends JFrame implements ActionListener {
 			}
 		} else
 			
-			if (cliqueMenu.getSource().equals(agrandirMenu)) {
-				panneau.agrandirImage();
-			} else if (cliqueMenu.getSource().equals(reduireMenu)) {
+			if (cliqueMenu.getSource().equals(editSubMenu)) {
+			//	panneau.agrandirImage();
+			// Lance la correction, toolbar	
+				toolBarEditing(true);
+				
+			} else if (cliqueMenu.getSource().equals(cropMenu)) {
 				panneau.reduireImage();
 			
-			}else if(cliqueMenu.getSource().equals(correctionImageMenu)){
+			}else if(cliqueMenu.getSource().equals(addLandMarkMenu)){
 				
-				try {
-					sauverImage();
-					
-				} catch (IOException e) {
-					
-					e.printStackTrace();
-				} catch (AWTException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				toolBarLandMark(true);
+				
 			}
 				
 		
-		if(squareButton.isEnabled()) {
+		if(cliqueMenu.getSource() == squareButton) {
 			System.out.println("squareButton");
-			combo.setVisible(true);
+			
+		/*	combo.setVisible(true);
 			slide.setVisible(true);
 			
-			
+			split.setVisible(false);
+			panData.setVisible(false);
+			frame.add(panneau);
+		//	frame.CreerSplit(false);
+			*/
 		} 
-		if(circleButton.isEnabled()) {
+		if(cliqueMenu.getSource() == circleButton) {
 			System.out.println("circleButton");
-			panneau.add(panData, BorderLayout.EAST);
-			split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, panneau, panData);
-			split.setOneTouchExpandable(true);
+		
 			
-			frame.add(split);
 			
 		}
 		
+		
+		
 	}
+	
+	
+
+
 	
 	public void sauverImage() throws IOException, AWTException 
 	{ 
 		Robot robot = new Robot();
-		BufferedImage image21 = robot.createScreenCapture(new Rectangle(frame.getX(), frame.getY(), frame.getWidth(), frame.getHeight()));
+		BufferedImage image21 = robot.createScreenCapture(new Rectangle(this.getX(), this.getY(), this.getWidth(), this.getHeight()));
 		JFileChooser fileEnregistrerImage = new JFileChooser();
 		if (fileEnregistrerImage.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
 			File fichierEnregistrement = new File(fileEnregistrerImage.getSelectedFile().getAbsolutePath()+ ".JPG");
@@ -324,7 +438,41 @@ public class Cadre2 extends JFrame implements ActionListener {
 
 
 
+	private void Go() {
+		
+		
+		
+		c = this.getContentPane();
+		
+	    jc = new JCanvas();
+	    panData = new PanelData();
+	    panneau = new Affichage();
+	    
+	    panData.setVisible(false);
+		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		this.setSize(1100,650);
+		jc.setBounds(this.getX(), this.getY(),950, 650);
+		
+		new TestML(jc);
+		
 	
+		panneau.add(jc);
+		
+		//panData.setVisible(true);
+		
+		jc.setBackground(Color.green);
+		jc.setVisible(true);
+		panneau.setVisible(true);
+		
+		c.add(panneau);
+	
+		System.out.println("lol");
+		this.setVisible(true);
+		
+		
+		
+		
+	}
 
 
 
@@ -333,45 +481,23 @@ public class Cadre2 extends JFrame implements ActionListener {
 	public static void main(String args[]) 
 	{
 		try {
-			
-			 
-			 
-			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-			frame.setSize(1100,650);
-			jc.setSize(950, 650);
-			
+			new Cadre2();
 		
-			/*panShape.setBackground(Color.RED);
-			panShape.setPreferredSize(new Dimension(550, panShape.getHeight() + 100));
-			panShape.setVisible(true);
-			*/
-			
-		//	GUIHelper.showOnFrame(jc,"test JCanvas");
-			
-			new TestML(jc);
-			
-	
-			panneau.setVisible(true);
-			
-			jc.add(panneau);
-			
-
-			
-			jc.setVisible(true);
-			
-			frame.add(jc);
-		
-			
-		
-			frame.setVisible(true);
-			
-			
 			
 			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		
 	}
+
+
+
+
+
+
+
+
 
 
 

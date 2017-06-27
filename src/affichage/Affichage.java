@@ -2,13 +2,11 @@ package affichage;
 
 
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.GridLayout;
-import java.awt.Rectangle;
-import java.awt.Robot;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
@@ -16,8 +14,6 @@ import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
-import javax.imageio.stream.ImageOutputStream;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
@@ -27,31 +23,42 @@ import javax.swing.JToolBar;
 
 
 
-public class Affichage extends JPanel  {
+public class Affichage extends JPanel implements MouseListener {
 
 	
 	private JToolBar toolBar = new JToolBar();
-
+	
 	
 	BufferedImage monImage = null;
 	public Affichage() {
-		super();
-
+		
+		this.setBackground(Color.red);
+		
+		
+		this.addMouseListener(this);
+		
+	
+		
+		 
 	}
+	
+	
+	 public static void addLandMark(int x, int y ){
+		 String texte = PanelData.jText.getText();
+			PanelData.jText.setText(texte+ "\n X : "+x+ " Y = "+y);
+			
+		 }
+		 
+			
+		
+	
 
 	protected void correctionImage() {
 		
 		
-	this.setLayout(new BorderLayout());	
+		
 	
-	
-	
-	JPanel pan = new JPanel();
-	
-	this.setLayout(new GridLayout(1, 2));
-    //On ajoute le bouton au content pane de la JFrame
-	this.getRootPane().add(pan);
-    this.setVisible(true);
+
 	
 		/*pan.add(toolBar);
 		pan.add(slide);
@@ -69,6 +76,10 @@ public class Affichage extends JPanel  {
 		 
 		*/
 	    }
+	
+
+
+
 	
 	 private void initToolBar(JButton square, JButton circle){
 		   
@@ -180,6 +191,68 @@ public class Affichage extends JPanel  {
 			e.printStackTrace();
 		}
 
+	}
+
+
+
+
+
+
+	@Override
+	public void mouseClicked(MouseEvent e) {
+
+
+		addLandMark(e.getX(), e.getY());
+		System.out.println("X lol : "+e.getX()+ " Y = "+e.getY());
+		//draw(null, e.getX(), e.getY(), 1,1);
+	}
+
+
+
+
+
+
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+
+
+
+
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+
+
+
+
+
+	@Override
+	public void mouseExited(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+
+
+
+
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
 	}
 
 	
