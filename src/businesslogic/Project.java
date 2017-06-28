@@ -17,11 +17,13 @@ public class Project {
 	/**
 	 * @param name
 	 * @param path
+	 * @param folderList 
 	 */
-	public Project(String name, String lastSave, String path, ArrayList<ImageWing> images) {
+	public Project(String name, String lastSave, String path, ArrayList<Folder> folders, ArrayList<ImageWing> images) {
 		this.name = name;
 		this.pathProject = path;
 		this.images = images;
+		this.folders = folders;
 		this.lastSave = lastSave;
 	}
 	

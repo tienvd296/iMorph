@@ -9,6 +9,12 @@ public class Folder {
 		this.name = name;
 	}
 	
+	public Folder(String folderName, ArrayList<Folder> folderList, ArrayList<ImageWing> imageList) {
+		this.name = folderName;
+		this.folders = folderList;
+		this.images = imageList;
+	}
+
 	private String name = null;
 	
 	private ArrayList<Folder> folders = new ArrayList<Folder>();

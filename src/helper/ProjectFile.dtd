@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!ELEMENT projet (folder*, image*) >
+<!ATTLIST projet name CDATA #REQUIRED>
+<!ATTLIST projet lastsave CDATA #REQUIRED>
+
+<!ELEMENT folder (folder*, image*) >
+<!ATTLIST folder name CDATA #REQUIRED>
+
+<!ELEMENT image (property*, landmark*) >
+<!ATTLIST image path CDATA #REQUIRED>
+
+
+<!ELEMENT property >
+<!ATTLIST property key CDATA #REQUIRED>
+<!ATTLIST property value CDATA #REQUIRED>
+
+<!ELEMENT landmark >
+<!ATTLIST landmark posX CDATA #REQUIRED>
+<!ATTLIST landmark posY CDATA #REQUIRED>
+<!ATTLIST landmark isLandmark CDATA #REQUIRED>
