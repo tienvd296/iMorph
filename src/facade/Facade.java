@@ -7,6 +7,7 @@ import java.util.HashMap;
 import businesslogic.*;
 import helper.MetadataExtractor;
 import helper.ProjectFile;
+import helper.XML;
 
 /**
  * 
@@ -65,7 +66,7 @@ public class Facade {
      * save the current Project
      */
     public static void saveProject() {
-    	ProjectFile.saveProject(Facade.currentProject);
+    	XML.saveProject(Facade.currentProject);
     }
 
     /**
@@ -82,7 +83,7 @@ public class Facade {
     public static boolean loadProject(File file) {
     	
 
-    	Project p = ProjectFile.reader(file);
+    	Project p = XML.readProject(file.getAbsolutePath());
     	if(p != null)
     	{
     		Facade.currentProject = p;

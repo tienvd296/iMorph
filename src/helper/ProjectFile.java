@@ -49,7 +49,7 @@ public class ProjectFile {
 			}
 			reader.close();
 					
-			return new Project(name, lastSave, path, images);
+			return new Project(name, lastSave, path, null, images);
         
         
 	} catch (IOException e) {
