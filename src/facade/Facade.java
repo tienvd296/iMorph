@@ -83,7 +83,7 @@ public class Facade {
     public static boolean loadProject(File file) {
     	
 
-    	Project p = XML.readProject(file.getAbsolutePath());
+    	Project p = XML.readProject(file);
     	if(p != null)
     	{
     		Facade.currentProject = p;
