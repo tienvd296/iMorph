@@ -289,6 +289,7 @@ public class XML {
 
 
 	private static void editLastSave(String path, String dateSave){
+		String separator = System.getProperty("file.separator");
 		org.jdom2.Document document;
 		org.jdom2.Element racine;
 		SAXBuilder sxb = new SAXBuilder();
@@ -354,6 +355,7 @@ public class XML {
 	public static ArrayList<Project> readHist()
 	{
 		ArrayList<Project> listP = new ArrayList<Project>();
+		String separator = System.getProperty("file.separator");
 
 		org.jdom2.Document document;
 		org.jdom2.Element racine;

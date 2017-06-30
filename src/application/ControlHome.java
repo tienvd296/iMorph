@@ -1,5 +1,7 @@
 package application;
 
+import java.awt.FileDialog;
+import java.awt.Frame;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -7,6 +9,7 @@ import java.util.Date;
 import java.util.Optional;
 
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
@@ -59,22 +62,28 @@ public class ControlHome {
 
 	@FXML
 	void newProject(MouseEvent event) {
-		JFileChooser file = new JFileChooser();
-		file.setMultiSelectionEnabled(false);
-		FileNameExtensionFilter filter = new FileNameExtensionFilter(
-				"PhleboMorph Project", "project");
-		file.setFileFilter(filter);
-		int returnVal = file.showSaveDialog(null);
-		if(returnVal == JFileChooser.APPROVE_OPTION) {
-			File proj = file.getSelectedFile();
-			this.newProject(proj.getAbsolutePath().toString() + ".project");
-		}
+
+		JFrame jFrame = new JFrame();
+		FileDialog fd = new FileDialog(jFrame,  "Choose a file", FileDialog.SAVE);
+		fd.setDirectory("C:\\");
+		//fd.setFile("*.to");
+		fd.setVisible(true);
+		File[] file = fd.getFiles();
+		if (file.length == 0)
+		  System.out.println("You cancelled the choice");
+		else
+		  {
+			this.newProject(file[0].getAbsolutePath() + ".project");
+			
+		  }
+			
 
 	}
 
 	@FXML
 	void openProject(MouseEvent event) {
 		this.loadProject();
+		moveToDashboard();
 	}
 
 	/**
@@ -91,35 +100,19 @@ public class ControlHome {
 	 * @param project
 	 */
 	public void loadProject() {
-		JFileChooser file = new JFileChooser();
-		file.setMultiSelectionEnabled(false);
-		FileNameExtensionFilter filter = new FileNameExtensionFilter(
-				"PhleboMorph Project", "project");
-		file.setFileFilter(filter);
-		int returnVal = file.showOpenDialog(null);
-		if(returnVal == JFileChooser.APPROVE_OPTION) {
-			File proj = file.getSelectedFile();
-			if(Facade.loadProject(proj))
-			{
-				this.moveToDashboard();
-			}
-			else
-			{
-				Alert alert = new Alert(AlertType.ERROR);
-				alert.setTitle("Error");
-				alert.setHeaderText(null);
-				alert.setContentText("Unable to open project !");
-				alert.showAndWait();
-			}
+		JFrame jFrame = new JFrame();
+		FileDialog fd = new FileDialog(jFrame,  "Choose a file", FileDialog.LOAD);
+		fd.setDirectory("C:\\");
+		fd.setFile("*.project");
+		fd.setVisible(true);
+		File[] file = fd.getFiles();
+		if (file.length == 0)
+		  System.out.println("You cancelled the choice");
+		else
+		{
+		  Facade.loadProject(file[0]);
+		}
 
-		}
-		else{
-			Alert alert = new Alert(AlertType.WARNING);
-			alert.setTitle("Error");
-			alert.setHeaderText(null);
-			alert.setContentText("Please, try again !");
-			alert.showAndWait();
-		}
 	}
 
 	public void initialize() {
@@ -166,7 +159,7 @@ public class ControlHome {
 			scene.addEventHandler(KeyEvent.KEY_PRESSED, (key) -> {
 				if(key.getCode()==KeyCode.CONTROL && key.getCode()==KeyCode.A)
 				{
-					
+
 				}
 				else if(key.getCode()==KeyCode.CONTROL) {
 					Keyboard.setCtrl();

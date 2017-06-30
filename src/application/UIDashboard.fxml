@@ -28,16 +28,8 @@
                         <MenuItem mnemonicParsing="false" onAction="#loadImages" text="Load images" />
                   </items>
                 </Menu>
-                <Menu mnemonicParsing="false" text="Edit">
-                  <items>
-                    <MenuItem mnemonicParsing="false" text="Delete" />
-                  </items>
-                </Menu>
-                <Menu mnemonicParsing="false" text="Help">
-                  <items>
-                    <MenuItem mnemonicParsing="false" text="About" />
-                  </items>
-                </Menu>
+                <Menu mnemonicParsing="false" text="Edit" />
+                <Menu mnemonicParsing="false" text="Help" />
               </menus>
             </MenuBar>
          </top>
@@ -73,16 +65,8 @@
                                                       <MenuItem mnemonicParsing="false" onAction="#newFolder" text="New folder" />
                                                    </items>
                                                 </Menu>
-                                              <Menu mnemonicParsing="false" text="Edit">
-                                                <items>
-                                                  <MenuItem mnemonicParsing="false" text="Delete" />
-                                                </items>
-                                              </Menu>
-                                              <Menu mnemonicParsing="false" text="Help">
-                                                <items>
-                                                  <MenuItem mnemonicParsing="false" text="About" />
-                                                </items>
-                                              </Menu>
+                                              <Menu mnemonicParsing="false" text="Edit" />
+                                              <Menu mnemonicParsing="false" text="Help" />
                                               <Menu fx:id="viewChoice" mnemonicParsing="false" text="View">
                                                 <items>
                                                       <RadioMenuItem mnemonicParsing="false" onAction="#view1" selected="true" text="Simple">
