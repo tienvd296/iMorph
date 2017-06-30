@@ -99,7 +99,7 @@ public class Facade {
         }
 
 	public static ArrayList<Project> getHistProject() {
-		return ProjectFile.histProject();
+		return XML.readHist();
 	}
 
 	public static ArrayList<ImageWing> getImages() {

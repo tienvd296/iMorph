@@ -2,6 +2,7 @@ package helper;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -89,6 +90,7 @@ public class XML {
 
 			XMLOutputter sortie = new XMLOutputter(Format.getPrettyFormat());
 			sortie.output(document, new FileOutputStream(pathProject));
+			editLastSave(pathProject, sm.format(d));
 			return true;
 		}
 		catch (java.io.IOException e){ return false; }
@@ -225,10 +227,10 @@ public class XML {
 		return new Project(projectName, projectLastSave, file.getAbsolutePath(), folders, images);
 
 	}
-	
+
 	private static Folder readFolder(org.jdom2.Element folder2) 
 	{
-		
+
 		String name = folder2.getAttributeValue("name");
 		ArrayList<Folder> folders = new ArrayList<Folder>();
 		ArrayList<ImageWing> images = new ArrayList<ImageWing>();
@@ -285,5 +287,104 @@ public class XML {
 
 	}
 
+
+	private static void editLastSave(String path, String dateSave){
+		org.jdom2.Document document;
+		org.jdom2.Element racine;
+		SAXBuilder sxb = new SAXBuilder();
+		Boolean stop = false;
+		try {
+			document = sxb.build(new File("lastSave"));
+			racine = document.getRootElement();
+
+
+			List<Element> listProject = racine.getChildren("project");
+			Iterator<Element> i = listProject.iterator();
+			while(i.hasNext() && !stop)
+			{
+				
+				org.jdom2.Element courant = i.next();
+				System.out.println(courant.getAttributeValue("path")+ " = "+path);
+				if(courant.getAttributeValue("path").equals(path))
+				{
+					System.out.println("2");
+					courant.getAttribute("dateSave").setValue(dateSave);
+					stop = true;
+				}
+			}
+			if(!stop)
+			{
+				org.jdom2.Element project = new org.jdom2.Element("project");
+				Attribute pathAtt = new Attribute("path", path);
+				project.setAttribute(pathAtt);
+				Attribute dateAtt = new Attribute("dateSave", dateSave);
+				project.setAttribute(dateAtt);
+				racine.addContent(project);
+				
+			}
+
+
+
+
+
+			XMLOutputter sortie = new XMLOutputter(Format.getPrettyFormat());
+			sortie.output(document, new FileOutputStream("lastSave"));
+
+		} catch (JDOMException | IOException e) {
+			org.jdom2.Element listProject = new org.jdom2.Element("listProject");
+			document = new org.jdom2.Document(listProject);
+			org.jdom2.Element project = new org.jdom2.Element("project");
+			Attribute pathAtt = new Attribute("path", path);
+			project.setAttribute(pathAtt);
+			Attribute dateAtt = new Attribute("dateSave", dateSave);
+			project.setAttribute(dateAtt);
+			XMLOutputter sortie = new XMLOutputter(Format.getPrettyFormat());
+			listProject.addContent(project);
+			try {
+				sortie.output(document, new FileOutputStream("lastSave"));
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		}
+
+
+	}
+
+	public static ArrayList<Project> readHist()
+	{
+		ArrayList<Project> listP = new ArrayList<Project>();
+
+		org.jdom2.Document document;
+		org.jdom2.Element racine;
+		SAXBuilder sxb = new SAXBuilder();
+
+		try {
+			document = sxb.build(new File("lastSave"));
+
+			racine = document.getRootElement();
+
+
+			List<Element> listProject = racine.getChildren("project");
+			Iterator<Element> i = listProject.iterator();
+			while(i.hasNext())
+			{
+				org.jdom2.Element courant = (Element)i.next();
+				String path = courant.getAttributeValue("path");
+				System.out.println(path);
+				String dateSave = courant.getAttributeValue("dateSave");
+
+				String name = path;
+
+
+				listP.add(new Project(name, path, dateSave));
+			}
+		} catch (JDOMException | IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return listP;
+	}
 
 }
