@@ -2,6 +2,7 @@ package application;
 
 
 
+import java.awt.FileDialog;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
@@ -12,6 +13,7 @@ import java.util.Optional;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import businesslogic.*;
@@ -61,9 +63,9 @@ public class ControlDashboard {
 
 	@FXML
 	private BorderPane table;
-	
-    @FXML
-    private Menu viewChoice;
+
+	@FXML
+	private Menu viewChoice;
 
 	@FXML
 	private TextArea console;
@@ -84,18 +86,17 @@ public class ControlDashboard {
 	@FXML
 	void loadImages(ActionEvent event) {
 
-		JFileChooser image = new JFileChooser();
-		image.setMultiSelectionEnabled(true);
-		FileNameExtensionFilter filter = new FileNameExtensionFilter(
-				"TIF Images", "tif");
-		image.setFileFilter(filter);
-		writeConsole("STEP1", "DEBUG");
-		int returnVal = image.showOpenDialog(null);
-		writeConsole("STEP2", "DEBUG");
-		if(returnVal == JFileChooser.APPROVE_OPTION) {
-			writeConsole("STEP3", "DEBUG");
-			File[] files = image.getSelectedFiles();
-			writeConsole("STEP4", "DEBUG");
+		JFrame jFrame = new JFrame();
+		FileDialog fd = new FileDialog(jFrame,  "Choose a file", FileDialog.LOAD);
+		fd.setDirectory("C:\\");
+		fd.setFile("*.tif");
+		fd.setMultipleMode(true);
+		fd.setVisible(true);
+		File[] files = fd.getFiles();
+		if (files.length == 0)
+			writeConsole("Open command cancelled by user.", "ImageBrowser"); 
+		else
+		{
 			for(int i = 0; i < files.length; i++)
 			{
 				writeConsole("STEP5", "DEBUG");
@@ -109,8 +110,6 @@ public class ControlDashboard {
 			writeConsole(files.length + " images added to the project", "ImageBrowser");
 			this.initImage(this.currentFolder);
 
-		} else { 
-			writeConsole("Open command cancelled by user.", "ImageBrowser"); 
 		} 
 		this.reloadView();
 
@@ -140,7 +139,6 @@ public class ControlDashboard {
 
 	@FXML
 	void next(MouseEvent event) {
-
 		if(this.page <= ((this.imageTab.length - 1) / (Math.sqrt(this.currentView))-1))
 		{
 			this.page++;
@@ -185,14 +183,14 @@ public class ControlDashboard {
 		this.page = 0;
 		this.viewChoice.setText("9");
 	}
-	
+
 	@FXML
 	void view16(ActionEvent event) {
 		this.view(4);
 		this.page = 0;
 		this.viewChoice.setText("16");
 	}
-	
+
 	@FXML
 	void view25(ActionEvent event) {
 		this.view(5);
@@ -208,7 +206,7 @@ public class ControlDashboard {
 		ArrayList<ImageWing> images = new ArrayList<ImageWing>();
 		int nbFolder = 0;
 		ArrayList<Folder> folders = new ArrayList<Folder>();
-		
+
 		if(folder == null)
 		{
 			nbImage = Facade.currentProject.getImages().size();
@@ -223,7 +221,7 @@ public class ControlDashboard {
 			nbFolder = folder.getFolders().size();
 			folders = folder.getFolders();
 		}
-		
+
 
 		Image[] imageTab = new Image[nbImage];
 		String[] nameTab = new String[nbImage];
@@ -238,7 +236,7 @@ public class ControlDashboard {
 			Folder fd = it2.next();
 			folderTab[x] = fd;
 		}
-		
+
 		int i = 0;
 		Iterator<ImageWing> it = images.iterator();
 		while(it.hasNext())
@@ -310,7 +308,6 @@ public class ControlDashboard {
 		Image[] images = this.imageTab;
 
 		this.currentView = 1;
-		this.page = 0;
 
 		GridPane grid = new GridPane();
 
@@ -388,7 +385,7 @@ public class ControlDashboard {
 
 	}
 
-	
+
 	public void view(int nbImg)
 	{
 
@@ -396,18 +393,15 @@ public class ControlDashboard {
 		String[] names = this.nameTab;
 		Folder[] folder = this.folderTab;
 		int sizeFolder = 0;
-		
+
 		if(folderTab != null)
 		{
-		sizeFolder = this.folderTab.length;
+			sizeFolder = this.folderTab.length;
 		}
 
-		
-		String separator = System.getProperty("file.separator");
-		String originalPath = System.getProperty("user.dir");
 
 		this.currentView = (int) Math.pow(nbImg, 2);
-		
+
 
 		double width = (this.table.getWidth() - 120) / nbImg;
 		double height = (this.table.getHeight() - 40) / nbImg;
@@ -417,7 +411,7 @@ public class ControlDashboard {
 
 		int marge = this.page*nbImg;
 
-		
+
 		for(int i = marge; i<marge+Math.pow(nbImg, 2); i++)
 		{
 			Pane pane = new Pane();
@@ -476,9 +470,9 @@ public class ControlDashboard {
 				pane.getChildren().add(0, im1);
 
 
-				this.displayLandmark(pane, im1, ratioImg, height/width, i);
+				this.displayLandmark(pane, im1, ratioImg, height/width, i-s);
 			}
-				grid.add(pane, i/nbImg, i%nbImg);
+			grid.add(pane, i/nbImg, i%nbImg);
 
 		}
 
@@ -498,9 +492,9 @@ public class ControlDashboard {
 	{
 		if(!Keyboard.isCtrl())
 		{
-	    	deselectAll();
-	  		this.selected.clear();
-	  		selected.add(imageView);
+			deselectAll();
+			this.selected.clear();
+			selected.add(imageView);
 		}
 		else
 		{
@@ -516,20 +510,20 @@ public class ControlDashboard {
 		}
 		displaySelected();
 
-		
+
 		ImageWing image = this.imageMap.get(path);
 		displayMetadata(image);
 		displayProperties(image);
 		displayLandmarks(image);
-		
+
 	}
-	
+
 	private void displayMetadata(ImageWing image) {
-		
+
 		this.metadataPane.getChildren().clear();
-		
+
 		HashMap<String, String> map = Facade.metadataExtractor(new File(image.getPath()));
-		
+
 		int i = 0;
 		GridPane grid = new GridPane();
 
@@ -546,19 +540,19 @@ public class ControlDashboard {
 
 		if(map != null)
 		{
-		
-		for (Map.Entry<String, String> entry : map.entrySet())
-		{
 
-			Label key = new Label(entry.getKey());
-			Label value = new Label(entry.getValue());
+			for (Map.Entry<String, String> entry : map.entrySet())
+			{
 
-			grid.add(key, 0, i);
-			grid.add(value, 1, i);
+				Label key = new Label(entry.getKey());
+				Label value = new Label(entry.getValue());
 
-			i++;
+				grid.add(key, 0, i);
+				grid.add(value, 1, i);
 
-		}
+				i++;
+
+			}
 		}
 		else{
 			Label mes = new Label("No metadata for this image.");
@@ -582,8 +576,8 @@ public class ControlDashboard {
 			DropShadow ds = new DropShadow( 20, Color.AQUA );
 			it.next().setEffect( ds );
 		}
-		
-		
+
+
 	}
 
 	private void displayProperties(ImageWing image)
@@ -629,7 +623,7 @@ public class ControlDashboard {
 
 		}
 	}
-	
+
 	private void displayLandmarks(ImageWing image)
 	{
 		this.landmarksPane.getChildren().clear();
@@ -646,11 +640,11 @@ public class ControlDashboard {
 			column = new ColumnConstraints();
 			column.setPercentWidth(30);
 			grid.getColumnConstraints().add(column);
-			
+
 			column = new ColumnConstraints();
 			column.setPercentWidth(30);
 			grid.getColumnConstraints().add(column);
-			
+
 			column = new ColumnConstraints();
 			column.setPercentWidth(30);
 			grid.getColumnConstraints().add(column);
@@ -658,12 +652,12 @@ public class ControlDashboard {
 			grid.setPrefSize(this.landmarksPane.getWidth(), this.landmarksPane.getHeight()); // Default width and height
 
 			Iterator<Landmark> it = Facade.getAllLandmark(image).iterator();
-						
+
 			while (it.hasNext())
 			{
 
 				Landmark l = it.next();
-				
+
 				Label nb = new Label(Integer.toString(i));
 				Label x = new Label(Float.toString(l.getPosX()));
 				Label y = new Label(Float.toString(l.getPosY()));
@@ -684,9 +678,9 @@ public class ControlDashboard {
 		}
 	}
 
-	
-	
-	
+
+
+
 	private void propertiesAdd(ImageWing image) {
 		TextInputDialog dialog = new TextInputDialog("Name of property");
 		dialog.setTitle("Add property");
@@ -727,33 +721,33 @@ public class ControlDashboard {
 			writeConsole("Editing to the properties of " + image.getProperties().get("FILENAME"), "Project");
 		}
 	}
-	
+
 	public void writeConsole(String msg, String auteur)
 	{
-		
-		
+
+
 		this.console.appendText(auteur + ">> " + msg + "\n");
 	}
-	
-	
 
-    @FXML
-    void newFolder(ActionEvent event) {
-    	Facade.addFolder("test1");
-    	writeConsole("1 folder added to the project", "ImageBrowser");
-    	this.initImage(this.currentFolder);
-    }
-	
+
+
+	@FXML
+	void newFolder(ActionEvent event) {
+		Facade.addFolder("test1");
+		writeConsole("1 folder added to the project", "ImageBrowser");
+		this.initImage(this.currentFolder);
+	}
+
 
 	public void initialize() {
-		
+
 		if(Facade.currentProject != null)
 		{
 			this.initImage(this.currentFolder);
 			writeConsole("Opening of the project: " + Facade.currentProject.name, "Project");
 		}
-		
-		
+
+
 	}
 
 
