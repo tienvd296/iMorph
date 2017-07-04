@@ -6,12 +6,14 @@ package affichage;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.util.List;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
+import java.util.List;
 
+import javax.swing.GroupLayout;
+import javax.swing.GroupLayout.Alignment;
 import javax.swing.JFrame;
-import  java.awt.Robot;
+
 import drawing.CircleDrawable;
 import drawing.IDrawable;
 import drawing.JCanvas;
@@ -21,8 +23,18 @@ import drawing.RectangleDrawable;
 public class TestML extends JCanvasMouseListener {
 
 	Double i = (double) affichage.Cadre2.slide.getValue(); 
+	/**
+	 * @wbp.parser.entryPoint
+	 */
 	public TestML(JCanvas canvas) {
 		super(canvas);
+		
+		
+
+	    
+	 //  this.setLayout();
+	   
+	   
 		
 	}
 	 public void removeDrawable(IDrawable d) {

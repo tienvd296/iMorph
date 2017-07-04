@@ -28,6 +28,8 @@ public class JCanvas extends JPanel {
 	private static final long serialVersionUID = 1L;
 	public static List drawables = new LinkedList();
     BufferedImage monImage = null;
+    
+    
 	public void addDrawable(IDrawable d) {
         drawables.add(d);
         repaint();

@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -51,9 +52,8 @@ import drawing.JCanvas;
 public class Cadre2 extends JFrame implements ActionListener {
 	
 
-	/**
-	 * 
-	 */
+	
+	
 	private static final long serialVersionUID = 1L;
 	private final JMenuBar menuBar = new JMenuBar();
 	private final JMenu fichierMenu = new JMenu();
@@ -124,10 +124,10 @@ public class Cadre2 extends JFrame implements ActionListener {
 	
 	
 
-	public Cadre2() {
+	public Cadre2(File fileImage) {
 		super();
-		System.out.println("lololo");
-		Go();
+		
+		Go(fileImage);
 		try {
 			
 			
@@ -292,10 +292,9 @@ public class Cadre2 extends JFrame implements ActionListener {
 		if(b==true) {
 			System.out.println("toolBarLandMark(true)");
 
-		//	panneau.setVisible(true);
 			panData.setVisible(true);
 			split.setVisible(true);
-			
+			panneau.setVisible(true);
 			toolBarEditing(false);
 			
 		
@@ -317,7 +316,11 @@ public class Cadre2 extends JFrame implements ActionListener {
 			
 			System.out.println("toolBarEditing true");
 			toolBarLandMark(false);
-			//c.add(panneau);
+			///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+			c.add(panneau);
+			panneau.add(jc);
+			jc.setBounds(c.getX(), c.getY(),c.getWidth(), c.getHeight());
+			jc.setVisible(true);
 			toolBar.setVisible(true);
 			
 		    slide.setVisible(true);
@@ -328,6 +331,7 @@ public class Cadre2 extends JFrame implements ActionListener {
 			
 		} else if(b == false)  {
 			
+		
 			toolBar.setVisible(false);
 			
 			System.out.println("Toolbar Correction refusée");
@@ -368,11 +372,13 @@ public class Cadre2 extends JFrame implements ActionListener {
 		{
 			JFileChooser fileOuvrirImage = new JFileChooser();
 			if (fileOuvrirImage.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
-				panneau.ajouterImage(new File(fileOuvrirImage.getSelectedFile().getAbsolutePath()));
+				new Cadre2(new File(fileOuvrirImage.getSelectedFile().getAbsolutePath()));
 				
 				panneau.setBounds(0, 0, this.getWidth(), this.getHeight());
+				
 			
 			}
+			
 			
 			
 		} else if (cliqueMenu.getSource().equals(enregistrerMenu)) {
@@ -387,9 +393,13 @@ public class Cadre2 extends JFrame implements ActionListener {
 			//	panneau.agrandirImage();
 			// Lance la correction, toolbar	
 				toolBarEditing(true);
+				panneau.setVisible(true);
 				
-			} else if (cliqueMenu.getSource().equals(cropMenu)) {
+			} else if (cliqueMenu.getSource().equals(zoomOut)) {
 				panneau.reduireImage();
+			
+			} else if (cliqueMenu.getSource().equals(zoomIn)) {
+				panneau.agrandirImage();
 			
 			}else if(cliqueMenu.getSource().equals(addLandMarkMenu)){
 				
@@ -438,8 +448,13 @@ public class Cadre2 extends JFrame implements ActionListener {
 
 
 
-	private void Go() {
+	private void Go(File fileImage) {
 		
+		
+		
+		panneau.ajouterImage(fileImage);
+		
+		panneau.setBounds(0, 0, this.getWidth(), this.getHeight());
 		
 		
 		c = this.getContentPane();
@@ -451,7 +466,7 @@ public class Cadre2 extends JFrame implements ActionListener {
 	    panData.setVisible(false);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setSize(1100,650);
-		jc.setBounds(this.getX(), this.getY(),950, 650);
+		
 		
 		new TestML(jc);
 		
@@ -461,7 +476,7 @@ public class Cadre2 extends JFrame implements ActionListener {
 		//panData.setVisible(true);
 		
 		jc.setBackground(Color.green);
-		jc.setVisible(true);
+		jc.setVisible(false);
 		panneau.setVisible(true);
 		
 		c.add(panneau);
@@ -481,7 +496,9 @@ public class Cadre2 extends JFrame implements ActionListener {
 	public static void main(String args[]) 
 	{
 		try {
-			new Cadre2();
+			
+				
+			
 		
 			
 			
