@@ -11,6 +11,7 @@ import java.util.Optional;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import businesslogic.Project;
@@ -33,10 +34,12 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
+import javafx.stage.FileChooser;
+import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
 
 /**
- * 
+ *
  */
 public class ControlHome {
 
@@ -63,20 +66,17 @@ public class ControlHome {
 	@FXML
 	void newProject(MouseEvent event) {
 
-		JFrame jFrame = new JFrame();
-		FileDialog fd = new FileDialog(jFrame,  "Choose a file", FileDialog.SAVE);
-		fd.setDirectory("C:\\");
-		//fd.setFile("*.to");
-		fd.setVisible(true);
-		File[] file = fd.getFiles();
-		if (file.length == 0)
-		  System.out.println("You cancelled the choice");
+		FileChooser chooser = new FileChooser();
+		chooser.setTitle("Open File");
+		File file = chooser.showSaveDialog(new Stage());
+		if (file == null)
+			System.out.println("You cancelled the choice");
 		else
-		  {
-			this.newProject(file[0].getAbsolutePath() + ".project");
-			
-		  }
-			
+		{
+			this.newProject(file.getAbsolutePath() + ".project");
+
+		}
+
 
 	}
 
@@ -100,17 +100,18 @@ public class ControlHome {
 	 * @param project
 	 */
 	public void loadProject() {
-		JFrame jFrame = new JFrame();
-		FileDialog fd = new FileDialog(jFrame,  "Choose a file", FileDialog.LOAD);
-		fd.setDirectory("C:\\");
-		fd.setFile("*.project");
-		fd.setVisible(true);
-		File[] file = fd.getFiles();
-		if (file.length == 0)
-		  System.out.println("You cancelled the choice");
+		FileChooser chooser = new FileChooser();
+		chooser.setTitle("Open project");
+		chooser.getExtensionFilters().addAll(
+		         new ExtensionFilter("Project Files", "*.project"));
+		File file = chooser.showOpenDialog(new Stage());
+		if (file == null)
+		{
+			System.out.println("You cancelled the choice");
+		}
 		else
 		{
-		  Facade.loadProject(file[0]);
+			Facade.loadProject(file);
 		}
 
 	}
@@ -149,7 +150,7 @@ public class ControlHome {
 	}
 
 	void moveToDashboard() {
-		Parent root;	
+		Parent root;
 		try {
 			FXMLLoader loader = new FXMLLoader(getClass().getResource("UIDashboard.fxml"));
 			root = loader.load();
@@ -177,7 +178,7 @@ public class ControlHome {
 
 		} catch (IOException e) {
 			e.printStackTrace();
-		} 
+		}
 
 	}
 
