@@ -124,10 +124,10 @@ public class Cadre2 extends JFrame implements ActionListener {
 	
 	
 
-	public Cadre2(File fileImage) {
+	public Cadre2(/*File fileImage */) {
 		super();
 		
-		Go(fileImage);
+		Go(/*fileImage*/);
 		try {
 			
 			
@@ -372,7 +372,7 @@ public class Cadre2 extends JFrame implements ActionListener {
 		{
 			JFileChooser fileOuvrirImage = new JFileChooser();
 			if (fileOuvrirImage.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
-				new Cadre2(new File(fileOuvrirImage.getSelectedFile().getAbsolutePath()));
+				panneau.ajouterImage(new File(fileOuvrirImage.getSelectedFile().getAbsolutePath()));
 				
 				panneau.setBounds(0, 0, this.getWidth(), this.getHeight());
 				
@@ -448,13 +448,13 @@ public class Cadre2 extends JFrame implements ActionListener {
 
 
 
-	private void Go(File fileImage) {
+	private void Go(/*File fileImage*/) {
 		
 		
 		
-		panneau.ajouterImage(fileImage);
+		//panneau.ajouterImage(fileImage);
 		
-		panneau.setBounds(0, 0, this.getWidth(), this.getHeight());
+		//panneau.setBounds(0, 0, this.getWidth(), this.getHeight());
 		
 		
 		c = this.getContentPane();
@@ -497,7 +497,7 @@ public class Cadre2 extends JFrame implements ActionListener {
 	{
 		try {
 			
-				
+				new Cadre2();
 			
 		
 			

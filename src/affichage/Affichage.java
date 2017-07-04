@@ -1,6 +1,6 @@
 package affichage;
 
-
+import businesslogic.Landmark;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -68,9 +68,11 @@ public class Affichage extends JPanel implements MouseListener {
 		      public void mouseReleased(MouseEvent event){
 		   
 		        if(event.isPopupTrigger()){       
-		   
+		        	
+		      jpm.add(new Landmark(event.getX(), event.getY(), true));
 		          jpm.add(trueLandmark);
 		          jpm.add(falseLandmark);
+		          // jpm.add(new LandMark(e.getX(), e.getY(), true));  
 		         
 		        
 		          jpm.show(Cadre2.panneau, event.getX(), event.getY());
@@ -93,7 +95,7 @@ public class Affichage extends JPanel implements MouseListener {
 
 		@Override
 		public void mouseClicked(MouseEvent e) {
-			addLandMark(e.getX(), e.getY());
+			addLandMark(e.getX(), e.getY(), true);
 			
 		}
 
@@ -155,9 +157,10 @@ public class Affichage extends JPanel implements MouseListener {
 		return new drawing.CircleDrawable(Color.white, p, dim);
 
 	}
-	 public static void addLandMark(int x, int y ){
+	 public static void addLandMark(int x, int y , boolean B){
+		 B = true;
 		 String texte = PanelData.jText.getText();
-			PanelData.jText.setText(texte+ "\n X : "+x+ " Y : "+y);
+			PanelData.jText.setText(texte+ "\n X : "+x+ " Y : "+y+" "+B);
 			
 		 }
 		 
@@ -326,8 +329,8 @@ public class Affichage extends JPanel implements MouseListener {
 	@Override
 	public void mouseClicked(MouseEvent e) {
 
-
-		addLandMark(e.getX(), e.getY());
+		
+		addLandMark(e.getX(), e.getY(), true);
 		System.out.println("X  : "+e.getX()+ " Y = "+e.getY());
 		//draw(null, e.getX(), e.getY(), 1,1);
 	
