@@ -3,19 +3,22 @@ package helper;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+
+import com.drew.imaging.ImageMetadataReader;
+import com.drew.imaging.ImageProcessingException;
+import com.drew.metadata.Directory;
+import com.drew.metadata.Metadata;
+import com.drew.metadata.Tag;
 
 import businesslogic.*;
 
@@ -44,12 +47,16 @@ public class ProjectFile {
 				images = ProjectFile.readImage(skeleton[1]);				
 				
 			}
+			reader.close();
 					
-			return new Project(name, lastSave, path, images);
+			return new Project(name, lastSave, path, null, images);
         
         
 	} catch (IOException e) {
 		// TODO Auto-generated catch block
+		e.printStackTrace();
+		return null;
+	} catch (NullPointerException e){
 		e.printStackTrace();
 		return null;
 	}
@@ -62,7 +69,7 @@ public class ProjectFile {
 		for(int i = 1; i < tab.length; i++)
 		{
 			String pathImage = "UN";
-			Map<String, String> properties = new HashMap();
+			Map<String, String> properties = new HashMap<String, String>();
 			ArrayList<Landmark> landmarks = new ArrayList<Landmark>();
 			
 			String[] tab2 = tab[i].split(";");
@@ -72,7 +79,6 @@ public class ProjectFile {
 			
 			while (!tab2[n].equals("LANDMARKS"))
 			{
-				System.out.println(tab2[n]);
 				String[] prop = tab2[n].split("=");
 				properties.put(prop[0], prop[1]);
 				n++;
@@ -130,7 +136,7 @@ public class ProjectFile {
 				if(!image.getLandmarks().isEmpty())
 				{
 					Iterator<Landmark> it2 = image.getLandmarks().iterator();
-					while(it.hasNext())
+					while(it2.hasNext())
 					{
 						Landmark landmark = it2.next();
 						dataSave = dataSave + landmark.getPosX() + " " + landmark.getPosY() + " " + landmark.getIsLandmark() + ";"; 
@@ -154,7 +160,7 @@ public class ProjectFile {
 			writer = new BufferedWriter(new FileWriter(logFile));
 			writer2 = new BufferedWriter(new FileWriter(lastSaveFile, true));
 			writer.write(dataSave);	
-			writer2.append(p.getName() + "#" + p.getPathProject() + "#" + p.getLastSave());
+			writer2.append("\n" + p.getName() + "#" + p.getPathProject() + "#" + p.getLastSave());
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
@@ -183,11 +189,13 @@ public class ProjectFile {
 
 			try {
 				String content;
+				reader.readLine();
 				while((content = reader.readLine()) != null)
 				{
 					Project p1 = new Project(content.split("#")[0], content.split("#")[1], content.split("#")[2]);
 					listProj.add(p1);
 				}
+				reader.close();
 				return listProj;
 				
 			
@@ -206,6 +214,24 @@ public class ProjectFile {
 				return listProj;
 			}
 			
+			
 		
 	}
+
+	public static void clearHistoric() {
+		String separator = System.getProperty("file.separator");
+		String originalPath = System.getProperty("user.dir");
+		File lastSaveFile = new File(originalPath + separator + "assets" + separator + "lastProject.data");
+		BufferedWriter writer;
+		try {
+			writer = new BufferedWriter(new FileWriter(lastSaveFile));
+			writer.write("");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+	
+	
 }

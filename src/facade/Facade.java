@@ -1,13 +1,13 @@
 package facade;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import businesslogic.*;
+import helper.MetadataExtractor;
 import helper.ProjectFile;
+import helper.XML;
 
 /**
  * 
@@ -31,7 +31,7 @@ public class Facade {
      * @return
      */
     public static void newProject(String path) {
-    	String separator = System.getProperty("file.separator");
+    	//String separator = System.getProperty("file.separator");
     	String[] tab = path.split("\\\\");
     	String name = tab[tab.length - 1];
         Project p = new Project(name);
@@ -45,8 +45,10 @@ public class Facade {
      * @param path 
      * @return
      */
-    public static void addImage(String path) {
+    public static void addImage(String path, double height, double width) {
         ImageWing image = new ImageWing(path);
+        image.getProperties().put("HEIGHT", Double.toString(height));
+        image.getProperties().put("WIDTH", Double.toString(width));
         Facade.currentProject.addImage(image);
         
         
@@ -64,7 +66,7 @@ public class Facade {
      * save the current Project
      */
     public static void saveProject() {
-    	ProjectFile.saveProject(Facade.currentProject);
+    	XML.saveProject(Facade.currentProject);
     }
 
     /**
@@ -78,18 +80,83 @@ public class Facade {
      * Load an existing project, it becomes the current project
      * @param path
      */
-    public static void loadProject(File file) {
+    public static boolean loadProject(File file) {
     	
 
-    	Project p = ProjectFile.reader(file);
-    	Facade.currentProject = p;
+    	Project p = XML.readProject(file);
+    	if(p != null)
+    	{
+    		Facade.currentProject = p;
+    		return true;
+    	}
+    	else
+    	{
+    		return false;
+    	}
+    	
 
 
         }
 
 	public static ArrayList<Project> getHistProject() {
-		// TODO Auto-generated method stub
-		return ProjectFile.histProject();
+		return XML.readHist();
+	}
+
+	public static ArrayList<ImageWing> getImages() {
+		return Facade.currentProject.getImages();
+	}
+
+	public static ArrayList<Landmark> getAllLandmark(ImageWing im) {
+		return im.getLandmarks();
+	}
+
+	public static boolean hasProperties(ImageWing image) {
+		return !image.getProperties().isEmpty();
+
+	}
+
+	public static void setProperties(ImageWing image, String key, String value) {
+		image.getProperties().replace(key, value);
+		
+	}
+
+	public static void addProperties(ImageWing image, String key, String value) {
+		image.getProperties().put(key, value);
+		
+		
+	}
+
+	public static boolean hasLandmarks(ImageWing image) {
+		return !image.getLandmarks().isEmpty();
+	}
+
+	public static double getX_ratio(Landmark landmark, ImageWing im) {
+		double a = landmark.getPosX();
+		double b = Double.parseDouble(im.getProperties().get("WIDTH"));
+		
+		return a/b;
+	}
+	
+	public static double getY_ratio(Landmark landmark, ImageWing im) {
+		double a = landmark.getPosY();
+		double b = Double.parseDouble(im.getProperties().get("HEIGHT"));
+		
+		return a/b;
+	}
+
+	public static void clearHistoric() {
+		ProjectFile.clearHistoric();
+		
+	}
+	
+	public static HashMap<String, String> metadataExtractor(File file)
+	{
+		return MetadataExtractor.metadataExtractor(file);
+	}
+
+	public static void addFolder(String string) {
+    	Folder folder = new Folder(string);
+		Facade.currentProject.getFolders().add(folder);
 	}
 
 }

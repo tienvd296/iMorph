@@ -1,8 +1,5 @@
 package businesslogic;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
 import java.util.*;
 
 /**
@@ -20,11 +17,13 @@ public class Project {
 	/**
 	 * @param name
 	 * @param path
+	 * @param folderList 
 	 */
-	public Project(String name, String lastSave, String path, ArrayList<ImageWing> images) {
+	public Project(String name, String lastSave, String path, ArrayList<Folder> folders, ArrayList<ImageWing> images) {
 		this.name = name;
 		this.pathProject = path;
 		this.images = images;
+		this.folders = folders;
 		this.lastSave = lastSave;
 	}
 	
@@ -85,6 +84,17 @@ public class Project {
 	 * 
 	 */
 	public ArrayList<ImageWing> images = new ArrayList<ImageWing>();
+
+
+	public ArrayList<Folder> folders = new ArrayList<Folder>();
+
+	public ArrayList<Folder> getFolders() {
+		return folders;
+	}
+
+	public void setFolders(ArrayList<Folder> folders) {
+		this.folders = folders;
+	}
 
 	/**
 	 * 
