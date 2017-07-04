@@ -69,7 +69,7 @@ public class Affichage extends JPanel implements MouseListener {
 		   
 		        if(event.isPopupTrigger()){       
 		        	
-		      jpm.add(new Landmark(event.getX(), event.getY(), true));
+		     // jpm.add(new Landmark(event.getX(), event.getY(), true));
 		          jpm.add(trueLandmark);
 		          jpm.add(falseLandmark);
 		          // jpm.add(new LandMark(e.getX(), e.getY(), true));  

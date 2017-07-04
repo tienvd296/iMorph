@@ -124,10 +124,10 @@ public class Cadre2 extends JFrame implements ActionListener {
 	
 	
 
-	public Cadre2(/*File fileImage */) {
+	public Cadre2(File fileImage) {
 		super();
 		
-		Go(/*fileImage*/);
+		Go(fileImage);
 		try {
 			
 			
@@ -448,7 +448,7 @@ public class Cadre2 extends JFrame implements ActionListener {
 
 
 
-	private void Go(/*File fileImage*/) {
+	private void Go(File fileImage) {
 		
 		
 		
@@ -497,7 +497,7 @@ public class Cadre2 extends JFrame implements ActionListener {
 	{
 		try {
 			
-				new Cadre2();
+			//	new Cadre2(File );
 			
 		
 			
