@@ -87,7 +87,7 @@ public class ControlDashboard {
 	void loadImages(ActionEvent event) {
 
 		JFrame jFrame = new JFrame();
-		FileDialog fd = new FileDialog(jFrame,  "Choose a file", FileDialog.LOAD);
+		FileDialog fd = new FileDialog(jFrame,  "Choose images", FileDialog.LOAD);
 		fd.setDirectory("C:\\");
 		fd.setFile("*.tif");
 		fd.setMultipleMode(true);
@@ -382,6 +382,8 @@ public class ControlDashboard {
 			pane.getChildren().add(y+1, c);
 			y++;
 		}
+		
+		
 
 	}
 
@@ -671,6 +673,13 @@ public class ControlDashboard {
 				i++;
 
 			}
+			
+			Label add = new Label("Add a new landmark");
+			add.setOnMouseClicked(e -> landmarkAdd(new File (image.getPath())));
+
+			grid.add(add, 0, i);
+
+			this.propertiesPane.getChildren().add(0, grid);
 
 			this.landmarksPane.getChildren().add(0, grid);
 
@@ -680,6 +689,10 @@ public class ControlDashboard {
 
 
 
+
+	private void landmarkAdd(File file) {
+		//Dans cette méthode tu peux récupérer le file en paramètre et appeler ton constructeur
+	}
 
 	private void propertiesAdd(ImageWing image) {
 		TextInputDialog dialog = new TextInputDialog("Name of property");
