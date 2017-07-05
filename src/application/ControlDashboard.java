@@ -18,6 +18,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import affichage.Cadre2;
 import businesslogic.*;
 import facade.Facade;
 import helper.Keyboard;
@@ -701,11 +702,8 @@ public class ControlDashboard {
 
 
 	private void landmarkAdd(File file) {
-		Alert alert = new Alert(AlertType.INFORMATION);
-		alert.setTitle("Partie de Pierre");
-		alert.setHeaderText("Ici la partie de Pierre");
-
-		alert.showAndWait();
+		
+		new Cadre2(file);
 	}
 
 	private void propertiesAdd(ImageWing image) {

@@ -1,10 +1,15 @@
 package affichage;
 
-
+import businesslogic.Landmark;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.geom.AffineTransform;
@@ -12,12 +17,23 @@ import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
 
 import javax.imageio.ImageIO;
 import javax.swing.JButton;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JSlider;
 import javax.swing.JToolBar;
+
+import org.opencv.core.Mat;
+import org.opencv.core.Size;
+import org.opencv.imgproc.Imgproc;
+
+import drawing.IDrawable;
 
 
 
@@ -25,10 +41,16 @@ import javax.swing.JToolBar;
 
 public class Affichage extends JPanel implements MouseListener {
 
-	
+	 private JPopupMenu jpm = new JPopupMenu();
+	 private JMenuItem trueLandmark = new JMenuItem("True Landmark");      
+	 private JMenuItem falseLandmark = new JMenuItem("False Landmark");
+	  
+	 
+	 private TrueLandMark TlandMark=new TrueLandMark();
+	  
 	private JToolBar toolBar = new JToolBar();
 	
-	
+	public static List<IDrawable> drawables = new LinkedList();
 	BufferedImage monImage = null;
 	public Affichage() {
 		
@@ -37,15 +59,108 @@ public class Affichage extends JPanel implements MouseListener {
 		
 		this.addMouseListener(this);
 		
+		
+		trueLandmark.addActionListener(TlandMark);
+		
+		//falseLandmark.addActionListener(startAnimation);
+	
+		  this.addMouseListener(new MouseAdapter(){
+		      public void mouseReleased(MouseEvent event){
+		   
+		        if(event.isPopupTrigger()){       
+		        	
+		     // jpm.add(new Landmark(event.getX(), event.getY(), true));
+		          jpm.add(trueLandmark);
+		          jpm.add(falseLandmark);
+		          // jpm.add(new LandMark(e.getX(), e.getY(), true));  
+		         
+		        
+		          jpm.show(Cadre2.panneau, event.getX(), event.getY());
+		        }
+		      }
+		    });
 	
 		
 		 
 	}
 	
+	class TrueLandMark implements ActionListener, MouseListener{
+		
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			System.out.println("Action Performed TrueLandMark");
+			
+			//addLandMark(t.getX(), t.getY());
+		}
+
+		@Override
+		public void mouseClicked(MouseEvent e) {
+			addLandMark(e.getX(), e.getY(), true);
+			
+		}
+
+		@Override
+		public void mousePressed(MouseEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void mouseReleased(MouseEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void mouseEntered(MouseEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void mouseExited(MouseEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
+		
+	}
 	
-	 public static void addLandMark(int x, int y ){
+	
+	
+	public void draw(Graphics g, int x, int y, MouseEvent e) {
+		super.paint(g);
+		Color c = g.getColor();
+		
+		IDrawable circl = createDrawable2(e);
+		this.addDrawable(circl);
+		g.setColor(Color.BLUE);
+		
+		
+		g.fillOval(e.getX(),e.getY(),80,80);
+		g.setColor(c);
+		
+		
+	}
+	
+	
+	public void addDrawable(IDrawable d) {
+        drawables.add(d);
+        repaint();
+    }
+	
+	
+	private static IDrawable createDrawable2(MouseEvent e) {
+	//	Double i = (double) affichage.Cadre2.slide.getValue();
+		Point p = e.getPoint();
+		Dimension dim = new Dimension();
+		dim.setSize(10, 10);
+		return new drawing.CircleDrawable(Color.white, p, dim);
+
+	}
+	 public static void addLandMark(int x, int y , boolean B){
+		 B = true;
 		 String texte = PanelData.jText.getText();
-			PanelData.jText.setText(texte+ "\n X : "+x+ " Y = "+y);
+			PanelData.jText.setText(texte+ "\n X : "+x+ " Y : "+y+" "+B);
 			
 		 }
 		 
@@ -148,12 +263,25 @@ public class Affichage extends JPanel implements MouseListener {
 		try {
 			System.out.println("Chargement image");
 			monImage = ImageIO.read(fichierImage);
+		
 			
 		} catch (IOException e) {
 			e.printStackTrace();
 			System.out.println("Erreur chargement image");
 		}
 		repaint(); 
+	}
+	
+	
+	
+	static boolean resizeIfNeeded(Mat img, int desiredWidth, int desiredHeight) {
+	    Size size = img.size();
+	    Size desiredSize = new Size(desiredWidth, desiredHeight);
+	    if (size.width != desiredWidth || size.height != desiredHeight) {
+	        Imgproc.resize(img, img, desiredSize);
+	        return true;
+	    }
+	    return false;
 	}
 
 	protected BufferedImage getImagePanneau()
@@ -201,10 +329,11 @@ public class Affichage extends JPanel implements MouseListener {
 	@Override
 	public void mouseClicked(MouseEvent e) {
 
-
-		addLandMark(e.getX(), e.getY());
-		System.out.println("X lol : "+e.getX()+ " Y = "+e.getY());
+		
+		addLandMark(e.getX(), e.getY(), true);
+		System.out.println("X  : "+e.getX()+ " Y = "+e.getY());
 		//draw(null, e.getX(), e.getY(), 1,1);
+	
 	}
 
 
