@@ -83,8 +83,11 @@ public class ControlHome {
 
 	@FXML
 	void openProject(MouseEvent event) {
-		this.loadProject();
-		moveToDashboard();
+		if(this.loadProject())
+		{
+			moveToDashboard();	
+		}
+		
 	}
 
 	/**
@@ -100,7 +103,7 @@ public class ControlHome {
 	 * Load an existing project
 	 * @param project
 	 */
-	public void loadProject() {
+	public boolean loadProject() {
 		FileChooser chooser = new FileChooser();
 		chooser.setTitle("Open project");
 		chooser.getExtensionFilters().addAll(
@@ -109,10 +112,12 @@ public class ControlHome {
 		if (file == null)
 		{
 			System.out.println("You cancelled the choice");
+			return false;
 		}
 		else
 		{
 			Facade.loadProject(file);
+			return true;
 		}
 
 	}

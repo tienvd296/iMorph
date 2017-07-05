@@ -2,7 +2,6 @@ package application;
 
 
 
-import java.awt.FileDialog;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
@@ -12,11 +11,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import javax.imageio.ImageIO;
-import javax.swing.JButton;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.filechooser.FileNameExtensionFilter;
 
 import affichage.Cadre2;
 import businesslogic.*;
@@ -27,8 +21,6 @@ import ij.io.Opener;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
@@ -98,7 +90,7 @@ public class ControlDashboard {
 		FileChooser chooser = new FileChooser();
 		chooser.setTitle("Load images");
 		chooser.getExtensionFilters().addAll(
-		         new ExtensionFilter("TIFF Files", "*.tif"));
+				new ExtensionFilter("TIFF Files", "*.tif"));
 		List<File> files = chooser.showOpenMultipleDialog(new Stage());
 		if (files.size() == 0)
 			writeConsole("Open command cancelled by user.", "ImageBrowser");
@@ -702,7 +694,7 @@ public class ControlDashboard {
 
 
 	private void landmarkAdd(File file) {
-		
+
 		new Cadre2(file);
 	}
 
@@ -758,9 +750,18 @@ public class ControlDashboard {
 
 	@FXML
 	void newFolder(ActionEvent event) {
-		Facade.addFolder("test1", this.currentFolder);
-		writeConsole("1 folder added to the project", "ImageBrowser");
-		this.initImage(this.currentFolder);
+		TextInputDialog dialog = new TextInputDialog("walter");
+		dialog.setTitle("Image browser");
+		dialog.setHeaderText("Create a new folder.");
+		dialog.setContentText("Please enter folder name:");
+
+		// Traditional way to get the response value.
+		Optional<String> result = dialog.showAndWait();
+		if (result.isPresent()){
+			Facade.addFolder(result.get(), this.currentFolder);
+			writeConsole("1 folder added to the project", "ImageBrowser");
+			this.initImage(this.currentFolder);
+		}
 	}
 
 
