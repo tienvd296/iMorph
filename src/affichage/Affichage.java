@@ -52,9 +52,12 @@ public class Affichage extends JPanel implements MouseListener {
 	
 	public static List<IDrawable> drawables = new LinkedList();
 	BufferedImage monImage = null;
+	
+	
+	
 	public Affichage() {
 		
-		this.setBackground(Color.red);
+		//this.setBackground(Color.red);
 		
 		
 		this.addMouseListener(this);
@@ -227,7 +230,8 @@ public class Affichage extends JPanel implements MouseListener {
 	protected void paintComponent(Graphics g)
 	{
 		super.paintComponent(g);
-		if(monImage != null)
+		System.out.println("paintComponent de la classe Affichage");
+		
 			g.drawImage(monImage, 0, 0, null);
 	}
 
@@ -261,9 +265,9 @@ public class Affichage extends JPanel implements MouseListener {
 	protected void ajouterImage(File fichierImage)
 	{   // dessiner une image à l'ecran	
 		try {
-			System.out.println("Chargement image");
+			System.out.println("Chargement image dans la fonction Ajouter Image");
 			monImage = ImageIO.read(fichierImage);
-		
+			repaint();
 			
 		} catch (IOException e) {
 			e.printStackTrace();

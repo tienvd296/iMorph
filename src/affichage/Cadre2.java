@@ -128,13 +128,18 @@ public class Cadre2 extends JFrame implements ActionListener {
 		super();
 		System.out.println("Lancement de Cadre2");
 		
+
 		
-		Go(fileImage);
+		
+		Go();
 		try {
 			
 			
 			creerMenu();
-			
+			System.out.println("Avant ajout image");
+			panneau.ajouterImage(fileImage);
+			System.out.println("Ajout de l'image après la fonction AjouterImage");
+			repaint();
 			
 			
 		} catch (Throwable e) {
@@ -280,6 +285,11 @@ public class Cadre2 extends JFrame implements ActionListener {
 		
 		squareButton.addActionListener(this);
 		circleButton.addActionListener(this);
+		
+		
+		
+		
+		
 	}
 	
 	
@@ -438,13 +448,13 @@ public class Cadre2 extends JFrame implements ActionListener {
 
 
 
-	private void Go(File fileImage) {
+	private void Go() {
 		
 		
 		
-		//panneau.ajouterImage(fileImage);
 		
-		//panneau.setBounds(0, 0, this.getWidth(), this.getHeight());
+		
+	//	panneau.setBounds(0, 0, this.getWidth(), this.getHeight());
 		
 		
 		c = this.getContentPane();
@@ -473,7 +483,6 @@ public class Cadre2 extends JFrame implements ActionListener {
 	
 		System.out.println("lol");
 		this.setVisible(true);
-		
 		
 		
 		
