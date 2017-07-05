@@ -189,6 +189,13 @@ public class ControlDashboard {
 		this.page = 0;
 		this.viewChoice.setText("16");
 	}
+	
+    @FXML
+    void startView(MouseEvent event) {
+		this.view(4);
+		this.page = 0;
+		this.viewChoice.setText("16");
+    }
 
 	@FXML
 	void view25(ActionEvent event) {
@@ -306,47 +313,52 @@ public class ControlDashboard {
 	{
 		Image[] images = this.imageTab;
 
-		this.currentView = 1;
-
-		GridPane grid = new GridPane();
-
-		ImageView im1 = new ImageView();
-
-		double width = this.table.getWidth() - 120;
-		double height = this.table.getHeight() - 25;
-
-		final int y = this.page;
-
-
-		//------IMAGE-----//
-		im1.setOnMouseClicked(e -> imageEditor(pathTab[y], im1));
-		im1.setPreserveRatio(true);
-		im1.setImage(images[this.page]);
-		im1.setFitWidth(width - 10);
-		Pane pane = new Pane();
-		double ratioImg = images[this.page].getHeight()/images[this.page].getWidth();
-		if(ratioImg > height/width)
+		if(images.length != 0)
 		{
-			im1.setFitHeight(height-20);
-			im1.setX((width - im1.getFitHeight()/ratioImg) / 2);
-			im1.setY((height - im1.getFitHeight()) / 2);
+			this.currentView = 1;
+
+			GridPane grid = new GridPane();
+
+			ImageView im1 = new ImageView();
+
+
+			double width = this.table.getWidth() - 120;
+			double height = this.table.getHeight() - 25;
+
+			final int y = this.page;
+
+
+
+			//------IMAGE-----//
+			im1.setOnMouseClicked(e -> imageEditor(pathTab[y], im1));
+			im1.setPreserveRatio(true);
+			im1.setImage(images[this.page]);
+			im1.setFitWidth(width - 10);
+			Pane pane = new Pane();
+			double ratioImg = images[this.page].getHeight()/images[this.page].getWidth();
+			if(ratioImg > height/width)
+			{
+				im1.setFitHeight(height-20);
+				im1.setX((width - im1.getFitHeight()/ratioImg) / 2);
+				im1.setY((height - im1.getFitHeight()) / 2);
+			}
+			else
+			{
+				im1.setFitWidth(width - 20);
+				im1.setX((width - im1.getFitWidth()) / 2);
+				im1.setY((height - im1.getFitWidth()*ratioImg) / 2);
+			}
+			pane.setPrefHeight(height);
+			pane.setPrefWidth(width);
+			pane.getChildren().add(0, im1);
+
+
+			this.displayLandmark(pane, im1, ratioImg, height/width, this.page);
+			this.imageEditor(pathTab[y], im1);
+			this.table.setCenter(grid);
+			grid.add(pane, 0, 0);
+
 		}
-		else
-		{
-			im1.setFitWidth(width - 20);
-			im1.setX((width - im1.getFitWidth()) / 2);
-			im1.setY((height - im1.getFitWidth()*ratioImg) / 2);
-		}
-		pane.setPrefHeight(height);
-		pane.setPrefWidth(width);
-		pane.getChildren().add(0, im1);
-
-
-		this.displayLandmark(pane, im1, ratioImg, height/width, this.page);
-		this.imageEditor(pathTab[y], im1);
-		this.table.setCenter(grid);
-		grid.add(pane, 0, 0);
-
 	}
 
 	private void displayLandmark(Pane pane, ImageView image, double ratio1, double ratio2, int i) {
@@ -393,93 +405,95 @@ public class ControlDashboard {
 		Image[] images = this.imageTab;
 		String[] names = this.nameTab;
 		Folder[] folder = this.folderTab;
-		int sizeFolder = 0;
 
-		if(folderTab != null)
+		if(images.length != 0 || folder.length != 0)
 		{
-			sizeFolder = this.folderTab.length;
-		}
+			int sizeFolder = 0;
 
-
-		this.currentView = (int) Math.pow(nbImg, 2);
-
-
-		double width = (this.table.getWidth() - 120) / nbImg;
-		double height = (this.table.getHeight() - 40) / nbImg;
-
-
-		GridPane grid = new GridPane();
-
-		int marge = this.page*nbImg;
-
-
-		for(int i = marge; i<marge+Math.pow(nbImg, 2); i++)
-		{
-			Pane pane = new Pane();
-			if(sizeFolder > i)
+			if(folderTab != null)
 			{
-				ImageView im1 = new ImageView();
-
-				final int y = i;
-				im1.setOnMouseClicked(e -> clickFolder(folder[y]));
-				im1.setPreserveRatio(true);
-				Image folderImage = new Image("open-folder-outline.png");
-				im1.setImage(folderImage);
-
-				double ratioImg = folderImage.getHeight()/folderImage.getWidth();
-				if(ratioImg > height/width)
-				{
-					im1.setFitHeight(height-20);
-					im1.setX((width - im1.getFitHeight()/ratioImg) / 2);
-					im1.setY((height - im1.getFitHeight()) / 2);
-				}
-				else
-				{
-					im1.setFitWidth(width - 20);
-					im1.setX((width - im1.getFitWidth()) / 2);
-					im1.setY((height - im1.getFitWidth()*ratioImg) / 2);
-				}
-				pane.setPrefHeight(height);
-				pane.setPrefWidth(width);
-				pane.getChildren().add(0, im1);
+				sizeFolder = this.folderTab.length;
 			}
-			else if(images.length + sizeFolder > i)
+
+
+			this.currentView = (int) Math.pow(nbImg, 2);
+
+
+			double width = (this.table.getWidth() - 120) / nbImg;
+			double height = (this.table.getHeight() - 40) / nbImg;
+
+
+			GridPane grid = new GridPane();
+
+			int marge = this.page*nbImg;
+
+
+			for(int i = marge; i<marge+Math.pow(nbImg, 2); i++)
 			{
-				ImageView im1 = new ImageView();
-
-				final int y = i;
-				final int s = sizeFolder;
-				im1.setOnMouseClicked(e -> imageEditor(pathTab[y - s], im1));
-				im1.setPreserveRatio(true);
-				im1.setImage(images[i - sizeFolder]);
-
-				double ratioImg = images[i - sizeFolder].getHeight()/images[i - sizeFolder].getWidth();
-				if(ratioImg > height/width)
+				Pane pane = new Pane();
+				if(sizeFolder > i)
 				{
-					im1.setFitHeight(height-20);
-					im1.setX((width - im1.getFitHeight()/ratioImg) / 2);
-					im1.setY((height - im1.getFitHeight()) / 2);
+					ImageView im1 = new ImageView();
+
+					final int y = i;
+					im1.setOnMouseClicked(e -> clickFolder(folder[y]));
+					im1.setPreserveRatio(true);
+					Image folderImage = new Image("open-folder-outline.png");
+					im1.setImage(folderImage);
+
+					double ratioImg = folderImage.getHeight()/folderImage.getWidth();
+					if(ratioImg > height/width)
+					{
+						im1.setFitHeight(height-20);
+						im1.setX((width - im1.getFitHeight()/ratioImg) / 2);
+						im1.setY((height - im1.getFitHeight()) / 2);
+					}
+					else
+					{
+						im1.setFitWidth(width - 20);
+						im1.setX((width - im1.getFitWidth()) / 2);
+						im1.setY((height - im1.getFitWidth()*ratioImg) / 2);
+					}
+					pane.setPrefHeight(height);
+					pane.setPrefWidth(width);
+					pane.getChildren().add(0, im1);
 				}
-				else
+				else if(images.length + sizeFolder > i)
 				{
-					im1.setFitWidth(width - 20);
-					im1.setX((width - im1.getFitWidth()) / 2);
-					im1.setY((height - im1.getFitWidth()*ratioImg) / 2);
+					ImageView im1 = new ImageView();
+
+					final int y = i;
+					final int s = sizeFolder;
+					im1.setOnMouseClicked(e -> imageEditor(pathTab[y - s], im1));
+					im1.setPreserveRatio(true);
+					im1.setImage(images[i - sizeFolder]);
+
+					double ratioImg = images[i - sizeFolder].getHeight()/images[i - sizeFolder].getWidth();
+					if(ratioImg > height/width)
+					{
+						im1.setFitHeight(height-20);
+						im1.setX((width - im1.getFitHeight()/ratioImg) / 2);
+						im1.setY((height - im1.getFitHeight()) / 2);
+					}
+					else
+					{
+						im1.setFitWidth(width - 20);
+						im1.setX((width - im1.getFitWidth()) / 2);
+						im1.setY((height - im1.getFitWidth()*ratioImg) / 2);
+					}
+					pane.setPrefHeight(height);
+					pane.setPrefWidth(width);
+					pane.getChildren().add(0, im1);
+
+
+					this.displayLandmark(pane, im1, ratioImg, height/width, i-s);
 				}
-				pane.setPrefHeight(height);
-				pane.setPrefWidth(width);
-				pane.getChildren().add(0, im1);
+				grid.add(pane, i/nbImg, i%nbImg);
 
-
-				this.displayLandmark(pane, im1, ratioImg, height/width, i-s);
 			}
-			grid.add(pane, i/nbImg, i%nbImg);
+			this.table.setCenter(grid);
 
 		}
-
-		this.table.setCenter(grid);
-
-
 
 
 	}

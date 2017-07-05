@@ -29,10 +29,10 @@ import javax.swing.JPopupMenu;
 import javax.swing.JSlider;
 import javax.swing.JToolBar;
 
-import org.opencv.core.Mat;
+/*import org.opencv.core.Mat;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
-
+*/
 import drawing.IDrawable;
 
 
@@ -274,7 +274,7 @@ public class Affichage extends JPanel implements MouseListener {
 	
 	
 	
-	static boolean resizeIfNeeded(Mat img, int desiredWidth, int desiredHeight) {
+	/*static boolean resizeIfNeeded(Mat img, int desiredWidth, int desiredHeight) {
 	    Size size = img.size();
 	    Size desiredSize = new Size(desiredWidth, desiredHeight);
 	    if (size.width != desiredWidth || size.height != desiredHeight) {
@@ -282,7 +282,7 @@ public class Affichage extends JPanel implements MouseListener {
 	        return true;
 	    }
 	    return false;
-	}
+	}*/
 
 	protected BufferedImage getImagePanneau()
 	{      // récupérer une image du panneau

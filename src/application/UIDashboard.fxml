@@ -85,7 +85,7 @@
                                           </MenuBar>
                                        </top>
                                        <center>
-                                          <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onMouseClicked="#view16" text="Load images" BorderPane.alignment="CENTER" />
+                                          <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onMouseClicked="#startView" text="Load images" BorderPane.alignment="CENTER" />
                                        </center>
                                     </BorderPane>
                                  </children>
