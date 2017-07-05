@@ -704,6 +704,8 @@ public class ControlDashboard {
 	private void landmarkAdd(File file) {
 		
 		new Cadre2(file);
+		
+		
 	}
 
 	private void propertiesAdd(ImageWing image) {

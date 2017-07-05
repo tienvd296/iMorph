@@ -127,6 +127,8 @@ public class Cadre2 extends JFrame implements ActionListener {
 	public Cadre2(File fileImage) {
 		super();
 		System.out.println("Lancement de Cadre2");
+		
+		
 		Go(fileImage);
 		try {
 			
@@ -452,7 +454,7 @@ public class Cadre2 extends JFrame implements ActionListener {
 	    panneau = new Affichage();
 	    
 	    panData.setVisible(false);
-		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		//this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setSize(1100,650);
 		
 		
