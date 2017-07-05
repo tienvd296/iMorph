@@ -4,19 +4,38 @@ import java.util.ArrayList;
 
 public class Folder {
 	
-	public Folder(String name)
+	public Folder(String name, Folder parent)
 	{
 		this.name = name;
+		this.parent = parent;
 	}
 	
-	public Folder(String folderName, ArrayList<Folder> folderList, ArrayList<ImageWing> imageList) {
+	public Folder(String folderName, ArrayList<Folder> folderList, ArrayList<ImageWing> imageList, Folder parent) {
 		this.name = folderName;
 		this.folders = folderList;
 		this.images = imageList;
+		this.parent = parent;
 	}
 
 	private String name = null;
+	private Folder parent = null;
 	
+	public void setImages(ArrayList<ImageWing> images) {
+		this.images = images;
+	}
+
+	public Folder getParent() {
+		return parent;
+	}
+
+	public void setParent(Folder parent) {
+		this.parent = parent;
+	}
+
+	public void setFolders(ArrayList<Folder> folders) {
+		this.folders = folders;
+	}
+
 	private ArrayList<Folder> folders = new ArrayList<Folder>();
 	
 	private ArrayList<ImageWing> images = new ArrayList<ImageWing>();

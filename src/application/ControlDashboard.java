@@ -79,6 +79,7 @@ public class ControlDashboard {
 
 	@FXML
 	private AnchorPane landmarksPane;
+	private Folder activeFolder;
 
 
 
@@ -153,7 +154,14 @@ public class ControlDashboard {
 		{
 			this.page--;
 		}
-
+		else
+		{
+			if(this.currentFolder != null)
+			{
+				this.currentFolder = this.currentFolder.getParent();
+				this.initImage(this.currentFolder);
+			}
+		}
 		this.reloadView();
 
 	}
@@ -189,13 +197,13 @@ public class ControlDashboard {
 		this.page = 0;
 		this.viewChoice.setText("16");
 	}
-	
-    @FXML
-    void startView(MouseEvent event) {
+
+	@FXML
+	void startView(MouseEvent event) {
 		this.view(4);
 		this.page = 0;
 		this.viewChoice.setText("16");
-    }
+	}
 
 	@FXML
 	void view25(ActionEvent event) {
@@ -401,10 +409,12 @@ public class ControlDashboard {
 
 	public void view(int nbImg)
 	{
-
+		System.out.println(this.imageTab.length);
 		Image[] images = this.imageTab;
 		String[] names = this.nameTab;
 		Folder[] folder = this.folderTab;
+
+		GridPane grid = new GridPane();
 
 		if(images.length != 0 || folder.length != 0)
 		{
@@ -423,7 +433,7 @@ public class ControlDashboard {
 			double height = (this.table.getHeight() - 40) / nbImg;
 
 
-			GridPane grid = new GridPane();
+
 
 			int marge = this.page*nbImg;
 
@@ -491,20 +501,38 @@ public class ControlDashboard {
 				grid.add(pane, i/nbImg, i%nbImg);
 
 			}
-			this.table.setCenter(grid);
+
 
 		}
 
-
+		this.table.setCenter(grid);
 	}
 
 	private void clickFolder(Folder folder) {
-		//INFO
-		//double click => open
+
+		if(this.activeFolder != folder)
+		{
+			this.activeFolder = folder;
+			this.propertiesPane.getChildren().clear();
+			this.landmarksPane.getChildren().clear();
+			this.metadataPane.getChildren().clear();
+			Label add = new Label(folder.getName() + "\n" + "Number of image: " + folder.getImages().size() + "\n" + "Number of folder: " + folder.getFolders().size());
+			this.propertiesPane.getChildren().add(0, add);
+		}
+		else
+		{
+			this.currentFolder = folder;
+			this.initImage(this.currentFolder);
+			this.view(4);
+			this.page = 0;
+			this.viewChoice.setText("16");
+			System.out.println("OK3");
+		}
 	}
 
 	public void imageEditor(String path, ImageView imageView)
 	{
+		this.activeFolder = null;
 		if(!Keyboard.isCtrl())
 		{
 			deselectAll();

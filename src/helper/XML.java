@@ -186,7 +186,7 @@ public class XML {
 		while(itF.hasNext())
 		{
 			org.jdom2.Element folder = (org.jdom2.Element)itF.next();
-			Folder f = readFolder(folder);
+			Folder f = readFolder(folder, null);
 			folders.add(f);
 		}
 
@@ -228,9 +228,9 @@ public class XML {
 
 	}
 
-	private static Folder readFolder(org.jdom2.Element folder2) 
+	private static Folder readFolder(org.jdom2.Element folder2, Folder parent) 
 	{
-
+		Folder ret = new Folder(null, parent);
 		String name = folder2.getAttributeValue("name");
 		ArrayList<Folder> folders = new ArrayList<Folder>();
 		ArrayList<ImageWing> images = new ArrayList<ImageWing>();
@@ -244,7 +244,7 @@ public class XML {
 		while(itF.hasNext())
 		{
 			org.jdom2.Element folder = (org.jdom2.Element)itF.next();
-			Folder f = readFolder(folder);
+			Folder f = readFolder(folder, ret);
 			folders.add(f);
 		}
 
@@ -281,8 +281,10 @@ public class XML {
 			ImageWing im1 = new ImageWing(imagePath, ppts, lnds);
 			images.add(im1);
 		}
-
-		return new Folder(name, folders, images);
+		ret.setName(name);
+		ret.setFolders(folders);
+		ret.setImages(images);
+		return ret;
 
 
 	}

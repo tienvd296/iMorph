@@ -169,13 +169,15 @@ public class Facade {
 	}
 
 	public static void addFolder(String string, Folder fold) {
-		Folder folder = new Folder(string);
+		
 		if(fold == null)
 		{
+			Folder folder = new Folder(string, null);
 			Facade.currentProject.getFolders().add(folder);
 		}
 		else
 		{
+			Folder folder = new Folder(string, fold);
 			fold.addFolder(folder);
 		}
 	}
