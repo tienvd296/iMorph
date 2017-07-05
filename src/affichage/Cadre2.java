@@ -126,7 +126,7 @@ public class Cadre2 extends JFrame implements ActionListener {
 
 	public Cadre2(File fileImage) {
 		super();
-		
+		System.out.println("Lancement de Cadre2");
 		Go(fileImage);
 		try {
 			
@@ -146,13 +146,7 @@ public class Cadre2 extends JFrame implements ActionListener {
 	
 	private void creerMenu() throws Exception {
 
-		try {
-			Robot robot = new Robot();
-		} catch (AWTException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
+
 	
 		
 		// construction du menu
@@ -437,13 +431,7 @@ public class Cadre2 extends JFrame implements ActionListener {
 	
 	public void sauverImage() throws IOException, AWTException 
 	{ 
-		Robot robot = new Robot();
-		BufferedImage image21 = robot.createScreenCapture(new Rectangle(this.getX(), this.getY(), this.getWidth(), this.getHeight()));
-		JFileChooser fileEnregistrerImage = new JFileChooser();
-		if (fileEnregistrerImage.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
-			File fichierEnregistrement = new File(fileEnregistrerImage.getSelectedFile().getAbsolutePath()+ ".JPG");
-			panneau.enregistrerImage2(image21, fichierEnregistrement);
-			}
+		
 	} 
 
 
@@ -497,7 +485,7 @@ public class Cadre2 extends JFrame implements ActionListener {
 	{
 		try {
 			
-			//	new Cadre2(File );
+			//new Cadre2(File );
 			
 		
 			
