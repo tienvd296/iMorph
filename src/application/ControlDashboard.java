@@ -280,7 +280,7 @@ public class ControlDashboard {
 	 * @param path
 	 */
 	public void addImage(String path, double height, double width) {
-		Facade.addImage(path, height, width);
+		Facade.addImage(path, height, width, this.currentFolder);
 	}
 
 	/**
@@ -288,7 +288,7 @@ public class ControlDashboard {
 	 * @param image
 	 */
 	public void deleteImage(ImageWing image) {
-		// TODO implement here
+		Facade.deleteImage(image, this.currentFolder);
 	}
 
 
@@ -760,7 +760,7 @@ public class ControlDashboard {
 
 	@FXML
 	void newFolder(ActionEvent event) {
-		Facade.addFolder("test1");
+		Facade.addFolder("test1", this.currentFolder);
 		writeConsole("1 folder added to the project", "ImageBrowser");
 		this.initImage(this.currentFolder);
 	}
