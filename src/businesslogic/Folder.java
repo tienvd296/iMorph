@@ -33,16 +33,30 @@ public class Folder {
 		return folders;
 	}
 
-	public void setFolders(ArrayList<Folder> folders) {
-		this.folders = folders;
-	}
 
 	public ArrayList<ImageWing> getImages() {
 		return images;
 	}
-
-	public void setImages(ArrayList<ImageWing> images) {
-		this.images = images;
+	
+	public void addImage(ImageWing im)
+	{
+		this.images.add(im);
 	}
+	
+	public void deleteImage(ImageWing im)
+	{
+		this.images.remove(im);
+	}
+	
+	public void addFolder(Folder fold)
+	{
+		this.folders.add(fold);
+	}
+	
+	public void deleteFolder(Folder fold)
+	{
+		this.folders.remove(fold);
+	}
+
 
 }
