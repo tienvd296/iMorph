@@ -251,7 +251,7 @@ public class XML {
 		while(itI.hasNext())
 		{
 			org.jdom2.Element image = (org.jdom2.Element)itI.next();
-			String imagePath = image.getChild("path").getText();
+			String imagePath = image.getAttributeValue("path");
 			ArrayList<Landmark> lnds = new ArrayList<Landmark>();
 			HashMap<String, String> ppts = new HashMap<String, String>();
 			List<org.jdom2.Element> listLandmarks = image.getChildren("landmark");
@@ -272,7 +272,7 @@ public class XML {
 
 			while(itP.hasNext())
 			{
-				org.jdom2.Element landmark = (org.jdom2.Element)itL.next();
+				org.jdom2.Element landmark = (org.jdom2.Element)itP.next();
 				String key = landmark.getAttributeValue("key");
 				String value = landmark.getAttributeValue("value");
 				ppts.put(key, value);

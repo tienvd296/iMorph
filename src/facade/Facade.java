@@ -6,7 +6,6 @@ import java.util.HashMap;
 
 import businesslogic.*;
 import helper.MetadataExtractor;
-import helper.ProjectFile;
 import helper.XML;
 import helper.landmarkFile;
 
@@ -58,6 +57,19 @@ public class Facade {
 		{
 			fold.addImage(image);
 		}
+	}
+	
+	public static void addImage(ImageWing imW, Folder fold1) {
+		ImageWing image = imW;
+		if(fold1 == null)
+		{
+			Facade.currentProject.addImage(image);
+		}
+		else
+		{
+			fold1.addImage(image);
+		}
+		
 	}
 
 
@@ -159,8 +171,6 @@ public class Facade {
 	}
 
 	public static void clearHistoric() {
-		ProjectFile.clearHistoric();
-
 	}
 
 	public static HashMap<String, String> metadataExtractor(File file)
@@ -209,5 +219,7 @@ public class Facade {
 	{
 		landmarkFile.saveImage(im);
 	}
+
+
 
 }
