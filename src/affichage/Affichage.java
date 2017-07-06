@@ -230,9 +230,10 @@ public class Affichage extends JPanel implements MouseListener {
 	protected void paintComponent(Graphics g)
 	{
 		super.paintComponent(g);
-		System.out.println("paintComponent de la classe Affichage");
-		
-			g.drawImage(monImage, 0, 0, null);
+		System.out.println("paintComponent de la classe Affichage 1");
+		g.drawImage(monImage, 0, 0, null);
+		System.out.println("IMAGE "+monImage);
+		System.out.println("paintComponent de la classe Affichage 2");
 	}
 
 
@@ -267,13 +268,13 @@ public class Affichage extends JPanel implements MouseListener {
 		try {
 			System.out.println("Chargement image dans la fonction Ajouter Image");
 			monImage = ImageIO.read(fichierImage);
-			repaint();
+			System.out.println("Image 2 : "+monImage);
 			
 		} catch (IOException e) {
 			e.printStackTrace();
 			System.out.println("Erreur chargement image");
 		}
-		repaint(); 
+		//repaint(); 
 	}
 	
 	

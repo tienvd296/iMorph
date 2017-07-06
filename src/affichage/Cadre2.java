@@ -131,15 +131,16 @@ public class Cadre2 extends JFrame implements ActionListener {
 
 		
 		
-		Go();
+		
+		Go(fileImage);
 		try {
 			
-			
-			creerMenu();
 			System.out.println("Avant ajout image");
 			panneau.ajouterImage(fileImage);
 			System.out.println("Ajout de l'image après la fonction AjouterImage");
-			repaint();
+			System.out.println("File : "+fileImage);
+			creerMenu(fileImage);
+			
 			
 			
 		} catch (Throwable e) {
@@ -151,7 +152,7 @@ public class Cadre2 extends JFrame implements ActionListener {
 	
 	
 	
-	private void creerMenu() throws Exception {
+	private void creerMenu(File fileImage) throws Exception {
 
 
 	
@@ -287,7 +288,8 @@ public class Cadre2 extends JFrame implements ActionListener {
 		circleButton.addActionListener(this);
 		
 		
-		
+	
+	
 		
 		
 	}
@@ -448,7 +450,7 @@ public class Cadre2 extends JFrame implements ActionListener {
 
 
 
-	private void Go() {
+	private void Go(File fileImage) {
 		
 		
 		
@@ -481,16 +483,15 @@ public class Cadre2 extends JFrame implements ActionListener {
 		
 		c.add(panneau);
 	
-		System.out.println("lol");
-		this.setVisible(true);
 		
+		this.setVisible(true);
 		
 		
 	}
 
 
 
-
+/*
 
 	public static void main(String args[]) 
 	{
@@ -509,7 +510,7 @@ public class Cadre2 extends JFrame implements ActionListener {
 
 
 
-
+*/
 
 
 
