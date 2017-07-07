@@ -119,6 +119,25 @@ public class ControlDashboard {
 
 
 	}
+	
+	/**
+	 * delete image to the current project
+	 */
+	@FXML
+	void deleteImages(ActionEvent event) {
+		Iterator<ImageView> it = selected.iterator();
+		while(it.hasNext())
+		{
+			ImageView imV = it.next();
+			ImageWing imW = this.pathToImageWing.get(this.imageViewToPath.get(imV));
+			Facade.deleteImage(imW, currentFolder);
+			writeConsole(imW.getPath() + " has just been deleted.", "ImageBrowser");
+		}
+		this.initImage(this.currentFolder);
+		this.view((int)Math.sqrt(this.currentView));
+		this.page = 0;
+		this.viewChoice.setText(Integer.toString(this.currentView));
+	}
 
 	private void reloadView() {
 		if(this.currentView == 1)
@@ -303,14 +322,6 @@ public class ControlDashboard {
 	 */
 	public void addImage(String path, double height, double width) {
 		Facade.addImage(path, height, width, this.currentFolder);
-	}
-
-	/**
-	 * delete image to the current project
-	 * @param image
-	 */
-	public void deleteImage(ImageWing image) {
-		Facade.deleteImage(image, this.currentFolder);
 	}
 
 
@@ -867,9 +878,21 @@ private void moveFilesToFolder() {
 	    final MenuItem item2 = new MenuItem("Open Folder");
 	    item2.setOnAction(e -> changeFolder());
 	    
-	    contextMenu.getItems().addAll(item1, item2);
+	    final MenuItem item3 = new MenuItem("Delete Folder");
+	    item3.setOnAction(e -> deleteFolder());
+	    
+	    contextMenu.getItems().addAll(item1, item2, item3);
 
 
+	}
+
+	private void deleteFolder() {
+
+		Facade.deleteFolder(this.currentFolder, this.activeFolder);
+		this.initImage(this.currentFolder);
+		this.view((int)Math.sqrt(this.currentView));
+		this.page = 0;
+		this.viewChoice.setText(Integer.toString(this.currentView));
 	}
 
 
