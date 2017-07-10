@@ -10,7 +10,7 @@ import java.util.ArrayList;
  * files and other folders. Here files are images.
  * </p>
  * <p>
- * A folder is characteristic of:
+ * A folder is characteristic by:
  * <ul>
  * <li>A name</li>
  * <li>A parent folder</li>
@@ -110,9 +110,6 @@ public class Folder {
 	 *            The folder who include the new folder
 	 *            
 	 * @see ImageWing
-	 * 
-	 * @see Folder#name
-	 * @see Folder#parent
 	 */
 	public Folder(String folderName, ArrayList<Folder> folderList, ArrayList<ImageWing> imageList, Folder parent) {
 		this.name = folderName;
@@ -137,7 +134,7 @@ public class Folder {
 	/**
 	 * Return the folder parent.
 	 * 
-	 * @return the folder parent
+	 * @return the Folder parent
 	 */
 	public Folder getParent() {
 		return parent;
