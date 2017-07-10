@@ -64,7 +64,6 @@ public class ImageWing {
 	 * @param path
 	 *            The image path
 	 * 
-	 * @see ImageWing#path
 	 */
 	public ImageWing(String path) {
 		this.path = path;
