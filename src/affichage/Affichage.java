@@ -22,6 +22,7 @@ import java.util.List;
 
 import javax.imageio.ImageIO;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
@@ -39,7 +40,7 @@ import drawing.IDrawable;
 
 
 
-public class Affichage extends JPanel implements MouseListener {
+public class Affichage extends JPanel implements MouseListener, ActionListener {
 
 	 private JPopupMenu jpm = new JPopupMenu();
 	 private JMenuItem trueLandmark = new JMenuItem("True Landmark");      
@@ -51,20 +52,20 @@ public class Affichage extends JPanel implements MouseListener {
 	private JToolBar toolBar = new JToolBar();
 	
 	public static List<IDrawable> drawables = new LinkedList();
-	BufferedImage monImage = null;
+	BufferedImage monImage;
+	MouseEvent e;
 	
 	
 	
 	public Affichage() {
 		
-		//this.setBackground(Color.red);
+
 		
 		
 		this.addMouseListener(this);
+		  trueLandmark.addActionListener((ActionListener)this);
 		
-		
-		trueLandmark.addActionListener(TlandMark);
-		
+
 		//falseLandmark.addActionListener(startAnimation);
 	
 		  this.addMouseListener(new MouseAdapter(){
@@ -76,35 +77,42 @@ public class Affichage extends JPanel implements MouseListener {
 		          jpm.add(trueLandmark);
 		          jpm.add(falseLandmark);
 		          // jpm.add(new LandMark(e.getX(), e.getY(), true));  
+		          
+			    
+		          
 		         
-		        
 		          jpm.show(Cadre2.panneau, event.getX(), event.getY());
 		        }
 		      }
 		    });
-	
-		
-		 
+
 	}
 	
 	class TrueLandMark implements ActionListener, MouseListener{
-		
+		MouseEvent event;
 		@Override
-		public void actionPerformed(ActionEvent e) {
+		
+		
+		public void actionPerformed(ActionEvent a) {
 			System.out.println("Action Performed TrueLandMark");
 			
-			//addLandMark(t.getX(), t.getY());
+		
+		
+			
 		}
+		
+
 
 		@Override
 		public void mouseClicked(MouseEvent e) {
-			addLandMark(e.getX(), e.getY(), true);
+			//addLandMark(e.getX(), e.getY(), true);
 			
 		}
 
 		@Override
 		public void mousePressed(MouseEvent e) {
-			// TODO Auto-generated method stub
+			Point position = e.getPoint();
+			addLandMark(position.getX(), position.getY(),true);
 			
 		}
 
@@ -160,7 +168,7 @@ public class Affichage extends JPanel implements MouseListener {
 		return new drawing.CircleDrawable(Color.white, p, dim);
 
 	}
-	 public static void addLandMark(int x, int y , boolean B){
+	 public static void addLandMark(double x, double y , boolean B){
 		 B = true;
 		 String texte = PanelData.jText.getText();
 			PanelData.jText.setText(texte+ "\n X : "+x+ " Y : "+y+" "+B);
@@ -229,6 +237,7 @@ public class Affichage extends JPanel implements MouseListener {
 
 	protected void paintComponent(Graphics g)
 	{
+		System.out.println("IMAGE1 "+monImage);
 		super.paintComponent(g);
 		System.out.println("paintComponent de la classe Affichage 1");
 		g.drawImage(monImage, 0, 0, null);
@@ -267,7 +276,9 @@ public class Affichage extends JPanel implements MouseListener {
 	{   // dessiner une image à l'ecran	
 		try {
 			System.out.println("Chargement image dans la fonction Ajouter Image");
+			System.out.println("File ajouterImage : "+fichierImage);
 			monImage = ImageIO.read(fichierImage);
+		
 			System.out.println("Image 2 : "+monImage);
 			
 		} catch (IOException e) {
@@ -337,6 +348,8 @@ public class Affichage extends JPanel implements MouseListener {
 		
 		addLandMark(e.getX(), e.getY(), true);
 		System.out.println("X  : "+e.getX()+ " Y = "+e.getY());
+		
+		new Landmark(e.getX(), e.getY(), true);
 		//draw(null, e.getX(), e.getY(), 1,1);
 	
 	}
@@ -386,6 +399,20 @@ public class Affichage extends JPanel implements MouseListener {
 	@Override
 	public void mousePressed(MouseEvent e) {
 		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		Point a = getMousePosition();
+		if (e.getSource().equals(trueLandmark))
+		{
+		
+			addLandMark(a.getX(), a.getY(), true);
+				
+			
+			}
 		
 	}
 

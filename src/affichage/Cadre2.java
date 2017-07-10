@@ -98,8 +98,7 @@ public class Cadre2 extends JFrame implements ActionListener {
 	 
 	ImageIcon circle = new ImageIcon(circleT.getImage().getScaledInstance(40,40,java.awt.Image.SCALE_SMOOTH));
 	
-	
-//	 public static Cadre2 frame = new Cadre2();
+
 	 static JPanel panShape = new JPanel();
 	
 	 
@@ -127,19 +126,20 @@ public class Cadre2 extends JFrame implements ActionListener {
 	public Cadre2(File fileImage) {
 		super();
 		System.out.println("Lancement de Cadre2");
-		
+		System.out.println("1st File : "+fileImage);
 
 		
 		
 		
-		Go(fileImage);
+		Go();
 		try {
 			
 			System.out.println("Avant ajout image");
 			panneau.ajouterImage(fileImage);
+			panneau.setBounds(0, 0, this.getWidth(), this.getHeight());
 			System.out.println("Ajout de l'image après la fonction AjouterImage");
 			System.out.println("File : "+fileImage);
-			creerMenu(fileImage);
+			creerMenu();
 			
 			
 			
@@ -152,7 +152,7 @@ public class Cadre2 extends JFrame implements ActionListener {
 	
 	
 	
-	private void creerMenu(File fileImage) throws Exception {
+	private void creerMenu() throws Exception {
 
 
 	
@@ -381,7 +381,7 @@ public class Cadre2 extends JFrame implements ActionListener {
 			JFileChooser fileOuvrirImage = new JFileChooser();
 			if (fileOuvrirImage.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
 				panneau.ajouterImage(new File(fileOuvrirImage.getSelectedFile().getAbsolutePath()));
-				
+				System.out.println("fileOuvrirImage = "+fileOuvrirImage.getSelectedFile().getAbsolutePath());
 				panneau.setBounds(0, 0, this.getWidth(), this.getHeight());
 				
 			
@@ -450,13 +450,7 @@ public class Cadre2 extends JFrame implements ActionListener {
 
 
 
-	private void Go(File fileImage) {
-		
-		
-		
-		
-		
-	//	panneau.setBounds(0, 0, this.getWidth(), this.getHeight());
+	private void Go() {
 		
 		
 		c = this.getContentPane();
@@ -466,7 +460,7 @@ public class Cadre2 extends JFrame implements ActionListener {
 	    panneau = new Affichage();
 	    
 	    panData.setVisible(false);
-		//this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	
 		this.setSize(1100,650);
 		
 		
