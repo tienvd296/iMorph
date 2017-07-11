@@ -1,1 +1,7 @@
 /bin/
+
+lib/opencv/build/doc/
+
+lib/opencv/build/include/opencv/
+
+lib/
