@@ -56,9 +56,9 @@ public class ImageWing {
 	public ArrayList<Landmark> landmarks =new ArrayList<Landmark>();
 
 	/**
-	 * New image builder.
+	 * New image constructor.
 	 * <p>
-	 * This builder create an new image without landmark and property.
+	 * This constructor create an new image without landmark and property.
 	 * </p>
 	 * 
 	 * @param path
@@ -73,9 +73,9 @@ public class ImageWing {
 
 
 	/**
-	 * "Load image" builder.
+	 * "Load image" constructor.
 	 * <p>
-	 * This builder create an image with landmarks and properties.
+	 * This constructor create an image with landmarks and properties.
 	 * </p>
 	 * 
 	 * @param pathImage

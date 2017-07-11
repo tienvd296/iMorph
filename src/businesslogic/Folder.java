@@ -74,9 +74,9 @@ public class Folder {
 
 
 	/**
-	 * Empty folder builder.
+	 * Empty folder constructor.
 	 * <p>
-	 * This builder create an empty folder.
+	 * This constructor create an empty folder.
 	 * </p>
 	 * 
 	 * @param name
@@ -95,9 +95,9 @@ public class Folder {
 
 
 	/**
-	 * Folder builder.
+	 * Folder constructor.
 	 * <p>
-	 * This builder create a folder with images and other folders.
+	 * This constructor create a folder with images and other folders.
 	 * </p>
 	 * 
 	 * @param folderName
