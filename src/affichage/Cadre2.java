@@ -98,8 +98,7 @@ public class Cadre2 extends JFrame implements ActionListener {
 	 
 	ImageIcon circle = new ImageIcon(circleT.getImage().getScaledInstance(40,40,java.awt.Image.SCALE_SMOOTH));
 	
-	
-//	 public static Cadre2 frame = new Cadre2();
+
 	 static JPanel panShape = new JPanel();
 	
 	 
@@ -126,14 +125,23 @@ public class Cadre2 extends JFrame implements ActionListener {
 
 	public Cadre2(File fileImage) {
 		super();
+		System.out.println("Lancement de Cadre2");
+		System.out.println("1st File : "+fileImage);
+
 		
-		Go(fileImage);
+		
+		
+		Go();
 		try {
 			
-			
+			System.out.println("Avant ajout image");
+			panneau.ajouterImage(fileImage);
+			panneau.setBounds(0, 0, this.getWidth(), this.getHeight());
+			System.out.println("Ajout de l'image après la fonction AjouterImage");
+			System.out.println("File : "+fileImage);
 			creerMenu();
 			
-			
+			//panneau.ajouterImage(new File(fileOuvrirImage.getSelectedFile().getAbsolutePath()));
 			
 		} catch (Throwable e) {
 			e.printStackTrace();
@@ -146,13 +154,7 @@ public class Cadre2 extends JFrame implements ActionListener {
 	
 	private void creerMenu() throws Exception {
 
-		try {
-			Robot robot = new Robot();
-		} catch (AWTException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
+
 	
 		
 		// construction du menu
@@ -284,6 +286,12 @@ public class Cadre2 extends JFrame implements ActionListener {
 		
 		squareButton.addActionListener(this);
 		circleButton.addActionListener(this);
+		
+		
+	
+	
+		
+		
 	}
 	
 	
@@ -373,7 +381,7 @@ public class Cadre2 extends JFrame implements ActionListener {
 			JFileChooser fileOuvrirImage = new JFileChooser();
 			if (fileOuvrirImage.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
 				panneau.ajouterImage(new File(fileOuvrirImage.getSelectedFile().getAbsolutePath()));
-				
+				System.out.println("fileOuvrirImage = "+fileOuvrirImage.getSelectedFile().getAbsolutePath());
 				panneau.setBounds(0, 0, this.getWidth(), this.getHeight());
 				
 			
@@ -437,24 +445,12 @@ public class Cadre2 extends JFrame implements ActionListener {
 	
 	public void sauverImage() throws IOException, AWTException 
 	{ 
-		Robot robot = new Robot();
-		BufferedImage image21 = robot.createScreenCapture(new Rectangle(this.getX(), this.getY(), this.getWidth(), this.getHeight()));
-		JFileChooser fileEnregistrerImage = new JFileChooser();
-		if (fileEnregistrerImage.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
-			File fichierEnregistrement = new File(fileEnregistrerImage.getSelectedFile().getAbsolutePath()+ ".JPG");
-			panneau.enregistrerImage2(image21, fichierEnregistrement);
-			}
+		
 	} 
 
 
 
-	private void Go(File fileImage) {
-		
-		
-		
-		//panneau.ajouterImage(fileImage);
-		
-		//panneau.setBounds(0, 0, this.getWidth(), this.getHeight());
+	private void Go() {
 		
 		
 		c = this.getContentPane();
@@ -464,7 +460,7 @@ public class Cadre2 extends JFrame implements ActionListener {
 	    panneau = new Affichage();
 	    
 	    panData.setVisible(false);
-		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	
 		this.setSize(1100,650);
 		
 		
@@ -481,23 +477,21 @@ public class Cadre2 extends JFrame implements ActionListener {
 		
 		c.add(panneau);
 	
-		System.out.println("lol");
+		
 		this.setVisible(true);
-		
-		
 		
 		
 	}
 
 
 
-
+/*
 
 	public static void main(String args[]) 
 	{
 		try {
 			
-			//	new Cadre2(File );
+			//new Cadre2(File );
 			
 		
 			
@@ -510,7 +504,7 @@ public class Cadre2 extends JFrame implements ActionListener {
 
 
 
-
+*/
 
 
 

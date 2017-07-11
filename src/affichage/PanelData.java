@@ -40,19 +40,6 @@ public class PanelData extends JPanel{
 		 Font police = new Font("Arial", Font.BOLD, 16);
 		    jText.setFont(police);
 		    
-		    
-		  
-		    
-		    
-		/*    jText.addKeyListener(new KeyAdapter(){ 
-		    	public void keyPressed(KeyEvent e){ 
-		    	JTextField jtf = (JTextField) e.getSource(); 
-		    	String texteNouvellementInserer = jtf.getText(); 
-		    	int nouvelleTaille = texteNouvellementInserer.length(); 
-		    	jText.setSize(nouvelleTaille); 
-		    	} 
-		    	}); */
-		    
 		    jText.setText("LandMarks :");
 		    jText.setForeground(Color.BLACK);
 		    jText.setEnabled(false);
@@ -78,20 +65,6 @@ public class PanelData extends JPanel{
 	}
 	
 	 
-	 
-	
-	/* public void paintComponent(Graphics g){
-		 super.paintComponent(g);
-		 Font font = new Font("Courier", Font.BOLD, 20);
-		   this.setFont(font);
-		   g.setColor(Color.red);          
-		   g.drawString("Test de texte dans panData", 10, 20); 
-		   g.drawString(" test", 10, 20);
-	 }
-	 */
-	 
-	 
-
 	 
 	 
 }
