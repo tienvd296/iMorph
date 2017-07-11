@@ -35,6 +35,8 @@ import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
 import drawing.IDrawable;
+import ij.ImagePlus;
+import ij.io.Opener;
 
 
 
@@ -240,7 +242,8 @@ public class Affichage extends JPanel implements MouseListener, ActionListener {
 		System.out.println("IMAGE1 "+monImage);
 		super.paintComponent(g);
 		System.out.println("paintComponent de la classe Affichage 1");
-		g.drawImage(monImage, 0, 0, null);
+		g.drawImage(monImage, 0, 0,1100, 650, null);
+		
 		System.out.println("IMAGE "+monImage);
 		System.out.println("paintComponent de la classe Affichage 2");
 	}
@@ -273,19 +276,18 @@ public class Affichage extends JPanel implements MouseListener, ActionListener {
 
 
 	protected void ajouterImage(File fichierImage)
-	{   // dessiner une image à l'ecran	
-		try {
-			System.out.println("Chargement image dans la fonction Ajouter Image");
-			System.out.println("File ajouterImage : "+fichierImage);
-			monImage = ImageIO.read(fichierImage);
+	{  
 		
-			System.out.println("Image 2 : "+monImage);
-			
-		} catch (IOException e) {
-			e.printStackTrace();
-			System.out.println("Erreur chargement image");
-		}
-		//repaint(); 
+		String result = fichierImage.getAbsolutePath().toString();
+		ImagePlus imagePlus = new Opener().openTiff(result, "");
+		BufferedImage bufferedImage = imagePlus.getBufferedImage();
+
+		
+		System.out.println("Chargement image dans la fonction Ajouter Image");
+		System.out.println("File ajouterImage : "+fichierImage);
+		monImage = bufferedImage;
+		
+		System.out.println("Image 2 : "+monImage);
 	}
 	
 	

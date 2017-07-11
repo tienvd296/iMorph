@@ -141,7 +141,7 @@ public class Cadre2 extends JFrame implements ActionListener {
 			System.out.println("File : "+fileImage);
 			creerMenu();
 			
-			
+			//panneau.ajouterImage(new File(fileOuvrirImage.getSelectedFile().getAbsolutePath()));
 			
 		} catch (Throwable e) {
 			e.printStackTrace();
