@@ -119,7 +119,7 @@ public class ControlDashboard {
 
 
 	}
-	
+
 	/**
 	 * delete image to the current project
 	 */
@@ -137,6 +137,7 @@ public class ControlDashboard {
 		this.view((int)Math.sqrt(this.currentView));
 		this.page = 0;
 		this.viewChoice.setText(Integer.toString(this.currentView));
+		
 	}
 
 	private void reloadView() {
@@ -163,6 +164,9 @@ public class ControlDashboard {
 
 	@FXML
 	void next(MouseEvent event) {
+		
+		this.selected.clear();
+		
 		if(this.page <= ((this.imageTab.length - 1) / (Math.sqrt(this.currentView))-1))
 		{
 			this.page++;
@@ -174,6 +178,8 @@ public class ControlDashboard {
 	@FXML
 	void previous(MouseEvent event) {
 
+		this.selected.clear();
+		
 		if(this.page > 0)
 		{
 			this.page--;
@@ -245,7 +251,7 @@ public class ControlDashboard {
 
 
 	void initImage(Folder folder) {
-
+		this.selected.clear();
 		int nbImage = 0;
 		ArrayList<ImageWing> images = new ArrayList<ImageWing>();
 		int nbFolder = 0;
@@ -287,9 +293,9 @@ public class ControlDashboard {
 		{
 
 			ImageWing im = it.next();
-			
+
 			this.pathToImageWing.put(im.getPath(), im);
-			
+
 			ImagePlus imagePlus = new Opener().openTiff(im.getPath(), "");
 			BufferedImage bufferedImage = imagePlus.getBufferedImage();
 			Image temp = SwingFXUtils.toFXImage(bufferedImage, null);
@@ -502,8 +508,8 @@ public class ControlDashboard {
 					im1.setPreserveRatio(true);
 					im1.setImage(images[i - sizeFolder]);
 
-					
-					
+
+
 					double ratioImg = images[i - sizeFolder].getHeight()/images[i - sizeFolder].getWidth();
 					if(ratioImg > height/width)
 					{
@@ -522,7 +528,7 @@ public class ControlDashboard {
 					pane.getChildren().add(0, im1);
 
 					this.imageViewToPath.put(im1, pathTab[y - s]);
-					
+
 					this.displayLandmark(pane, im1, ratioImg, height/width, i-s);
 				}
 				grid.add(pane, i/nbImg, i%nbImg);
@@ -538,7 +544,7 @@ public class ControlDashboard {
 	private void clickFolder(Folder folder, MouseEvent e, Pane pane) {
 		this.activeFolder = folder;
 		contextMenu.show(pane, e.getScreenX(), e.getScreenY());
-	    /*
+		/*
 		if(this.activeFolder != folder)
 		{
 			this.activeFolder = folder;
@@ -765,9 +771,11 @@ public class ControlDashboard {
 
 	private void landmarkAdd(File file) {
 
+		ImageWing imW = this.pathToImageWing.get(file.getAbsolutePath());
+		Facade.editedImage = imW;
 		new Cadre2(file);
-		
-		
+
+
 	}
 
 	private void propertiesAdd(ImageWing image) {
@@ -836,54 +844,56 @@ public class ControlDashboard {
 		}
 	}
 
-private void changeFolder()
-{
-	
-	this.currentFolder = this.activeFolder;
-	this.initImage(this.currentFolder);
-	this.view((int)Math.sqrt(this.currentView));
-	this.page = 0;
-	this.viewChoice.setText(Integer.toString(this.currentView));
-}
-
-private void moveFilesToFolder() {
-	Folder fold1 = this.activeFolder;
-	Iterator<ImageView> it = selected.iterator();
-	while(it.hasNext())
+	private void changeFolder()
 	{
-		ImageView imV = it.next();
-		ImageWing imW = this.pathToImageWing.get(this.imageViewToPath.get(imV));
-		Facade.addImage(imW, fold1);
-		Facade.deleteImage(imW, currentFolder);
-		writeConsole(imW.getPath() + " is now in the " + fold1.getName() + " folder.", "ImageBrowser");
-	}
-	this.initImage(this.currentFolder);
-	this.view((int)Math.sqrt(this.currentView));
-	this.page = 0;
-	this.viewChoice.setText(Integer.toString(this.currentView));
-	
-}
 
-	
-	
+		this.currentFolder = this.activeFolder;
+		this.initImage(this.currentFolder);
+		this.view((int)Math.sqrt(this.currentView));
+		this.page = 0;
+		this.viewChoice.setText(Integer.toString(this.currentView));
+	}
+
+	private void moveFilesToFolder() {
+		Folder fold1 = this.activeFolder;
+		Iterator<ImageView> it = selected.iterator();
+		while(it.hasNext())
+		{
+			ImageView imV = it.next();
+			ImageWing imW = this.pathToImageWing.get(this.imageViewToPath.get(imV));
+			Facade.addImage(imW, fold1);
+			Facade.deleteImage(imW, currentFolder);
+			writeConsole(imW.getPath() + " is now in the " + fold1.getName() + " folder.", "ImageBrowser");
+		}
+		this.initImage(this.currentFolder);
+		this.view((int)Math.sqrt(this.currentView));
+		this.page = 0;
+		this.viewChoice.setText(Integer.toString(this.currentView));
+
+	}
+
+
+
 	public void initialize() {
+		
+		Facade.activeView = this;
 
 		if(Facade.currentProject != null)
 		{
 			this.initImage(this.currentFolder);
 			writeConsole("Opening of the project: " + Facade.currentProject.name, "Project");
 		}
-		
-	    final MenuItem item1 = new MenuItem("Move selected files to Folder");
-	    item1.setOnAction(e -> moveFilesToFolder());
-	    
-	    final MenuItem item2 = new MenuItem("Open Folder");
-	    item2.setOnAction(e -> changeFolder());
-	    
-	    final MenuItem item3 = new MenuItem("Delete Folder");
-	    item3.setOnAction(e -> deleteFolder());
-	    
-	    contextMenu.getItems().addAll(item1, item2, item3);
+
+		final MenuItem item1 = new MenuItem("Move selected files to Folder");
+		item1.setOnAction(e -> moveFilesToFolder());
+
+		final MenuItem item2 = new MenuItem("Open Folder");
+		item2.setOnAction(e -> changeFolder());
+
+		final MenuItem item3 = new MenuItem("Delete Folder");
+		item3.setOnAction(e -> deleteFolder());
+
+		contextMenu.getItems().addAll(item1, item2, item3);
 
 
 	}

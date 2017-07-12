@@ -120,14 +120,15 @@ public class Cadre2 extends JFrame implements ActionListener {
 	public static JSplitPane split;
 	
 	
-	
+	public File file;
 	
 
 	public Cadre2(File fileImage) {
 		super();
 		System.out.println("Lancement de Cadre2");
 		System.out.println("1st File : "+fileImage);
-
+		this.file = fileImage;
+		
 		
 		
 		
@@ -457,7 +458,7 @@ public class Cadre2 extends JFrame implements ActionListener {
 		
 	    jc = new JCanvas();
 	    panData = new PanelData();
-	    panneau = new Affichage();
+	    panneau = new Affichage(this.file);
 	    
 	    panData.setVisible(false);
 	

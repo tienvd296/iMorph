@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import application.ControlDashboard;
 import businesslogic.*;
 import helper.MetadataExtractor;
 import helper.XML;
@@ -26,6 +27,10 @@ public class Facade {
 	 * @see Project
 	 */
 	public static Project currentProject = null;
+	
+	public static ImageWing editedImage = null;
+	
+	public static ControlDashboard activeView = null;
 
 	/**
 	 * Create a new empty project. Just the project's path is available.
@@ -376,10 +381,16 @@ public class Facade {
 	 * @see ImageWing
 	 * @see Landmark
 	 */
-	public static void addLandmark(ImageWing im, Landmark land)
+	public static void addLandmark(File file, float X, float Y, Boolean b)
 	{
-		im.addLandmark(land);
-		landmarkFile.saveImage(im);
+		ImageWing imW = Facade.editedImage;
+		X = (int) (X*Float.parseFloat(imW.getProperties().get("WIDTH")));
+		Y = (int)(Y*Float.parseFloat(imW.getProperties().get("HEIGHT")));
+		Landmark land = new Landmark(X, Y, b);
+		Facade.editedImage.addLandmark(land);
+		landmarkFile.saveImage(Facade.editedImage);
+		Facade.activeView.writeConsole(imW.getProperties().get("FILENAME") + " has a new landmark, X=" + X + "  Y=" + Y + "  isLandmark" + b , "POPUP Pierre");
+		
 	}
 
 	/**
