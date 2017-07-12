@@ -137,7 +137,7 @@ public class ControlDashboard {
 		this.view((int)Math.sqrt(this.currentView));
 		this.page = 0;
 		this.viewChoice.setText(Integer.toString(this.currentView));
-		
+
 	}
 
 	private void reloadView() {
@@ -164,9 +164,9 @@ public class ControlDashboard {
 
 	@FXML
 	void next(MouseEvent event) {
-		
+
 		this.selected.clear();
-		
+
 		if(this.page <= ((this.imageTab.length - 1) / (Math.sqrt(this.currentView))-1))
 		{
 			this.page++;
@@ -179,7 +179,7 @@ public class ControlDashboard {
 	void previous(MouseEvent event) {
 
 		this.selected.clear();
-		
+
 		if(this.page > 0)
 		{
 			this.page--;
@@ -875,7 +875,7 @@ public class ControlDashboard {
 
 
 	public void initialize() {
-		
+
 		Facade.activeView = this;
 
 		if(Facade.currentProject != null)
@@ -908,6 +908,29 @@ public class ControlDashboard {
 	}
 
 
+	/* ------- START EXTERNAL FUNCTION ------- */
+	@FXML
+	void binaryPP(ActionEvent event) {
+		
+	}
+
+	@FXML
+	void rgb2PP(ActionEvent event) {
+
+	}
+
+	@FXML
+	void skeletonPP(ActionEvent event) {
+
+	}
+
+
+	@FXML
+	void landmarkPrediction(ActionEvent event) {
+
+	}
+	
+	/* ------- END EXTERNAL FUNCTION ------- */
 
 
 }
