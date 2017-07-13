@@ -21,9 +21,23 @@ import businesslogic.ImageWing;
 import businesslogic.Landmark;
 import businesslogic.Project;
 
+/**
+ * <b>This class is an helper for using XML file</b>
+ * 
+ * <p>
+ * There are only static methods for read and write an XML file.
+ *
+ */
 public class XML {
 
-
+	/**
+	 * Create a new project XML file with all informations about the project.
+	 * 
+	 * @param p 
+	 * 			The project to be saved
+	 * 
+	 * @see Project
+	 */
 	public static boolean saveProject(Project p){
 
 		ArrayList<Folder> folders = p.getFolders();
@@ -97,6 +111,16 @@ public class XML {
 	}
 
 
+	/**
+	 * Recursively called function for save folder
+	 * 
+	 * @param folderParent 
+	 * 			The parent folder
+	 * @param folder2 
+	 * 			The folder to be saved
+	 * 
+	 * @see Folder
+	 */
 	private static org.jdom2.Element writeFolder(org.jdom2.Element folderParent, Folder folder2)
 	{
 		ArrayList<Folder> folders = folder2.getFolders();
@@ -153,7 +177,16 @@ public class XML {
 	}
 
 
-
+	/**
+	 * Read an existing project XML file with all informations about the project.
+	 * 
+	 * @param file 
+	 * 			The file to be read
+	 * 
+	 * @return An existing project
+	 * 
+	 * @see Project
+	 */
 	public static Project readProject(File file){
 
 		SAXBuilder sxb = new SAXBuilder();
@@ -228,6 +261,17 @@ public class XML {
 
 	}
 
+	
+	/**
+	 * Recursively called function for read folder
+	 * 
+	 * @param folder2 
+	 * 			The folder to be saved
+	 * @param parent 
+	 * 			The parent folder
+	 * 
+	 * @see Folder
+	 */
 	private static Folder readFolder(org.jdom2.Element folder2, Folder parent) 
 	{
 		Folder ret = new Folder(null, parent);
@@ -305,7 +349,7 @@ public class XML {
 			Iterator<Element> i = listProject.iterator();
 			while(i.hasNext() && !stop)
 			{
-				
+
 				org.jdom2.Element courant = i.next();
 				System.out.println(courant.getAttributeValue("path")+ " = "+path);
 				if(courant.getAttributeValue("path").equals(path))
@@ -323,7 +367,7 @@ public class XML {
 				Attribute dateAtt = new Attribute("dateSave", dateSave);
 				project.setAttribute(dateAtt);
 				racine.addContent(project);
-				
+
 			}
 
 
