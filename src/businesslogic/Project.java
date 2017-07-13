@@ -103,9 +103,9 @@ public class Project {
 	 *            The date the project was last saved
 	 * @param path
 	 *            The path to the project's backup file
-	 * @param imageList
+	 * @param images
 	 *            The folder is composed of this list of image           
-	 * @param folderList
+	 * @param folders
 	 *            The folder is composed of this list of folder
 	 *            
 	 * @see ImageWing
@@ -168,7 +168,7 @@ public class Project {
     /**
      * Set the date the project was last saved
      * 
-     * @param name
+     * @param lastSave
      *            String with the date the project was last saved.
      * 
      */
@@ -233,7 +233,7 @@ public class Project {
     /**
      * Set the folder list
      * 
-     * @param images
+     * @param folders
      *            ArrayList of Folder.
      *            
      * @see Folder

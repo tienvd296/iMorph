@@ -104,9 +104,9 @@ public class Facade {
 	/**
 	 * Remove image to the current folder.
 	 * 
-	 * @param imW
+	 * @param image
 	 * 			An ImageWing
-	 * @param fold1
+	 * @param fold
 	 * 			The current folder, 
 	 * 			if the current folder is the root then fold = null
 	 */
@@ -372,11 +372,13 @@ public class Facade {
 	/**
 	 * Add a new landmark to image as passed in parameter
 	 * 
-	 * @param im
-	 * 			the ImageWing who is concerned by the new landmark
-	 * @param land
-	 * 			the new landmark
+	 * @param file
+	 * 			
+	 * @param X
 	 * 
+	 * @param Y
+	 * 
+	 * @param b
 	 * 
 	 * @see ImageWing
 	 * @see Landmark
@@ -416,8 +418,6 @@ public class Facade {
 	 * 
 	 * @param im
 	 * 			the ImageWing who is concerned by the edited landmark
-	 * @param land
-	 * 			the edited landmark
 	 * 
 	 * 
 	 * @see ImageWing

@@ -36,6 +36,8 @@ public class XML {
 	 * @param p 
 	 * 			The project to be saved
 	 * 
+	 * @return true if the save is ok
+	 * 
 	 * @see Project
 	 */
 	public static boolean saveProject(Project p){
