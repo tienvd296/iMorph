@@ -147,7 +147,6 @@ public class ControlDashboard {
 		}
 		else
 		{
-			System.out.println(this.currentView);
 			this.view((int) Math.sqrt(currentView));
 		}
 	}
@@ -310,6 +309,7 @@ public class ControlDashboard {
 		this.imageTab = imageTab;
 		this.pathTab = pathTab;
 		this.folderTab = folderTab;
+		
 	}
 
 
@@ -841,6 +841,7 @@ public class ControlDashboard {
 			Facade.addFolder(result.get(), this.currentFolder);
 			writeConsole("1 folder added to the project", "ImageBrowser");
 			this.initImage(this.currentFolder);
+			this.reloadView();
 		}
 	}
 
@@ -911,25 +912,61 @@ public class ControlDashboard {
 	/* ------- START EXTERNAL FUNCTION ------- */
 	@FXML
 	void binaryPP(ActionEvent event) {
+		this.writeConsole("Binary is executing...", "Image Preprocessing");
+
+		ArrayList<String> listPath = new ArrayList<String>();
+		Iterator<ImageView> it = this.selected.iterator();
+		while(it.hasNext())
+		{
+			ImageView imV = it.next();
+			String path = this.imageViewToPath.get(imV);
+			listPath.add(path);
+		}
+		this.writeConsole(Facade.binaryPP(listPath), "Image Preprocessing");
 		
+		this.initImage(currentFolder);
+		this.reloadView();
 	}
 
 	@FXML
 	void rgb2PP(ActionEvent event) {
+		this.writeConsole("RGB2 Grey is executing...", "Image Preprocessing");
 
+		
+		
+		this.initImage(currentFolder);
+		this.reloadView();
 	}
 
 	@FXML
 	void skeletonPP(ActionEvent event) {
+		this.writeConsole("Skeleton is executing...", "Image Preprocessing");
 
+		
+		
+		this.initImage(currentFolder);
+		this.reloadView();
 	}
 
 
 	@FXML
 	void landmarkPrediction(ActionEvent event) {
+		this.writeConsole("Landmark prediction is executing...", "Landmark");
 
+		ArrayList<String> listPath = new ArrayList<String>();
+		Iterator<ImageView> it = this.selected.iterator();
+		while(it.hasNext())
+		{
+			ImageView imV = it.next();
+			String path = this.imageViewToPath.get(imV);
+			listPath.add(path);
+		}
+		this.writeConsole(Facade.landmarkPrediction(listPath), "Image Preprocessing");
+		
+		this.initImage(currentFolder);
+		this.reloadView();
 	}
-	
+
 	/* ------- END EXTERNAL FUNCTION ------- */
 
 

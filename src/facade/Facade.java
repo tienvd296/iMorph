@@ -1,8 +1,13 @@
 package facade;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import application.ControlDashboard;
 import businesslogic.*;
@@ -426,6 +431,39 @@ public class Facade {
 	public static void editLandmark(ImageWing im)
 	{
 		landmarkFile.saveImage(im);
+	}
+
+	public static String binaryPP(ArrayList<String> listPath) {
+		return "OK";
+		
+	}
+
+	public static String landmarkPrediction(ArrayList<String> listPath) {
+		String separator = System.getProperty("file.separator");
+		String originalPath = System.getProperty("user.dir");
+		String pathAPI = originalPath + separator + "testLandmark.exe";
+		
+		ProcessBuilder pb = new ProcessBuilder(pathAPI, listPath.get(0));
+
+		Process process;
+		try {
+			process = pb.start();
+
+		BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream())); 
+		Logger logger = Logger.getLogger("global");
+		String line = null;
+		
+			while ((line = stdInput.readLine()) != null) {
+			    logger.log(Level.INFO, line);
+		}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		System.out.println("Completed...");
+		
+
+		return "OK";
 	}
 
 

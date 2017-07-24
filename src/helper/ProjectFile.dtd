@@ -19,3 +19,4 @@
 <!ATTLIST landmark posX CDATA #REQUIRED>
 <!ATTLIST landmark posY CDATA #REQUIRED>
 <!ATTLIST landmark isLandmark CDATA #REQUIRED>
+
