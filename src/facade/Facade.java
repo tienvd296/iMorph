@@ -32,9 +32,9 @@ public class Facade {
 	 * @see Project
 	 */
 	public static Project currentProject = null;
-	
+
 	public static ImageWing editedImage = null;
-	
+
 	public static ControlDashboard activeView = null;
 
 	/**
@@ -81,8 +81,8 @@ public class Facade {
 			fold.addImage(image);
 		}
 	}
-	
-	
+
+
 	/**
 	 * Add an existing image to the current folder. The image is given in parameter.
 	 * 
@@ -102,7 +102,7 @@ public class Facade {
 		{
 			fold1.addImage(image);
 		}
-		
+
 	}
 
 
@@ -187,7 +187,7 @@ public class Facade {
 		return Facade.currentProject.getImages();
 	}
 
-	
+
 	/**
 	 * Return image landmarks of the image passed as a parameter
 	 * 
@@ -202,7 +202,7 @@ public class Facade {
 	public static ArrayList<Landmark> getAllLandmark(ImageWing im) {
 		return im.getLandmarks();
 	}
-	
+
 	/**
 	 * Return if image has properties or not
 	 * 
@@ -235,7 +235,7 @@ public class Facade {
 		image.getProperties().replace(key, value);
 
 	}
-	
+
 	/**
 	 * Add a property to image as passed in parameter
 	 * 
@@ -309,7 +309,7 @@ public class Facade {
 		return a/b;
 	}
 
-	
+
 	public static void clearHistoric() {
 	}
 
@@ -339,7 +339,7 @@ public class Facade {
 	 * @see Folder
 	 */
 	public static void addFolder(String string, Folder fold) {
-		
+
 		if(fold == null)
 		{
 			Folder folder = new Folder(string, null);
@@ -351,7 +351,7 @@ public class Facade {
 			fold.addFolder(folder);
 		}
 	}
-	
+
 	/**
 	 * Remove the folder as passed in parameter to the current one
 	 * 
@@ -397,7 +397,7 @@ public class Facade {
 		Facade.editedImage.addLandmark(land);
 		landmarkFile.saveImage(Facade.editedImage);
 		Facade.activeView.writeConsole(imW.getProperties().get("FILENAME") + " has a new landmark, X=" + X + "  Y=" + Y + "  isLandmark" + b , "POPUP Pierre");
-		
+
 	}
 
 	/**
@@ -435,33 +435,42 @@ public class Facade {
 
 	public static String binaryPP(ArrayList<String> listPath) {
 		return "OK";
-		
+
 	}
 
-	public static String landmarkPrediction(ArrayList<String> listPath) {
+	public static String landmarkPrediction(ArrayList<String> listPath, HashMap<String, ImageWing> listImW, ControlDashboard CD) {
 		String separator = System.getProperty("file.separator");
 		String originalPath = System.getProperty("user.dir");
-		String pathAPI = originalPath + separator + "testLandmark.exe";
-		
-		ProcessBuilder pb = new ProcessBuilder(pathAPI, listPath.get(0));
+		String pathAPI = originalPath + separator + "landmarkPrediction.exe";
 
+		ProcessBuilder pb = new ProcessBuilder(pathAPI, listPath.get(0));
 		Process process;
 		try {
 			process = pb.start();
+			BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream())); 
+			String line = null;
 
-		BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream())); 
-		Logger logger = Logger.getLogger("global");
-		String line = null;
-		
+			
 			while ((line = stdInput.readLine()) != null) {
-			    logger.log(Level.INFO, line);
-		}
+				CD.writeConsole(line, "Image Preprocessing");
+				String[] tab = line.split(" ");
+				Boolean b;
+				if(tab[2] == "true"){
+					b = true;
+				}
+				else
+				{
+					b = false;
+				}
+				Landmark l = new Landmark(Float.parseFloat(tab[0]), Float.parseFloat(tab[1]), b);
+				listImW.get(listPath.get(0)).addLandmark(l);
+			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		System.out.println("Completed...");
-		
+
 
 		return "OK";
 	}

@@ -952,7 +952,6 @@ public class ControlDashboard {
 	@FXML
 	void landmarkPrediction(ActionEvent event) {
 		this.writeConsole("Landmark prediction is executing...", "Landmark");
-
 		ArrayList<String> listPath = new ArrayList<String>();
 		Iterator<ImageView> it = this.selected.iterator();
 		while(it.hasNext())
@@ -961,7 +960,7 @@ public class ControlDashboard {
 			String path = this.imageViewToPath.get(imV);
 			listPath.add(path);
 		}
-		this.writeConsole(Facade.landmarkPrediction(listPath), "Image Preprocessing");
+		this.writeConsole(Facade.landmarkPrediction(listPath, pathToImageWing, this), "Image Preprocessing");
 		
 		this.initImage(currentFolder);
 		this.reloadView();
