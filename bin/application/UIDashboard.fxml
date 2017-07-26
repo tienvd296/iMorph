@@ -58,7 +58,7 @@
 									<items>
 										<AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
 											<children>
-												<BorderPane fx:id="table" layoutX="143.0" layoutY="68.0" prefHeight="383.0" prefWidth="572.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+												<BorderPane fx:id="table" layoutX="143.0" layoutY="68.0" prefHeight="383.0" prefWidth="572.0" style="-fx-background-color: #454545;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
 													<left>
 														<ImageView fitHeight="70.0" fitWidth="60.0" onMouseClicked="#previous" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER">
 															<image>
@@ -74,7 +74,7 @@
 														</ImageView>
 													</right>
 													<top>
-														<MenuBar style="-fx-background-color: blue;" BorderPane.alignment="CENTER">
+														<MenuBar style="-fx-background-color: #626262;" BorderPane.alignment="CENTER">
 															<menus>
 																<Menu mnemonicParsing="false" text="Folder">
 																	<items>

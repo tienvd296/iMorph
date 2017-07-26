@@ -21,7 +21,9 @@ import ij.io.Opener;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.geometry.Pos;
 import javafx.scene.control.Button;
+import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
@@ -284,6 +286,7 @@ public class ControlDashboard {
 		{
 			Folder fd = it2.next();
 			folderTab[x] = fd;
+			x++;
 		}
 
 		int i = 0;
@@ -309,7 +312,7 @@ public class ControlDashboard {
 		this.imageTab = imageTab;
 		this.pathTab = pathTab;
 		this.folderTab = folderTab;
-		
+
 	}
 
 
@@ -453,6 +456,7 @@ public class ControlDashboard {
 			if(folderTab != null)
 			{
 				sizeFolder = this.folderTab.length;
+				
 			}
 
 
@@ -462,41 +466,51 @@ public class ControlDashboard {
 			double width = (this.table.getWidth() - 120) / nbImg;
 			double height = (this.table.getHeight() - 40) / nbImg;
 
-
+			System.out.println(folder);
 
 
 			int marge = this.page*nbImg;
-
-
+			
+			System.out.println(sizeFolder);
 			for(int i = marge; i<marge+Math.pow(nbImg, 2); i++)
 			{
+				System.out.println(i);
 				Pane pane = new Pane();
 				if(sizeFolder > i)
 				{
 					ImageView im1 = new ImageView();
 
 					final int y = i;
-					im1.setOnMouseClicked(e -> clickFolder(folder[y], e, pane));
+					pane.setOnMouseClicked(e -> clickFolder(folder[y], e, pane));
 					im1.setPreserveRatio(true);
 					Image folderImage = new Image("open-folder-outline.png");
 					im1.setImage(folderImage);
-
+					System.out.println(folder[i].toString());
+					Label l1 = new Label(folder[i].getName(), im1);
+					l1.setContentDisplay(ContentDisplay.TOP);
 					double ratioImg = folderImage.getHeight()/folderImage.getWidth();
 					if(ratioImg > height/width)
 					{
-						im1.setFitHeight(height-20);
+						im1.setFitHeight(height-50);
 						im1.setX((width - im1.getFitHeight()/ratioImg) / 2);
+						l1.setLayoutX((width - im1.getFitHeight()/ratioImg) / 2);
 						im1.setY((height - im1.getFitHeight()) / 2);
+						l1.setLayoutY((height - im1.getFitHeight()) / 2);
 					}
 					else
 					{
-						im1.setFitWidth(width - 20);
+						im1.setFitWidth(width-50);
 						im1.setX((width - im1.getFitWidth()) / 2);
+						l1.setLayoutX((width - im1.getFitWidth()) / 2);
 						im1.setY((height - im1.getFitWidth()*ratioImg) / 2);
+						l1.setLayoutY((height - im1.getFitWidth()*ratioImg) / 2);
 					}
+
+					l1.setStyle("-fx-text-fill: WHITE;");
 					pane.setPrefHeight(height);
 					pane.setPrefWidth(width);
 					pane.getChildren().add(0, im1);
+					pane.getChildren().add(1, l1);
 				}
 				else if(images.length + sizeFolder > i)
 				{
@@ -830,7 +844,7 @@ public class ControlDashboard {
 
 	@FXML
 	void newFolder(ActionEvent event) {
-		TextInputDialog dialog = new TextInputDialog("walter");
+		TextInputDialog dialog = new TextInputDialog("UNDEFINED FOLDER");
 		dialog.setTitle("Image browser");
 		dialog.setHeaderText("Create a new folder.");
 		dialog.setContentText("Please enter folder name:");
@@ -891,12 +905,32 @@ public class ControlDashboard {
 		final MenuItem item2 = new MenuItem("Open Folder");
 		item2.setOnAction(e -> changeFolder());
 
-		final MenuItem item3 = new MenuItem("Delete Folder");
-		item3.setOnAction(e -> deleteFolder());
+		final MenuItem item3 = new MenuItem("Rename Folder");
+		item3.setOnAction(e -> renameFolder());
+		
+		final MenuItem item4 = new MenuItem("Delete Folder");
+		item4.setOnAction(e -> deleteFolder());
 
-		contextMenu.getItems().addAll(item1, item2, item3);
+		contextMenu.getItems().addAll(item1, item2, item3, item4);
 
 
+	}
+
+	private void renameFolder() {
+		String old = this.activeFolder.getName();
+		TextInputDialog dialog = new TextInputDialog(old);
+		dialog.setTitle("Image browser");
+		dialog.setHeaderText("Change folder name");
+		dialog.setContentText("Please enter folder name:");
+
+		// Traditional way to get the response value.
+		Optional<String> result = dialog.showAndWait();
+		if (result.isPresent()){
+			this.activeFolder.setName(result.get());
+			writeConsole("The folder -"+ old +"-e has been rename", "ImageBrowser");
+			this.initImage(this.currentFolder);
+			this.reloadView();
+		}
 	}
 
 	private void deleteFolder() {
@@ -923,7 +957,7 @@ public class ControlDashboard {
 			listPath.add(path);
 		}
 		this.writeConsole(Facade.binaryPP(listPath), "Image Preprocessing");
-		
+
 		this.initImage(currentFolder);
 		this.reloadView();
 	}
@@ -932,8 +966,8 @@ public class ControlDashboard {
 	void rgb2PP(ActionEvent event) {
 		this.writeConsole("RGB2 Grey is executing...", "Image Preprocessing");
 
-		
-		
+
+
 		this.initImage(currentFolder);
 		this.reloadView();
 	}
@@ -942,8 +976,8 @@ public class ControlDashboard {
 	void skeletonPP(ActionEvent event) {
 		this.writeConsole("Skeleton is executing...", "Image Preprocessing");
 
-		
-		
+
+
 		this.initImage(currentFolder);
 		this.reloadView();
 	}
@@ -961,7 +995,7 @@ public class ControlDashboard {
 			listPath.add(path);
 		}
 		this.writeConsole(Facade.landmarkPrediction(listPath, pathToImageWing, this), "Image Preprocessing");
-		
+
 		this.initImage(currentFolder);
 		this.reloadView();
 	}

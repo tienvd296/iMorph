@@ -162,7 +162,7 @@ public class ControlHome {
 			root = loader.load();
 
 			Scene scene = new Scene(root);
-
+			scene.getStylesheets().add("caspian.css");
 			scene.addEventHandler(KeyEvent.KEY_PRESSED, (key) -> {
 				if(key.getCode()==KeyCode.CONTROL && key.getCode()==KeyCode.A)
 				{
@@ -172,8 +172,9 @@ public class ControlHome {
 					Keyboard.setCtrl();
 				}
 			});
-
+			
 			Stage stage = new Stage();
+			stage.setFullScreen(true);
 			stage.setScene(scene);
 			stage.show();
 

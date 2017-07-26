@@ -1,46 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Menu?>
-<?import javafx.scene.control.MenuBar?>
-<?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.Pane?>
 
 <AnchorPane maxHeight="600.0" maxWidth="600.0" minHeight="600.0" minWidth="600.0" prefHeight="600.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.ControlHome">
    <children>
       <BorderPane layoutX="177.0" layoutY="182.0" prefHeight="600.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-         <top>
-            <MenuBar BorderPane.alignment="CENTER">
-              <menus>
-                <Menu mnemonicParsing="false" text="File">
-                  <items>
-                    <MenuItem mnemonicParsing="false" text="Close" />
-                  </items>
-                </Menu>
-                <Menu mnemonicParsing="false" text="Edit">
-                  <items>
-                    <MenuItem mnemonicParsing="false" onAction="#clearHistoric" text="Clear historic" />
-                  </items>
-                </Menu>
-                <Menu mnemonicParsing="false" text="Help">
-                  <items>
-                    <MenuItem mnemonicParsing="false" text="About" />
-                  </items>
-                </Menu>
-              </menus>
-            </MenuBar>
-         </top>
-         <center>
-            <AnchorPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
-               <children>
-                  <Button layoutX="150.0" layoutY="135.0" mnemonicParsing="false" onMouseClicked="#newProject" text="New project..." />
-                  <Button layoutX="307.0" layoutY="135.0" mnemonicParsing="false" onMouseClicked="#openProject" text="Load an existing project" />
-               </children>
-            </AnchorPane>
-         </center>
          <bottom>
             <TableView fx:id="lastProject" onMouseClicked="#clickItem" prefHeight="280.0" prefWidth="600.0" BorderPane.alignment="CENTER">
               <columns>
@@ -53,6 +24,19 @@
                </columnResizePolicy>
             </TableView>
          </bottom>
+         <center>
+            <Pane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #818EFE;" BorderPane.alignment="CENTER">
+               <children>
+                  <ImageView fitHeight="322.0" fitWidth="600.0" layoutY="-1.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../homeBG.jpg" />
+                     </image>
+                  </ImageView>
+                  <Button layoutX="212.0" layoutY="82.0" mnemonicParsing="false" onMouseClicked="#newProject" prefHeight="38.0" prefWidth="176.0" text="New project..." />
+                  <Button layoutX="166.0" layoutY="172.0" mnemonicParsing="false" onMouseClicked="#openProject" prefHeight="38.0" prefWidth="268.0" text="Load an existing project" />
+               </children>
+            </Pane>
+         </center>
       </BorderPane>
    </children>
 </AnchorPane>
