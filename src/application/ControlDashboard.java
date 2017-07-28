@@ -68,6 +68,11 @@ public class ControlDashboard {
 	private HashMap<ImageView, String> imageViewToPath = new HashMap<ImageView, String>();
 	private HashMap<String, ImageWing> pathToImageWing = new HashMap<String, ImageWing>();
 
+	
+
+    @FXML
+    private ImageView backFolder;
+    
 	@FXML
 	private BorderPane table;
 
@@ -185,17 +190,24 @@ public class ControlDashboard {
 		{
 			this.page--;
 		}
-		else
-		{
-			if(this.currentFolder != null)
-			{
-				this.currentFolder = this.currentFolder.getParent();
-				this.initImage(this.currentFolder);
-			}
-		}
 		this.reloadView();
 
 	}
+	
+
+    @FXML
+    void backFolder(MouseEvent event) {
+    	if(this.currentFolder != null)
+		{
+			this.currentFolder = this.currentFolder.getParent();
+			this.initImage(this.currentFolder);
+		}
+    	if(this.currentFolder == null)
+    	{
+    		this.backFolder.setVisible(false);
+    	}
+    	this.reloadView();
+    }
 
 
 	@FXML
@@ -466,15 +478,12 @@ public class ControlDashboard {
 			double width = (this.table.getWidth() - 120) / nbImg;
 			double height = (this.table.getHeight() - 40) / nbImg;
 
-			System.out.println(folder);
 
 
 			int marge = this.page*nbImg;
 			
-			System.out.println(sizeFolder);
 			for(int i = marge; i<marge+Math.pow(nbImg, 2); i++)
 			{
-				System.out.println(i);
 				Pane pane = new Pane();
 				if(sizeFolder > i)
 				{
@@ -485,7 +494,6 @@ public class ControlDashboard {
 					im1.setPreserveRatio(true);
 					Image folderImage = new Image("open-folder-outline.png");
 					im1.setImage(folderImage);
-					System.out.println(folder[i].toString());
 					Label l1 = new Label(folder[i].getName(), im1);
 					l1.setContentDisplay(ContentDisplay.TOP);
 					double ratioImg = folderImage.getHeight()/folderImage.getWidth();
@@ -787,7 +795,7 @@ public class ControlDashboard {
 
 		ImageWing imW = this.pathToImageWing.get(file.getAbsolutePath());
 		Facade.editedImage = imW;
-		new Cadre2(file);
+		new Cadre2(file, imW);
 
 
 	}
@@ -867,6 +875,7 @@ public class ControlDashboard {
 		this.view((int)Math.sqrt(this.currentView));
 		this.page = 0;
 		this.viewChoice.setText(Integer.toString(this.currentView));
+		this.backFolder.setVisible(true);
 	}
 
 	private void moveFilesToFolder() {

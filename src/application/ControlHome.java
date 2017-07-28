@@ -174,7 +174,7 @@ public class ControlHome {
 			});
 			
 			Stage stage = new Stage();
-			stage.setFullScreen(true);
+			stage.setMaximized(true);
 			stage.setScene(scene);
 			stage.show();
 

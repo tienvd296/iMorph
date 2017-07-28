@@ -14,6 +14,7 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.Pane?>
 
 <AnchorPane prefHeight="800.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.ControlDashboard">
 	<children>
@@ -59,13 +60,6 @@
 										<AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
 											<children>
 												<BorderPane fx:id="table" layoutX="143.0" layoutY="68.0" prefHeight="383.0" prefWidth="572.0" style="-fx-background-color: #454545;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-													<left>
-														<ImageView fitHeight="70.0" fitWidth="60.0" onMouseClicked="#previous" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER">
-															<image>
-																<Image url="@left-arrow.png" />
-															</image>
-														</ImageView>
-													</left>
 													<right>
 														<ImageView fitHeight="70.0" fitWidth="60.0" onMouseClicked="#next" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER">
 															<image>
@@ -107,6 +101,22 @@
 													<center>
 														<Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onMouseClicked="#startView" text="Load images" BorderPane.alignment="CENTER" />
 													</center>
+                                       <left>
+                                          <Pane prefHeight="512.0" prefWidth="70.0" BorderPane.alignment="CENTER">
+                                             <children>
+      														<ImageView fitHeight="70.0" fitWidth="60.0" layoutX="14.0" layoutY="226.0" onMouseClicked="#previous" pickOnBounds="true" preserveRatio="true">
+      															<image>
+      																<Image url="@left-arrow.png" />
+      															</image>
+      														</ImageView>
+                                                <ImageView fx:id="backFolder" fitHeight="50.0" fitWidth="50.0" layoutX="10.0" layoutY="10.0" onMouseClicked="#backFolder" pickOnBounds="true" preserveRatio="true">
+                                                   <image>
+                                                      <Image url="@folder.png" />
+                                                   </image>
+                                                </ImageView>
+                                             </children>
+                                          </Pane>
+                                       </left>
 												</BorderPane>
 											</children>
 										</AnchorPane>

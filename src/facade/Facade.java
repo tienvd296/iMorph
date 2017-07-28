@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -388,7 +389,7 @@ public class Facade {
 	 * @see ImageWing
 	 * @see Landmark
 	 */
-	public static void addLandmark(File file, float X, float Y, Boolean b)
+	/*public static void addLandmark(File file, float X, float Y, Boolean b)
 	{
 		ImageWing imW = Facade.editedImage;
 		X = (int) (X*Float.parseFloat(imW.getProperties().get("WIDTH")));
@@ -473,6 +474,15 @@ public class Facade {
 
 
 		return "OK";
+	}
+
+	public static void addLandmark(ImageWing im, ArrayList<Landmark> listLandmark) {
+		Iterator<Landmark> it = listLandmark.iterator();
+		while(it.hasNext())
+		{
+			im.addLandmark(it.next());
+		}
+		
 	}
 
 

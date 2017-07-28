@@ -7,8 +7,8 @@
 	<classpathentry kind="lib" path="lib/metadata-extractor-2.9.1.jar"/>
 	<classpathentry kind="lib" path="lib/xmpcore-5.1.2.jar"/>
 	<classpathentry kind="lib" path="lib/jdom-2.0.6.jar"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/opencv"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/jfoenix.jar"/>
+	<classpathentry kind="lib" path="lib/opencv/build/java/opencv-2413.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
