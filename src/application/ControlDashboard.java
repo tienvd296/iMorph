@@ -21,7 +21,6 @@ import ij.io.Opener;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.ContextMenu;
@@ -59,7 +58,6 @@ public class ControlDashboard {
 	private int page=0;
 	private int currentView=1;
 	private Image[] imageTab = null;
-	private String[] nameTab = null;
 	private String[] pathTab = null;
 	private Folder[] folderTab = null;
 	private Map<String, ImageWing> imageMap = new HashMap<String, ImageWing>();
@@ -68,11 +66,11 @@ public class ControlDashboard {
 	private HashMap<ImageView, String> imageViewToPath = new HashMap<ImageView, String>();
 	private HashMap<String, ImageWing> pathToImageWing = new HashMap<String, ImageWing>();
 
-	
 
-    @FXML
-    private ImageView backFolder;
-    
+
+	@FXML
+	private ImageView backFolder;
+
 	@FXML
 	private BorderPane table;
 
@@ -108,17 +106,28 @@ public class ControlDashboard {
 			writeConsole("Open command cancelled by user.", "ImageBrowser");
 		else
 		{
+			int error = 0;
+			ArrayList<String> listPath = new ArrayList<String>();
+			for(int z = 0; z < this.pathTab.length; z++)
+			{
+				listPath.add(this.pathTab[z]);
+			}
 			for(int i = 0; i < files.size(); i++)
 			{
-				writeConsole("STEP5", "DEBUG");
 				String result = files.get(i).getAbsolutePath().toString();
-				writeConsole("STEP6", "DEBUG");
-				ImagePlus im = new Opener().openTiff(result, "");
-				writeConsole("STEP7 " + im.getHeight(), "DEBUG");
-				this.addImage(result, im.getHeight(), im.getWidth());
-				writeConsole("STEP8", "DEBUG");
+				if(!listPath.contains(result))
+				{
+
+					ImagePlus im = new Opener().openTiff(result, "");
+					this.addImage(result, im.getHeight(), im.getWidth());
+				}
+				else
+				{
+					error++;
+					writeConsole(result + " is already in the project.", "ImageBrowser");
+				}
 			}
-			writeConsole(files.size() + " images added to the project", "ImageBrowser");
+			writeConsole((files.size() - error) + " images added to the project", "ImageBrowser");
 			this.initImage(this.currentFolder);
 
 		}
@@ -193,21 +202,21 @@ public class ControlDashboard {
 		this.reloadView();
 
 	}
-	
 
-    @FXML
-    void backFolder(MouseEvent event) {
-    	if(this.currentFolder != null)
+
+	@FXML
+	void backFolder(MouseEvent event) {
+		if(this.currentFolder != null)
 		{
 			this.currentFolder = this.currentFolder.getParent();
 			this.initImage(this.currentFolder);
 		}
-    	if(this.currentFolder == null)
-    	{
-    		this.backFolder.setVisible(false);
-    	}
-    	this.reloadView();
-    }
+		if(this.currentFolder == null)
+		{
+			this.backFolder.setVisible(false);
+		}
+		this.reloadView();
+	}
 
 
 	@FXML
@@ -320,7 +329,6 @@ public class ControlDashboard {
 			i++;
 
 		}
-		this.nameTab = nameTab;
 		this.imageTab = imageTab;
 		this.pathTab = pathTab;
 		this.folderTab = folderTab;
@@ -349,16 +357,19 @@ public class ControlDashboard {
 	/**
 	 * Save a copy of the current project
 	 */
-	public void saveAsProject() {
-		// TODO implement here
-	}
+	@FXML
+	void saveAsProject(ActionEvent event) {
+		FileChooser chooser = new FileChooser();
+		chooser.setTitle("Open File");
+		File file = chooser.showSaveDialog(new Stage());
+		if (file == null)
+			System.out.println("You cancelled the choice");
+		else
+		{
+			Facade.saveAsProject(file.getAbsolutePath() + ".project");
 
-	/**
-	 * Load an existing project, it replaces the current one.
-	 * @param path
-	 */
-	public void loadProject(String path) {
-		// TODO implement here
+		}
+
 	}
 
 
@@ -456,7 +467,6 @@ public class ControlDashboard {
 	public void view(int nbImg)
 	{
 		Image[] images = this.imageTab;
-		String[] names = this.nameTab;
 		Folder[] folder = this.folderTab;
 
 		GridPane grid = new GridPane();
@@ -468,7 +478,7 @@ public class ControlDashboard {
 			if(folderTab != null)
 			{
 				sizeFolder = this.folderTab.length;
-				
+
 			}
 
 
@@ -481,7 +491,7 @@ public class ControlDashboard {
 
 
 			int marge = this.page*nbImg;
-			
+
 			for(int i = marge; i<marge+Math.pow(nbImg, 2); i++)
 			{
 				Pane pane = new Pane();
@@ -916,7 +926,7 @@ public class ControlDashboard {
 
 		final MenuItem item3 = new MenuItem("Rename Folder");
 		item3.setOnAction(e -> renameFolder());
-		
+
 		final MenuItem item4 = new MenuItem("Delete Folder");
 		item4.setOnAction(e -> deleteFolder());
 
@@ -1003,7 +1013,7 @@ public class ControlDashboard {
 			String path = this.imageViewToPath.get(imV);
 			listPath.add(path);
 		}
-		this.writeConsole(Facade.landmarkPrediction(listPath, pathToImageWing, this), "Image Preprocessing");
+		Facade.landmarkPrediction(listPath, pathToImageWing, this);
 
 		this.initImage(currentFolder);
 		this.reloadView();

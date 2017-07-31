@@ -7,8 +7,6 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import application.ControlDashboard;
 import businesslogic.*;
@@ -136,9 +134,14 @@ public class Facade {
 
 	/**
 	 * Save a copy of the current project
+	 * @param string 
 	 */
-	public static void saveAsProject() {
-		// TODO implement here
+	public static void saveAsProject(String path) {
+		Project p = Facade.currentProject;
+		Facade.newProject(path);
+		Facade.currentProject.setFolders(p.getFolders());
+		Facade.currentProject.setImages(p.getImages());
+		Facade.saveProject();
 	}
 
 	/**
@@ -376,32 +379,6 @@ public class Facade {
 	}
 
 	/**
-	 * Add a new landmark to image as passed in parameter
-	 * 
-	 * @param file
-	 * 			
-	 * @param X
-	 * 
-	 * @param Y
-	 * 
-	 * @param b
-	 * 
-	 * @see ImageWing
-	 * @see Landmark
-	 */
-	/*public static void addLandmark(File file, float X, float Y, Boolean b)
-	{
-		ImageWing imW = Facade.editedImage;
-		X = (int) (X*Float.parseFloat(imW.getProperties().get("WIDTH")));
-		Y = (int)(Y*Float.parseFloat(imW.getProperties().get("HEIGHT")));
-		Landmark land = new Landmark(X, Y, b);
-		Facade.editedImage.addLandmark(land);
-		landmarkFile.saveImage(Facade.editedImage);
-		Facade.activeView.writeConsole(imW.getProperties().get("FILENAME") + " has a new landmark, X=" + X + "  Y=" + Y + "  isLandmark" + b , "POPUP Pierre");
-
-	}
-
-	/**
 	 * Remove a landmark to image as passed in parameter
 	 * 
 	 * @param im
@@ -439,50 +416,70 @@ public class Facade {
 
 	}
 
-	public static String landmarkPrediction(ArrayList<String> listPath, HashMap<String, ImageWing> listImW, ControlDashboard CD) {
+	public static void landmarkPrediction(ArrayList<String> listPath, HashMap<String, ImageWing> listImW, ControlDashboard CD) {
 		String separator = System.getProperty("file.separator");
 		String originalPath = System.getProperty("user.dir");
 		String pathAPI = originalPath + separator + "landmarkPrediction.exe";
 
-		ProcessBuilder pb = new ProcessBuilder(pathAPI, listPath.get(0));
-		Process process;
-		try {
-			process = pb.start();
-			BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream())); 
-			String line = null;
+		for(int i = 0; i<listPath.size(); i++)
+		{
 
-			
-			while ((line = stdInput.readLine()) != null) {
-				CD.writeConsole(line, "Image Preprocessing");
-				String[] tab = line.split(" ");
-				Boolean b;
-				if(tab[2] == "true"){
-					b = true;
+			ProcessBuilder pb = new ProcessBuilder(pathAPI, listPath.get(i));
+			Process process;
+			try {
+				process = pb.start();
+				BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream())); 
+				String line = null;
+
+
+				while ((line = stdInput.readLine()) != null) {
+					CD.writeConsole(line, "Image Preprocessing");
+					String[] tab = line.split(" ");
+					Boolean b;
+					if(tab[2] == "true"){
+						b = true;
+					}
+					else
+					{
+						b = false;
+					}
+					Landmark l = new Landmark(Float.parseFloat(tab[0]), Float.parseFloat(tab[1]), b);
+					ImageWing imW = listImW.get(listPath.get(i));
+					imW.addLandmark(l);
+					landmarkFile.saveImage(imW);
 				}
-				else
-				{
-					b = false;
-				}
-				Landmark l = new Landmark(Float.parseFloat(tab[0]), Float.parseFloat(tab[1]), b);
-				listImW.get(listPath.get(0)).addLandmark(l);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println("Completed...");
 		}
-		System.out.println("Completed...");
 
-
-		return "OK";
 	}
 
+
+	/**
+	 * Add a new landmark to image as passed in parameter
+	 * 
+	 * @param file
+	 * 			
+	 * @param X
+	 * 
+	 * @param Y
+	 * 
+	 * @param b
+	 * 
+	 * @see ImageWing
+	 * @see Landmark
+	 */
 	public static void addLandmark(ImageWing im, ArrayList<Landmark> listLandmark) {
 		Iterator<Landmark> it = listLandmark.iterator();
 		while(it.hasNext())
 		{
 			im.addLandmark(it.next());
 		}
-		
+		landmarkFile.saveImage(im);
+
 	}
 
 
