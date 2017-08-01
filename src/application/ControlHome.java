@@ -163,15 +163,8 @@ public class ControlHome {
 
 			Scene scene = new Scene(root);
 			scene.getStylesheets().add("caspian.css");
-			scene.addEventHandler(KeyEvent.KEY_PRESSED, (key) -> {
-				if(key.getCode()==KeyCode.CONTROL && key.getCode()==KeyCode.A)
-				{
-
-				}
-				else if(key.getCode()==KeyCode.CONTROL) {
-					Keyboard.setCtrl();
-				}
-			});
+			
+			Keyboard k = new Keyboard(scene);
 			
 			Stage stage = new Stage();
 			stage.setMaximized(true);

@@ -342,7 +342,7 @@ public class ControlDashboard {
 	@FXML
 	void saveProject(ActionEvent event) {
 		Facade.saveProject();
-		writeConsole("Save project: Success", "Project");
+		
 	}
 
 	/**
@@ -359,17 +359,21 @@ public class ControlDashboard {
 	 */
 	@FXML
 	void saveAsProject(ActionEvent event) {
+		this.saveAsProject();
+	}
+	
+	public void saveAsProject()
+	{
 		FileChooser chooser = new FileChooser();
 		chooser.setTitle("Open File");
 		File file = chooser.showSaveDialog(new Stage());
 		if (file == null)
-			System.out.println("You cancelled the choice");
+			this.writeConsole("You cancelled the choice", "Project");
 		else
 		{
 			Facade.saveAsProject(file.getAbsolutePath() + ".project");
 
 		}
-
 	}
 
 
@@ -931,6 +935,8 @@ public class ControlDashboard {
 		item4.setOnAction(e -> deleteFolder());
 
 		contextMenu.getItems().addAll(item1, item2, item3, item4);
+		
+		
 
 
 	}

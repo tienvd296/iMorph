@@ -130,6 +130,7 @@ public class Facade {
 	 */
 	public static void saveProject() {
 		XML.saveProject(Facade.currentProject);
+		Facade.activeView.writeConsole("Save project: Success", "Project");
 	}
 
 	/**
@@ -452,7 +453,6 @@ public class Facade {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			System.out.println("Completed...");
 		}
 
 	}
@@ -473,11 +473,12 @@ public class Facade {
 	 * @see Landmark
 	 */
 	public static void addLandmark(ImageWing im, ArrayList<Landmark> listLandmark) {
-		Iterator<Landmark> it = listLandmark.iterator();
+		/*Iterator<Landmark> it = listLandmark.iterator();
 		while(it.hasNext())
 		{
 			im.addLandmark(it.next());
-		}
+		}*/
+		
 		landmarkFile.saveImage(im);
 
 	}
