@@ -4,6 +4,7 @@ package application;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -21,6 +22,9 @@ import ij.io.Opener;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.ContextMenu;
@@ -29,9 +33,11 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextInputDialog;
+import javafx.scene.control.TreeItem;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
@@ -62,7 +68,7 @@ public class ControlDashboard {
 	private Folder[] folderTab = null;
 	private Map<String, ImageWing> imageMap = new HashMap<String, ImageWing>();
 	private ArrayList<ImageView> selected = new ArrayList<ImageView>();
-	private Folder currentFolder = null;
+	public Folder currentFolder = null;
 	private HashMap<ImageView, String> imageViewToPath = new HashMap<ImageView, String>();
 	private HashMap<String, ImageWing> pathToImageWing = new HashMap<String, ImageWing>();
 
@@ -90,7 +96,9 @@ public class ControlDashboard {
 	private AnchorPane landmarksPane;
 	private Folder activeFolder;
 
-	final ContextMenu contextMenu = new ContextMenu();
+	final ContextMenu contextMenuFolder = new ContextMenu();
+
+	final ContextMenu contextMenuImage = new ContextMenu();
 
 
 
@@ -139,8 +147,7 @@ public class ControlDashboard {
 	/**
 	 * delete image to the current project
 	 */
-	@FXML
-	void deleteImages(ActionEvent event) {
+	public void deleteImages() {
 		Iterator<ImageView> it = selected.iterator();
 		while(it.hasNext())
 		{
@@ -224,7 +231,6 @@ public class ControlDashboard {
 		this.view1();
 		this.currentView = 1;
 		this.page = 0;
-		this.viewChoice.setText("Simple");
 
 	}
 
@@ -234,7 +240,6 @@ public class ControlDashboard {
 		this.view(2);
 		this.currentView = 4;
 		this.page = 0;
-		this.viewChoice.setText("4");
 	}
 
 
@@ -243,7 +248,6 @@ public class ControlDashboard {
 		this.view(3);
 		this.currentView = 9;
 		this.page = 0;
-		this.viewChoice.setText("9");
 	}
 
 	@FXML
@@ -251,7 +255,6 @@ public class ControlDashboard {
 		this.view(4);
 		this.currentView = 16;
 		this.page = 0;
-		this.viewChoice.setText("16");
 	}
 
 	@FXML
@@ -259,7 +262,6 @@ public class ControlDashboard {
 		this.view(4);
 		this.currentView = 16;
 		this.page = 0;
-		this.viewChoice.setText("16");
 	}
 
 	@FXML
@@ -267,7 +269,6 @@ public class ControlDashboard {
 		this.view(5);
 		this.currentView = 25;
 		this.page = 0;
-		this.viewChoice.setText("25");
 	}
 
 
@@ -342,7 +343,7 @@ public class ControlDashboard {
 	@FXML
 	void saveProject(ActionEvent event) {
 		Facade.saveProject();
-		
+
 	}
 
 	/**
@@ -361,7 +362,7 @@ public class ControlDashboard {
 	void saveAsProject(ActionEvent event) {
 		this.saveAsProject();
 	}
-	
+
 	public void saveAsProject()
 	{
 		FileChooser chooser = new FileChooser();
@@ -399,7 +400,7 @@ public class ControlDashboard {
 
 
 			//------IMAGE-----//
-			im1.setOnMouseClicked(e -> imageEditor(pathTab[y], im1));
+			im1.setOnMouseClicked(e -> imageEditor(pathTab[y], im1, e, grid));
 			im1.setPreserveRatio(true);
 			im1.setImage(images[this.page]);
 			im1.setFitWidth(width - 10);
@@ -423,7 +424,7 @@ public class ControlDashboard {
 
 
 			this.displayLandmark(pane, im1, ratioImg, height/width, this.page);
-			this.imageEditor(pathTab[y], im1);
+			this.imageEditor(pathTab[y], im1, null, pane);
 			this.table.setCenter(grid);
 			grid.add(pane, 0, 0);
 
@@ -540,7 +541,7 @@ public class ControlDashboard {
 
 					final int y = i;
 					final int s = sizeFolder;
-					im1.setOnMouseClicked(e -> imageEditor(pathTab[y - s], im1));
+					im1.setOnMouseClicked(e -> imageEditor(pathTab[y - s], im1, e, pane));
 					im1.setPreserveRatio(true);
 					im1.setImage(images[i - sizeFolder]);
 
@@ -579,56 +580,73 @@ public class ControlDashboard {
 
 	private void clickFolder(Folder folder, MouseEvent e, Pane pane) {
 		this.activeFolder = folder;
-		contextMenu.show(pane, e.getScreenX(), e.getScreenY());
-		/*
-		if(this.activeFolder != folder)
-		{
-			this.activeFolder = folder;
-			this.propertiesPane.getChildren().clear();
-			this.landmarksPane.getChildren().clear();
-			this.metadataPane.getChildren().clear();
-			Label add = new Label(folder.getName() + "\n" + "Number of image: " + folder.getImages().size() + "\n" + "Number of folder: " + folder.getFolders().size());
-			this.propertiesPane.getChildren().add(0, add);
-		}
-		else
-		{
-			this.currentFolder = folder;
-			this.initImage(this.currentFolder);
-			this.view(4);
-			this.page = 0;
-			this.viewChoice.setText("16");
-		}*/
+		contextMenuFolder.show(pane, e.getScreenX(), e.getScreenY());
 	}
 
-	public void imageEditor(String path, ImageView imageView)
+	public void imageEditor(String path, ImageView imageView, MouseEvent e, Pane pane)
 	{
-		this.activeFolder = null;
-		if(!Keyboard.isCtrl())
+		if (e == null)
 		{
-			deselectAll();
-			this.selected.clear();
-			selected.add(imageView);
-		}
-		else
-		{
-			if(selected.contains(imageView))
+			this.activeFolder = null;
+			if(!Keyboard.isCtrl())
 			{
-				selected.remove(imageView);
-				imageView.setEffect(null);
+				deselectAll();
+				this.selected.clear();
+				selected.add(imageView);
 			}
 			else
 			{
+				if(selected.contains(imageView))
+				{
+					selected.remove(imageView);
+					imageView.setEffect(null);
+				}
+				else
+				{
+					selected.add(imageView);
+				}
+			}
+			displaySelected();
+			ImageWing image = this.imageMap.get(path);
+			displayMetadata(image);
+			displayProperties(image);
+			displayLandmarks(image);
+
+		}
+		else if (e.getButton() == MouseButton.SECONDARY) {
+			this.activeFolder = null;
+			selected.add(imageView);
+			contextMenuImage.show(pane, e.getScreenX(), e.getScreenY());
+		}
+		else
+		{
+			this.activeFolder = null;
+			if(!Keyboard.isCtrl())
+			{
+				deselectAll();
+				this.selected.clear();
 				selected.add(imageView);
 			}
+			else
+			{
+				if(selected.contains(imageView))
+				{
+					selected.remove(imageView);
+					imageView.setEffect(null);
+				}
+				else
+				{
+					selected.add(imageView);
+				}
+			}
+			displaySelected();
+
+
+			ImageWing image = this.imageMap.get(path);
+			displayMetadata(image);
+			displayProperties(image);
+			displayLandmarks(image);
 		}
-		displaySelected();
-
-
-		ImageWing image = this.imageMap.get(path);
-		displayMetadata(image);
-		displayProperties(image);
-		displayLandmarks(image);
-
 	}
 
 	private void displayMetadata(ImageWing image) {
@@ -792,11 +810,6 @@ public class ControlDashboard {
 
 
 		}
-		Button add = new Button("Add a new landmark");
-		add.setOnMouseClicked(e -> landmarkAdd(new File (image.getPath())));
-
-		grid.add(add, 0, i);
-
 		this.propertiesPane.getChildren().add(0, grid);
 
 		this.landmarksPane.getChildren().add(0, grid);
@@ -805,11 +818,13 @@ public class ControlDashboard {
 
 
 
-	private void landmarkAdd(File file) {
+	private void landmarkAdd() {
 
-		ImageWing imW = this.pathToImageWing.get(file.getAbsolutePath());
+		ImageView imV = this.selected.get(this.selected.size() - 1);
+		String path = this.imageViewToPath.get(imV);
+		ImageWing imW = this.pathToImageWing.get(path);
 		Facade.editedImage = imW;
-		new Cadre2(file, imW);
+		new Cadre2(new File(path), imW);
 
 
 	}
@@ -864,8 +879,7 @@ public class ControlDashboard {
 
 
 
-	@FXML
-	void newFolder(ActionEvent event) {
+	public void newFolder() {
 		TextInputDialog dialog = new TextInputDialog("UNDEFINED FOLDER");
 		dialog.setTitle("Image browser");
 		dialog.setHeaderText("Create a new folder.");
@@ -881,7 +895,7 @@ public class ControlDashboard {
 		}
 	}
 
-	private void changeFolder()
+	public void changeFolder()
 	{
 
 		this.currentFolder = this.activeFolder;
@@ -890,24 +904,6 @@ public class ControlDashboard {
 		this.page = 0;
 		this.viewChoice.setText(Integer.toString(this.currentView));
 		this.backFolder.setVisible(true);
-	}
-
-	private void moveFilesToFolder() {
-		Folder fold1 = this.activeFolder;
-		Iterator<ImageView> it = selected.iterator();
-		while(it.hasNext())
-		{
-			ImageView imV = it.next();
-			ImageWing imW = this.pathToImageWing.get(this.imageViewToPath.get(imV));
-			Facade.addImage(imW, fold1);
-			Facade.deleteImage(imW, currentFolder);
-			writeConsole(imW.getPath() + " is now in the " + fold1.getName() + " folder.", "ImageBrowser");
-		}
-		this.initImage(this.currentFolder);
-		this.view((int)Math.sqrt(this.currentView));
-		this.page = 0;
-		this.viewChoice.setText(Integer.toString(this.currentView));
-
 	}
 
 
@@ -922,8 +918,8 @@ public class ControlDashboard {
 			writeConsole("Opening of the project: " + Facade.currentProject.name, "Project");
 		}
 
-		final MenuItem item1 = new MenuItem("Move selected files to Folder");
-		item1.setOnAction(e -> moveFilesToFolder());
+		final MenuItem item1 = new MenuItem("New folder");
+		item1.setOnAction(e -> newFolder());
 
 		final MenuItem item2 = new MenuItem("Open Folder");
 		item2.setOnAction(e -> changeFolder());
@@ -934,11 +930,94 @@ public class ControlDashboard {
 		final MenuItem item4 = new MenuItem("Delete Folder");
 		item4.setOnAction(e -> deleteFolder());
 
-		contextMenu.getItems().addAll(item1, item2, item3, item4);
-		
-		
+		final MenuItem itemImage1 = new MenuItem("New folder");
+		itemImage1.setOnAction(e -> newFolder());
+
+		final Menu itemImage2 = new Menu("Move image to...");
 
 
+
+		Iterator<Folder> it = Facade.currentProject.getFolders().iterator();
+		while(it.hasNext())
+		{
+			Folder n = it.next();
+			if(n.getFolders() == null)
+			{
+				final MenuItem folder1 = new MenuItem(n.getName());
+				itemImage2.setOnAction(e -> moveImageTo(n));
+				itemImage2.getItems().add(folder1);
+			}
+			else
+			{
+				final Menu folder1 = this.getMenu(n);
+				itemImage2.setOnAction(e -> moveImageTo(n));
+				itemImage2.getItems().add(folder1);
+			}
+			
+			
+		}
+
+
+
+		final MenuItem itemImage3 = new MenuItem("Landmark editor");
+		itemImage3.setOnAction(e -> landmarkAdd());
+
+		final MenuItem itemImage4 = new MenuItem("Delete image");
+		itemImage4.setOnAction(e -> deleteImages());
+
+		contextMenuFolder.getItems().addAll(item1, item2, item3, item4);
+
+		contextMenuImage.getItems().addAll(itemImage1, itemImage2, itemImage3, itemImage4);
+
+	}
+
+	private Menu getMenu(Folder folder) {
+		
+		final Menu itemImage2 = new Menu(folder.getName());
+		Iterator<Folder> it = folder.getFolders().iterator();
+		while(it.hasNext())
+		{
+			Folder n = it.next();
+			if(n.getFolders() == null)
+			{
+				final MenuItem folder1 = new MenuItem(n.getName());
+				itemImage2.setOnAction(e -> moveImageTo(n));
+				itemImage2.getItems().add(folder1);
+			}
+			else
+			{
+				final Menu folder1 = this.getMenu(n);
+				itemImage2.setOnAction(e -> moveImageTo(n));
+				itemImage2.getItems().add(folder1);
+			}
+			
+			
+		}
+		return itemImage2;
+	}
+
+	private void moveImageTo(Folder n) {
+
+		Folder fold1 = n;
+		Iterator<ImageView> it = selected.iterator();
+		while(it.hasNext())
+		{
+			ImageView imV = it.next();
+			ImageWing imW = this.pathToImageWing.get(this.imageViewToPath.get(imV));
+			Facade.addImage(imW, fold1);
+			Facade.deleteImage(imW, currentFolder);
+			writeConsole(imW.getPath() + " is now in the " + fold1.getName() + " folder.", "ImageBrowser");
+		}
+		this.initImage(this.currentFolder);
+		this.view((int)Math.sqrt(this.currentView));
+		this.page = 0;
+		
+	}
+
+
+	void setActiveFolder(Folder f)
+	{
+		this.activeFolder = f;
 	}
 
 	private void renameFolder() {
@@ -1024,6 +1103,7 @@ public class ControlDashboard {
 		this.initImage(currentFolder);
 		this.reloadView();
 	}
+
 
 	/* ------- END EXTERNAL FUNCTION ------- */
 

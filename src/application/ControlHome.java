@@ -174,7 +174,6 @@ public class ControlHome {
 			ControlDashboard myController = loader.getController();
 
 
-			//myController.setDataOptions();
 
 		} catch (IOException e) {
 			e.printStackTrace();

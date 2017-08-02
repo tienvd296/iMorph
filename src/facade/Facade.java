@@ -417,6 +417,20 @@ public class Facade {
 
 	}
 
+	
+	/**
+	 * Remove image to the current folder.
+	 * 
+	 * @param listPath
+	 * 			Image path ArrayList affected by the function
+	 * 
+	 * @param listImW
+	 * 			HashMap to find the ImageWing object from path
+	 * 
+	 *  @param CD
+	 * 			The ControlDashboard instance 
+	 * 
+	 */
 	public static void landmarkPrediction(ArrayList<String> listPath, HashMap<String, ImageWing> listImW, ControlDashboard CD) {
 		String separator = System.getProperty("file.separator");
 		String originalPath = System.getProperty("user.dir");
@@ -461,13 +475,11 @@ public class Facade {
 	/**
 	 * Add a new landmark to image as passed in parameter
 	 * 
-	 * @param file
+	 * @param im
+	 * 			ImageWing concerned by the edition
 	 * 			
-	 * @param X
-	 * 
-	 * @param Y
-	 * 
-	 * @param b
+	 * @param listLandark
+	 * 			ArrayList of landmarks
 	 * 
 	 * @see ImageWing
 	 * @see Landmark
