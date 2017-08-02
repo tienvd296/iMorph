@@ -615,7 +615,11 @@ public class ControlDashboard {
 		}
 		else if (e.getButton() == MouseButton.SECONDARY) {
 			this.activeFolder = null;
-			selected.add(imageView);
+			if(!selected.contains(imageView))
+			{
+				selected.add(imageView);
+			}
+			
 			contextMenuImage.show(pane, e.getScreenX(), e.getScreenY());
 		}
 		else
@@ -902,7 +906,6 @@ public class ControlDashboard {
 		this.initImage(this.currentFolder);
 		this.view((int)Math.sqrt(this.currentView));
 		this.page = 0;
-		this.viewChoice.setText(Integer.toString(this.currentView));
 		this.backFolder.setVisible(true);
 	}
 
@@ -918,25 +921,27 @@ public class ControlDashboard {
 			writeConsole("Opening of the project: " + Facade.currentProject.name, "Project");
 		}
 
-		final MenuItem item1 = new MenuItem("New folder");
+		final MenuItem item1 = new MenuItem("New collection");
 		item1.setOnAction(e -> newFolder());
 
-		final MenuItem item2 = new MenuItem("Open Folder");
+		final MenuItem item2 = new MenuItem("Open collection");
 		item2.setOnAction(e -> changeFolder());
 
-		final MenuItem item3 = new MenuItem("Rename Folder");
+		final MenuItem item3 = new MenuItem("Rename collection");
 		item3.setOnAction(e -> renameFolder());
 
-		final MenuItem item4 = new MenuItem("Delete Folder");
+		final MenuItem item4 = new MenuItem("Delete collection");
 		item4.setOnAction(e -> deleteFolder());
 
-		final MenuItem itemImage1 = new MenuItem("New folder");
+		final MenuItem itemImage1 = new MenuItem("New collection");
 		itemImage1.setOnAction(e -> newFolder());
 
 		final Menu itemImage2 = new Menu("Move image to...");
 
-
-
+		final Menu folder = new Menu("ROOT");
+		folder.setOnAction(e -> moveImageTo(null));
+		itemImage2.getItems().add(folder);
+		
 		Iterator<Folder> it = Facade.currentProject.getFolders().iterator();
 		while(it.hasNext())
 		{
@@ -944,14 +949,14 @@ public class ControlDashboard {
 			if(n.getFolders() == null)
 			{
 				final MenuItem folder1 = new MenuItem(n.getName());
-				itemImage2.setOnAction(e -> moveImageTo(n));
-				itemImage2.getItems().add(folder1);
+				folder1.setOnAction(e -> moveImageTo(n));
+				folder.getItems().add(folder1);
 			}
 			else
 			{
 				final Menu folder1 = this.getMenu(n);
-				itemImage2.setOnAction(e -> moveImageTo(n));
-				itemImage2.getItems().add(folder1);
+				folder1.setOnAction(e -> moveImageTo(n));
+				folder.getItems().add(folder1);
 			}
 			
 			
@@ -981,13 +986,13 @@ public class ControlDashboard {
 			if(n.getFolders() == null)
 			{
 				final MenuItem folder1 = new MenuItem(n.getName());
-				itemImage2.setOnAction(e -> moveImageTo(n));
+				folder1.setOnAction(e -> moveImageTo(n));
 				itemImage2.getItems().add(folder1);
 			}
 			else
 			{
 				final Menu folder1 = this.getMenu(n);
-				itemImage2.setOnAction(e -> moveImageTo(n));
+				folder1.setOnAction(e -> moveImageTo(n));
 				itemImage2.getItems().add(folder1);
 			}
 			
@@ -1006,7 +1011,15 @@ public class ControlDashboard {
 			ImageWing imW = this.pathToImageWing.get(this.imageViewToPath.get(imV));
 			Facade.addImage(imW, fold1);
 			Facade.deleteImage(imW, currentFolder);
-			writeConsole(imW.getPath() + " is now in the " + fold1.getName() + " folder.", "ImageBrowser");
+			if(fold1 == null)
+			{
+				writeConsole(imW.getPath() + " is now in the root collection.", "ImageBrowser");
+			}
+			else
+			{
+				writeConsole(imW.getPath() + " is now in the " + fold1.getName() + " collection.", "ImageBrowser");
+			}
+			
 		}
 		this.initImage(this.currentFolder);
 		this.view((int)Math.sqrt(this.currentView));
@@ -1024,14 +1037,14 @@ public class ControlDashboard {
 		String old = this.activeFolder.getName();
 		TextInputDialog dialog = new TextInputDialog(old);
 		dialog.setTitle("Image browser");
-		dialog.setHeaderText("Change folder name");
-		dialog.setContentText("Please enter folder name:");
+		dialog.setHeaderText("Change collection name");
+		dialog.setContentText("Please enter collection name:");
 
 		// Traditional way to get the response value.
 		Optional<String> result = dialog.showAndWait();
 		if (result.isPresent()){
 			this.activeFolder.setName(result.get());
-			writeConsole("The folder -"+ old +"-e has been rename", "ImageBrowser");
+			writeConsole("The collection -"+ old +"-e has been rename", "ImageBrowser");
 			this.initImage(this.currentFolder);
 			this.reloadView();
 		}

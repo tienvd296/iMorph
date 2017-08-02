@@ -47,6 +47,8 @@
                         <MenuItem mnemonicParsing="false" text="Training" />
                         <MenuItem mnemonicParsing="false" text="Landmark production" />
                      </items></Menu>
+                     <Menu mnemonicParsing="false" text="Help">
+						</Menu>
 					</menus>
 				</MenuBar>
 			</top>
