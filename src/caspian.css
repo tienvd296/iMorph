@@ -598,7 +598,7 @@
 
 .radio-button {
     -fx-label-padding: 0.0em 0.0em 0.0em 0.416667em; /* 0 0 0 5 */
-    -fx-text-fill: -fx-text-background-color;
+    -fx-text-fill: white;
 }
 
 .radio-button:focused {

@@ -99,8 +99,21 @@ public class ControlDashboard {
 	final ContextMenu contextMenuFolder = new ContextMenu();
 
 	final ContextMenu contextMenuImage = new ContextMenu();
+	
+	Menu itemImage2 = new Menu();
 
 
+	@FXML
+	void undo(ActionEvent event) {
+		Facade.undo();
+		this.refresh();
+	}
+	
+	@FXML
+	void redo(ActionEvent event) {
+		Facade.redo();
+		this.refresh();
+	}
 
 	@FXML
 	void loadImages(ActionEvent event) {
@@ -156,10 +169,7 @@ public class ControlDashboard {
 			Facade.deleteImage(imW, currentFolder);
 			writeConsole(imW.getPath() + " has just been deleted.", "ImageBrowser");
 		}
-		this.initImage(this.currentFolder);
-		this.view((int)Math.sqrt(this.currentView));
-		this.page = 0;
-		this.viewChoice.setText(Integer.toString(this.currentView));
+		this.refresh();
 
 	}
 
@@ -172,6 +182,14 @@ public class ControlDashboard {
 		{
 			this.view((int) Math.sqrt(currentView));
 		}
+	}
+	
+	public void refresh()
+	{
+		this.initialize();
+		this.initImage(this.currentFolder);
+		this.view((int)Math.sqrt(this.currentView));
+		this.page = 0;
 	}
 
 	@FXML
@@ -456,8 +474,8 @@ public class ControlDashboard {
 			}
 			double originY = image.getY();
 			Circle c = new Circle();
-			c.setCenterX(originX + Facade.getX_ratio(landmark, im)*width);
-			c.setCenterY(originY + Facade.getY_ratio(landmark, im)*height);
+			c.setCenterX(originX + (Facade.getX_ratio(landmark, im)*width));
+			c.setCenterY(originY + (height - Facade.getY_ratio(landmark, im)*height));
 			c.setRadius(3.0);
 			c.setFill(Color.RED);
 			pane.getChildren().add(y+1, c);
@@ -827,7 +845,6 @@ public class ControlDashboard {
 		ImageView imV = this.selected.get(this.selected.size() - 1);
 		String path = this.imageViewToPath.get(imV);
 		ImageWing imW = this.pathToImageWing.get(path);
-		Facade.editedImage = imW;
 		new Cadre2(new File(path), imW);
 
 
@@ -858,6 +875,7 @@ public class ControlDashboard {
 
 			}
 		}
+		
 	}
 
 	private void propertiesEditor(ImageWing image, String key) {
@@ -894,8 +912,7 @@ public class ControlDashboard {
 		if (result.isPresent()){
 			Facade.addFolder(result.get(), this.currentFolder);
 			writeConsole("1 folder added to the project", "ImageBrowser");
-			this.initImage(this.currentFolder);
-			this.reloadView();
+			this.refresh();
 		}
 	}
 
@@ -903,9 +920,7 @@ public class ControlDashboard {
 	{
 
 		this.currentFolder = this.activeFolder;
-		this.initImage(this.currentFolder);
-		this.view((int)Math.sqrt(this.currentView));
-		this.page = 0;
+		this.refresh();
 		this.backFolder.setVisible(true);
 	}
 
@@ -936,11 +951,27 @@ public class ControlDashboard {
 		final MenuItem itemImage1 = new MenuItem("New collection");
 		itemImage1.setOnAction(e -> newFolder());
 
-		final Menu itemImage2 = new Menu("Move image to...");
+		this.itemImage2 = getMoveTo();
+
+		final MenuItem itemImage3 = new MenuItem("Landmark editor");
+		itemImage3.setOnAction(e -> landmarkAdd());
+
+		final MenuItem itemImage4 = new MenuItem("Delete image");
+		itemImage4.setOnAction(e -> deleteImages());
+
+		contextMenuFolder.getItems().clear();
+		contextMenuFolder.getItems().addAll(item1, item2, item3, item4);
+		contextMenuImage.getItems().clear();
+		contextMenuImage.getItems().addAll(itemImage1, itemImage2, itemImage3, itemImage4);
+
+	}
+
+	private Menu getMoveTo(){
+		Menu a = new Menu("Move image to...");
 
 		final Menu folder = new Menu("ROOT");
 		folder.setOnAction(e -> moveImageTo(null));
-		itemImage2.getItems().add(folder);
+		a.getItems().add(folder);
 		
 		Iterator<Folder> it = Facade.currentProject.getFolders().iterator();
 		while(it.hasNext())
@@ -961,21 +992,9 @@ public class ControlDashboard {
 			
 			
 		}
-
-
-
-		final MenuItem itemImage3 = new MenuItem("Landmark editor");
-		itemImage3.setOnAction(e -> landmarkAdd());
-
-		final MenuItem itemImage4 = new MenuItem("Delete image");
-		itemImage4.setOnAction(e -> deleteImages());
-
-		contextMenuFolder.getItems().addAll(item1, item2, item3, item4);
-
-		contextMenuImage.getItems().addAll(itemImage1, itemImage2, itemImage3, itemImage4);
-
+		return a;
 	}
-
+	
 	private Menu getMenu(Folder folder) {
 		
 		final Menu itemImage2 = new Menu(folder.getName());
@@ -1021,10 +1040,7 @@ public class ControlDashboard {
 			}
 			
 		}
-		this.initImage(this.currentFolder);
-		this.view((int)Math.sqrt(this.currentView));
-		this.page = 0;
-		
+		this.refresh();
 	}
 
 
@@ -1053,10 +1069,7 @@ public class ControlDashboard {
 	private void deleteFolder() {
 
 		Facade.deleteFolder(this.currentFolder, this.activeFolder);
-		this.initImage(this.currentFolder);
-		this.view((int)Math.sqrt(this.currentView));
-		this.page = 0;
-		this.viewChoice.setText(Integer.toString(this.currentView));
+		this.refresh();
 	}
 
 

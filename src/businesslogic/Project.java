@@ -136,6 +136,27 @@ public class Project {
 		this.lastSave = lastSave;
 	}
 	
+	
+	public Project clonage()
+	{
+		ArrayList<Folder> foldersClone = new ArrayList<Folder>();
+		Iterator<Folder> it = this.folders.iterator();
+		while(it.hasNext())
+		{
+			foldersClone.add(it.next().clonage());
+		}
+		
+		ArrayList<ImageWing> imagesClone = new ArrayList<ImageWing>();
+		Iterator<ImageWing> it2 = this.images.iterator();
+		while(it2.hasNext())
+		{
+			imagesClone.add(it2.next().clonage());
+		}
+		
+		return new Project(this.name, this.lastSave, this.pathProject, foldersClone, imagesClone);
+	}
+	
+	
 	/**
 	 * Return the name of the project
 	 * 

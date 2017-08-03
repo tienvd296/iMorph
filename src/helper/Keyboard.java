@@ -34,6 +34,21 @@ public class Keyboard extends Parent{
 					{
 						Facade.activeView.saveAsProject();
 					}
+					else if(ke.getCode() == KeyCode.Z && ctrl == true && maj == false)
+					{
+						Facade.undo();
+						Facade.activeView.refresh();
+					}
+					else if(ke.getCode() == KeyCode.Z && ctrl == true && maj == true)
+					{
+						Facade.redo();
+						Facade.activeView.refresh();
+					}
+					else if(ke.getCode() == KeyCode.Y && ctrl == true && maj == false)
+					{
+						Facade.redo();
+						Facade.activeView.refresh();
+					}
 					
 			}
 		});

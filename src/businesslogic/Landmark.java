@@ -103,4 +103,9 @@ public class Landmark {
 	public void setPosY(int y) {
 		this.posY = y;
 	}
+
+	public Landmark clonage() {
+		// TODO Auto-generated method stub
+		return new Landmark(this.getPosX(), this.getPosY(), this.getIsLandmark());
+	}
 }

@@ -37,10 +37,10 @@ public class ImageWing {
 	 * @see HashMap
 	 * 
 	 * @see ImageWing#getProperties()
-	 * @see ImageWing#setProperties(Map)
-	 * @see ImageWing#ImageWing(String, Map, ArrayList)
+	 * @see ImageWing#setProperties(HashMap)
+	 * @see ImageWing#ImageWing(String, HashMap, ArrayList)
 	 */
-	public Map<String, String> properties = new HashMap<String, String>();
+	public HashMap<String, String> properties = new HashMap<String, String>();
 
 	/**
 	 * A image has many landmarks.
@@ -87,10 +87,25 @@ public class ImageWing {
 	 * 
 	 * @see Landmark
 	 */
-	public ImageWing(String pathImage, Map<String,String> properties, ArrayList<Landmark> landmarks) {
+	public ImageWing(String pathImage, HashMap<String,String> properties, ArrayList<Landmark> landmarks) {
 		this.path = pathImage;
 		this.properties = properties;
 		this.landmarks = landmarks;
+	}
+	
+	
+	public ImageWing clonage()
+	{
+		ArrayList<Landmark> landmarksClone = new ArrayList<Landmark>();
+		Iterator<Landmark> it = this.landmarks.iterator();
+		while(it.hasNext())
+		{
+			landmarksClone.add(it.next().clonage());
+		}
+		HashMap<String,String> propertiesClone = new HashMap<String, String>();
+		propertiesClone = (HashMap<String, String>) properties.clone();
+		
+		return new ImageWing(this.getPath(), propertiesClone, landmarksClone);
 	}
 
 
@@ -130,7 +145,7 @@ public class ImageWing {
      *            A Map with the new properties.
      * 
      */
-	public void setProperties(Map<String, String> properties) {
+	public void setProperties(HashMap<String, String> properties) {
 		this.properties = properties;
 	}
 

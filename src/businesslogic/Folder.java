@@ -1,6 +1,7 @@
 package businesslogic;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * <b>This class represents the folder object.</b>
@@ -117,6 +118,27 @@ public class Folder {
 		this.images = imageList;
 		this.parent = parent;
 	}
+	
+	
+	public Folder clonage()
+	{
+		ArrayList<Folder> foldersClone = new ArrayList<Folder>();
+		Iterator<Folder> it = this.folders.iterator();
+		while(it.hasNext())
+		{
+			foldersClone.add(it.next().clonage());
+		}
+		
+		ArrayList<ImageWing> imagesClone = new ArrayList<ImageWing>();
+		Iterator<ImageWing> it2 = this.images.iterator();
+		while(it2.hasNext())
+		{
+			imagesClone.add(it2.next().clonage());
+		}
+		
+		return new Folder(this.name, foldersClone, imagesClone, this.parent);
+	}
+	
 
     /**
      * Set the list of image

@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 
 import application.ControlDashboard;
 import businesslogic.*;
@@ -32,9 +31,14 @@ public class Facade {
 	 */
 	public static Project currentProject = null;
 
-	public static ImageWing editedImage = null;
-
 	public static ControlDashboard activeView = null;
+	
+	public static ArrayList<Project> undo = new ArrayList<Project>();
+	
+	public static ArrayList<Project> redo = new ArrayList<Project>();
+
+	
+	
 
 	/**
 	 * Create a new empty project. Just the project's path is available.
@@ -68,6 +72,7 @@ public class Facade {
 	 * 			if the current folder is the root then fold = null
 	 */
 	public static void addImage(String path, double height, double width, Folder fold) {
+
 		ImageWing image = new ImageWing(path);
 		image.getProperties().put("HEIGHT", Double.toString(height));
 		image.getProperties().put("WIDTH", Double.toString(width));
@@ -80,6 +85,7 @@ public class Facade {
 			fold.addImage(image);
 		}
 	}
+
 
 
 	/**
@@ -115,6 +121,7 @@ public class Facade {
 	 * 			if the current folder is the root then fold = null
 	 */
 	public static void deleteImage(ImageWing image, Folder fold) {
+		Facade.undo.add(currentProject.clonage());	
 		if(fold == null)
 		{
 			Facade.currentProject.deleteImage(image);
@@ -237,6 +244,7 @@ public class Facade {
 	 * @see ImageWing
 	 */
 	public static void setProperties(ImageWing image, String key, String value) {
+		Facade.undo.add(currentProject.clonage());	
 		image.getProperties().replace(key, value);
 
 	}
@@ -255,6 +263,7 @@ public class Facade {
 	 * @see ImageWing
 	 */
 	public static void addProperties(ImageWing image, String key, String value) {
+		Facade.undo.add(currentProject.clonage());	
 		image.getProperties().put(key, value);
 
 
@@ -344,7 +353,7 @@ public class Facade {
 	 * @see Folder
 	 */
 	public static void addFolder(String string, Folder fold) {
-
+		Facade.undo.add(currentProject.clonage());	
 		if(fold == null)
 		{
 			Folder folder = new Folder(string, null);
@@ -369,6 +378,7 @@ public class Facade {
 	 * @see Folder
 	 */
 	public static void deleteFolder(Folder current, Folder folder) {
+		Facade.undo.add(currentProject.clonage());	
 		if(current == null)
 		{
 			Facade.currentProject.getFolders().remove(folder);
@@ -393,6 +403,7 @@ public class Facade {
 	 */
 	public static void deleteLandmark(ImageWing im, Landmark land)
 	{
+		Facade.undo.add(currentProject.clonage());	
 		im.deleteLandmark(land);
 		landmarkFile.saveImage(im);
 	}
@@ -409,6 +420,7 @@ public class Facade {
 	 */
 	public static void editLandmark(ImageWing im)
 	{
+		
 		landmarkFile.saveImage(im);
 	}
 
@@ -432,6 +444,7 @@ public class Facade {
 	 * 
 	 */
 	public static void landmarkPrediction(ArrayList<String> listPath, HashMap<String, ImageWing> listImW, ControlDashboard CD) {
+		Facade.undo.add(currentProject.clonage());	
 		String separator = System.getProperty("file.separator");
 		String originalPath = System.getProperty("user.dir");
 		String pathAPI = originalPath + separator + "landmarkPrediction.exe";
@@ -485,14 +498,28 @@ public class Facade {
 	 * @see Landmark
 	 */
 	public static void addLandmark(ImageWing im, ArrayList<Landmark> listLandmark) {
-		/*Iterator<Landmark> it = listLandmark.iterator();
-		while(it.hasNext())
-		{
-			im.addLandmark(it.next());
-		}*/
-		
 		landmarkFile.saveImage(im);
-
+	}
+	
+	
+	public static void undo()
+	{
+		if(undo.size() > 0 )
+		{
+			Facade.redo.add(currentProject.clonage());
+			Facade.currentProject = Facade.undo.get(undo.size()-1);
+			Facade.undo.remove(undo.size()-1);
+		}
+	}
+	
+	public static void redo()
+	{
+		if(redo.size() > 0 )
+		{
+			Facade.undo.add(currentProject.clonage());
+			Facade.currentProject = Facade.redo.get(redo.size()-1);
+			Facade.redo.remove(redo.size()-1);
+		}
 	}
 
 
