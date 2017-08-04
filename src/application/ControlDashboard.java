@@ -19,21 +19,29 @@ import facade.Facade;
 import helper.Keyboard;
 import ij.ImagePlus;
 import ij.io.Opener;
+import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.ContextMenu;
+import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.TreeItem;
+import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -49,6 +57,7 @@ import javafx.scene.shape.Circle;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.FileChooser.ExtensionFilter;
+import javafx.util.Pair;
 
 /**
  *
@@ -99,7 +108,7 @@ public class ControlDashboard {
 	final ContextMenu contextMenuFolder = new ContextMenu();
 
 	final ContextMenu contextMenuImage = new ContextMenu();
-	
+
 	Menu itemImage2 = new Menu();
 
 
@@ -108,7 +117,7 @@ public class ControlDashboard {
 		Facade.undo();
 		this.refresh();
 	}
-	
+
 	@FXML
 	void redo(ActionEvent event) {
 		Facade.redo();
@@ -183,7 +192,7 @@ public class ControlDashboard {
 			this.view((int) Math.sqrt(currentView));
 		}
 	}
-	
+
 	public void refresh()
 	{
 		this.initialize();
@@ -637,7 +646,7 @@ public class ControlDashboard {
 			{
 				selected.add(imageView);
 			}
-			
+
 			contextMenuImage.show(pane, e.getScreenX(), e.getScreenY());
 		}
 		else
@@ -875,7 +884,7 @@ public class ControlDashboard {
 
 			}
 		}
-		
+
 	}
 
 	private void propertiesEditor(ImageWing image, String key) {
@@ -972,7 +981,7 @@ public class ControlDashboard {
 		final Menu folder = new Menu("ROOT");
 		folder.setOnAction(e -> moveImageTo(null));
 		a.getItems().add(folder);
-		
+
 		Iterator<Folder> it = Facade.currentProject.getFolders().iterator();
 		while(it.hasNext())
 		{
@@ -989,14 +998,14 @@ public class ControlDashboard {
 				folder1.setOnAction(e -> moveImageTo(n));
 				folder.getItems().add(folder1);
 			}
-			
-			
+
+
 		}
 		return a;
 	}
-	
+
 	private Menu getMenu(Folder folder) {
-		
+
 		final Menu itemImage2 = new Menu(folder.getName());
 		Iterator<Folder> it = folder.getFolders().iterator();
 		while(it.hasNext())
@@ -1014,8 +1023,8 @@ public class ControlDashboard {
 				folder1.setOnAction(e -> moveImageTo(n));
 				itemImage2.getItems().add(folder1);
 			}
-			
-			
+
+
 		}
 		return itemImage2;
 	}
@@ -1038,7 +1047,7 @@ public class ControlDashboard {
 			{
 				writeConsole(imW.getPath() + " is now in the " + fold1.getName() + " collection.", "ImageBrowser");
 			}
-			
+
 		}
 		this.refresh();
 	}
@@ -1077,7 +1086,6 @@ public class ControlDashboard {
 	@FXML
 	void binaryPP(ActionEvent event) {
 		this.writeConsole("Binary is executing...", "Image Preprocessing");
-
 		ArrayList<String> listPath = new ArrayList<String>();
 		Iterator<ImageView> it = this.selected.iterator();
 		while(it.hasNext())
@@ -1086,36 +1094,30 @@ public class ControlDashboard {
 			String path = this.imageViewToPath.get(imV);
 			listPath.add(path);
 		}
-		this.writeConsole(Facade.binaryPP(listPath), "Image Preprocessing");
+		Facade.listPath = listPath;
+		Parent root;
+		try {
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("UIBinary.fxml"));
+			root = loader.load();
+			Scene scene = new Scene(root);			
+			Stage stage = new Stage();
+			stage.setResizable(false);
+			stage.setScene(scene);
+			stage.show();
 
-		this.initImage(currentFolder);
-		this.reloadView();
+			ControlBinary myController = loader.getController();
+
+
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
 	}
 
 	@FXML
 	void rgb2PP(ActionEvent event) {
 		this.writeConsole("RGB2 Grey is executing...", "Image Preprocessing");
-
-
-
-		this.initImage(currentFolder);
-		this.reloadView();
-	}
-
-	@FXML
-	void skeletonPP(ActionEvent event) {
-		this.writeConsole("Skeleton is executing...", "Image Preprocessing");
-
-
-
-		this.initImage(currentFolder);
-		this.reloadView();
-	}
-
-
-	@FXML
-	void landmarkPrediction(ActionEvent event) {
-		this.writeConsole("Landmark prediction is executing...", "Landmark");
 		ArrayList<String> listPath = new ArrayList<String>();
 		Iterator<ImageView> it = this.selected.iterator();
 		while(it.hasNext())
@@ -1124,12 +1126,209 @@ public class ControlDashboard {
 			String path = this.imageViewToPath.get(imV);
 			listPath.add(path);
 		}
-		Facade.landmarkPrediction(listPath, pathToImageWing, this);
-
-		this.initImage(currentFolder);
-		this.reloadView();
+		Facade.listPath = listPath;
+		Facade.rgb2();
 	}
 
+	@FXML
+	void skeletonPP(ActionEvent event) {
+		this.writeConsole("Skeleton is executing...", "Image Preprocessing");
+		ArrayList<String> listPath = new ArrayList<String>();
+		Iterator<ImageView> it = this.selected.iterator();
+		while(it.hasNext())
+		{
+			ImageView imV = it.next();
+			String path = this.imageViewToPath.get(imV);
+			listPath.add(path);
+		}
+		Facade.listPath = listPath;
+		Parent root;
+		try {
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("UISkeleton.fxml"));
+			root = loader.load();
+			Scene scene = new Scene(root);			
+			Stage stage = new Stage();
+			stage.setResizable(false);
+			stage.setScene(scene);
+			stage.show();
+
+			ControlSkeleton myController = loader.getController();
+
+
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+	}
+
+
+	@FXML
+	void crossPointDetection(ActionEvent event) {
+		this.writeConsole("Cross point detection is executing...", "Cross point detection");
+		ArrayList<String> listPath = new ArrayList<String>();
+		Iterator<ImageView> it = this.selected.iterator();
+		while(it.hasNext())
+		{
+			ImageView imV = it.next();
+			String path = this.imageViewToPath.get(imV);
+			listPath.add(path);
+		}
+		
+		Facade.listPath = listPath;
+		Parent root;
+		try {
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("UICrossPointDetection.fxml"));
+			root = loader.load();
+			Scene scene = new Scene(root);			
+			Stage stage = new Stage();
+			stage.setResizable(false);
+			stage.setScene(scene);
+			stage.show();
+
+			ControlCrossPointDetection myController = loader.getController();
+			myController.dataLD(listPath, pathToImageWing);
+
+
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	
+	@FXML
+	void dotAndNoise(ActionEvent event) {
+		this.writeConsole("Dot & noise remover is executing...", "Image Preprocessing");
+		ArrayList<String> listPath = new ArrayList<String>();
+		Iterator<ImageView> it = this.selected.iterator();
+		while(it.hasNext())
+		{
+			ImageView imV = it.next();
+			String path = this.imageViewToPath.get(imV);
+			listPath.add(path);
+		}
+		Facade.listPath = listPath;
+		Parent root;
+		try {
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("UIDotAndNoise.fxml"));
+			root = loader.load();
+			Scene scene = new Scene(root);			
+			Stage stage = new Stage();
+			stage.setResizable(false);
+			stage.setScene(scene);
+			stage.show();
+
+			ControlDotAndNoise myController = loader.getController();
+
+
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+	}
+
+
+	@FXML
+	void landmarkPrediction(ActionEvent event) {
+		this.writeConsole("Landmark prediction is executing...", "LandmarkPrediction");
+		ArrayList<String> listPath = new ArrayList<String>();
+		Iterator<ImageView> it = this.selected.iterator();
+		while(it.hasNext())
+		{
+			ImageView imV = it.next();
+			String path = this.imageViewToPath.get(imV);
+			listPath.add(path);
+		}
+		
+		Facade.listPath = listPath;
+		Parent root;
+		try {
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("UILandmarkDetection.fxml"));
+			root = loader.load();
+			Scene scene = new Scene(root);			
+			Stage stage = new Stage();
+			stage.setResizable(false);
+			stage.setScene(scene);
+			stage.show();
+
+			ControlLandmarkDetection myController = loader.getController();
+			myController.dataLD(listPath, pathToImageWing);
+
+
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@FXML
+	void randomForest(ActionEvent event) {
+		
+		this.writeConsole("Random Forest is executing...", "Machine learning");
+		ArrayList<String> listPath = new ArrayList<String>();
+		Iterator<ImageView> it = this.selected.iterator();
+		while(it.hasNext())
+		{
+			ImageView imV = it.next();
+			String path = this.imageViewToPath.get(imV);
+			listPath.add(path);
+		}
+		Facade.listPath = listPath;
+		Parent root;
+		try {
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("UIRandomForest.fxml"));
+			root = loader.load();
+			Scene scene = new Scene(root);			
+			Stage stage = new Stage();
+			stage.setResizable(false);
+			stage.setScene(scene);
+			stage.show();
+
+			ControlRandomForest myController = loader.getController();
+
+
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+	}
+	
+	
+	@FXML
+	void SVM(ActionEvent event) {
+		
+		this.writeConsole("SVM is executing...", "Machine learning");
+		ArrayList<String> listPath = new ArrayList<String>();
+		Iterator<ImageView> it = this.selected.iterator();
+		while(it.hasNext())
+		{
+			ImageView imV = it.next();
+			String path = this.imageViewToPath.get(imV);
+			listPath.add(path);
+		}
+		Facade.listPath = listPath;
+		Parent root;
+		try {
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("UISVM.fxml"));
+			root = loader.load();
+			Scene scene = new Scene(root);			
+			Stage stage = new Stage();
+			stage.setResizable(false);
+			stage.setScene(scene);
+			stage.show();
+
+			ControlSVM myController = loader.getController();
+
+
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+	}
 
 	/* ------- END EXTERNAL FUNCTION ------- */
 

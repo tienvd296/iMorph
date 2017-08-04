@@ -32,13 +32,15 @@ public class Facade {
 	public static Project currentProject = null;
 
 	public static ControlDashboard activeView = null;
-	
+
 	public static ArrayList<Project> undo = new ArrayList<Project>();
-	
+
 	public static ArrayList<Project> redo = new ArrayList<Project>();
 
-	
-	
+	public static ArrayList<String> listPath = new ArrayList<String>();
+
+
+
 
 	/**
 	 * Create a new empty project. Just the project's path is available.
@@ -420,39 +422,19 @@ public class Facade {
 	 */
 	public static void editLandmark(ImageWing im)
 	{
-		
+
 		landmarkFile.saveImage(im);
 	}
 
-	public static String binaryPP(ArrayList<String> listPath) {
-		return "OK";
-
-	}
-
-	
-	/**
-	 * Remove image to the current folder.
-	 * 
-	 * @param listPath
-	 * 			Image path ArrayList affected by the function
-	 * 
-	 * @param listImW
-	 * 			HashMap to find the ImageWing object from path
-	 * 
-	 *  @param CD
-	 * 			The ControlDashboard instance 
-	 * 
-	 */
-	public static void landmarkPrediction(ArrayList<String> listPath, HashMap<String, ImageWing> listImW, ControlDashboard CD) {
-		Facade.undo.add(currentProject.clonage());	
+	public static void binaryPP(String threshold, String filter, String thresholdType) {
 		String separator = System.getProperty("file.separator");
 		String originalPath = System.getProperty("user.dir");
-		String pathAPI = originalPath + separator + "landmarkPrediction.exe";
+		String pathAPI = originalPath + separator + "binary.exe";
 
 		for(int i = 0; i<listPath.size(); i++)
 		{
 
-			ProcessBuilder pb = new ProcessBuilder(pathAPI, listPath.get(i));
+			ProcessBuilder pb = new ProcessBuilder(pathAPI, listPath.get(i) + " " + threshold + " " + filter + " " + thresholdType);
 			Process process;
 			try {
 				process = pb.start();
@@ -461,7 +443,64 @@ public class Facade {
 
 
 				while ((line = stdInput.readLine()) != null) {
-					CD.writeConsole(line, "Image Preprocessing");
+					Facade.activeView.writeConsole(line, "Binary");
+				}
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+
+	}
+
+
+	public static void skeletonPP(String length) {
+		String separator = System.getProperty("file.separator");
+		String originalPath = System.getProperty("user.dir");
+		String pathAPI = originalPath + separator + "skeleton.exe";
+
+		for(int i = 0; i<listPath.size(); i++)
+		{
+
+			ProcessBuilder pb = new ProcessBuilder(pathAPI, listPath.get(i) + " " + length);
+			Process process;
+			try {
+				process = pb.start();
+				BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream())); 
+				String line = null;
+
+
+				while ((line = stdInput.readLine()) != null) {
+					Facade.activeView.writeConsole(line, "Skeleton");
+				}
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+
+	}
+
+	
+	public static void landmarkDetection(ArrayList<String> listPath, HashMap<String, ImageWing> listImW, String features, String neighbor) {
+		Facade.undo.add(currentProject.clonage());	
+		String separator = System.getProperty("file.separator");
+		String originalPath = System.getProperty("user.dir");
+		String pathAPI = originalPath + separator + "landmarkDetection.exe";
+
+		for(int i = 0; i<listPath.size(); i++)
+		{
+
+			ProcessBuilder pb = new ProcessBuilder(pathAPI, listPath.get(i) + " " + features + " " + neighbor);
+			Process process;
+			try {
+				process = pb.start();
+				BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream())); 
+				String line = null;
+
+
+				while ((line = stdInput.readLine()) != null) {
+					Facade.activeView.writeConsole(line, "Image Preprocessing");
 					String[] tab = line.split(" ");
 					Boolean b;
 					if(tab[2] == "true"){
@@ -500,8 +539,8 @@ public class Facade {
 	public static void addLandmark(ImageWing im, ArrayList<Landmark> listLandmark) {
 		landmarkFile.saveImage(im);
 	}
-	
-	
+
+
 	public static void undo()
 	{
 		if(undo.size() > 0 )
@@ -511,7 +550,7 @@ public class Facade {
 			Facade.undo.remove(undo.size()-1);
 		}
 	}
-	
+
 	public static void redo()
 	{
 		if(redo.size() > 0 )
@@ -519,6 +558,158 @@ public class Facade {
 			Facade.undo.add(currentProject.clonage());
 			Facade.currentProject = Facade.redo.get(redo.size()-1);
 			Facade.redo.remove(redo.size()-1);
+		}
+	}
+
+	public static void randomForest(String ntree, String proximity) {
+
+		String separator = System.getProperty("file.separator");
+		String originalPath = System.getProperty("user.dir");
+		String pathAPI = originalPath + separator + "randomForest.exe";
+
+		for(int i = 0; i<listPath.size(); i++)
+		{
+
+			ProcessBuilder pb = new ProcessBuilder(pathAPI, listPath.get(i) + " " + ntree + " " + proximity);
+			Process process;
+			try {
+				process = pb.start();
+				BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream())); 
+				String line = null;
+
+
+				while ((line = stdInput.readLine()) != null) {
+					Facade.activeView.writeConsole(line, "RandomForest");
+				}
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+
+	}
+
+
+	public static void SVM(String kernel, String cost, String gamma, String cross) {
+
+		String separator = System.getProperty("file.separator");
+		String originalPath = System.getProperty("user.dir");
+		String pathAPI = originalPath + separator + "svm.exe";
+
+		for(int i = 0; i<listPath.size(); i++)
+		{
+
+			ProcessBuilder pb = new ProcessBuilder(pathAPI, listPath.get(i) + " " + kernel + " " + cost + " " + gamma+ " " + cross);
+			Process process;
+			try {
+				process = pb.start();
+				BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream())); 
+				String line = null;
+
+
+				while ((line = stdInput.readLine()) != null) {
+					Facade.activeView.writeConsole(line, "SVM");
+				}
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+
+	}
+
+	public static void rgb2() {
+		String separator = System.getProperty("file.separator");
+		String originalPath = System.getProperty("user.dir");
+		String pathAPI = originalPath + separator + "rgb2.exe";
+
+		for(int i = 0; i<listPath.size(); i++)
+		{
+
+			ProcessBuilder pb = new ProcessBuilder(pathAPI, listPath.get(i));
+			Process process;
+			try {
+				process = pb.start();
+				BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream())); 
+				String line = null;
+
+
+				while ((line = stdInput.readLine()) != null) {
+					Facade.activeView.writeConsole(line, "RGB2");
+				}
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}		
+	}
+
+	
+	public static void dotAndNoise(String dotSize) {
+		String separator = System.getProperty("file.separator");
+		String originalPath = System.getProperty("user.dir");
+		String pathAPI = originalPath + separator + "dotAndNoise.exe";
+
+		for(int i = 0; i<listPath.size(); i++)
+		{
+
+			ProcessBuilder pb = new ProcessBuilder(pathAPI, listPath.get(i) + " " + dotSize);
+			Process process;
+			try {
+				process = pb.start();
+				BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream())); 
+				String line = null;
+
+
+				while ((line = stdInput.readLine()) != null) {
+					Facade.activeView.writeConsole(line, "Dot & noise remover");
+				}
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+
+	}
+
+	
+	public static void crossPointDetection(ArrayList<String> listPath, HashMap<String, ImageWing> listImW, String windowSize, String neighbor) {
+		Facade.undo.add(currentProject.clonage());	
+		String separator = System.getProperty("file.separator");
+		String originalPath = System.getProperty("user.dir");
+		String pathAPI = originalPath + separator + "crossPointDetection.exe";
+
+		for(int i = 0; i<listPath.size(); i++)
+		{
+
+			ProcessBuilder pb = new ProcessBuilder(pathAPI, listPath.get(i) + " " + neighbor + " " + windowSize);
+			Process process;
+			try {
+				process = pb.start();
+				BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream())); 
+				String line = null;
+
+
+				while ((line = stdInput.readLine()) != null) {
+					Facade.activeView.writeConsole(line, "Cross Point Detection");
+					String[] tab = line.split(" ");
+					Boolean b;
+					if(tab[2] == "true"){
+						b = true;
+					}
+					else
+					{
+						b = false;
+					}
+					Landmark l = new Landmark(Float.parseFloat(tab[0]), Float.parseFloat(tab[1]), b);
+					ImageWing imW = listImW.get(listPath.get(i));
+					imW.addLandmark(l);
+					landmarkFile.saveImage(imW);
+				}
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 

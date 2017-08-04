@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXComboBox?>
+<?import com.jfoenix.controls.JFXRadioButton?>
+<?import com.jfoenix.controls.JFXTextField?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane maxHeight="300.0" maxWidth="400.0" minHeight="238.0" minWidth="400.0" prefHeight="290.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.ControlBinary">
+   <children>
+      <Pane prefHeight="97.0" prefWidth="400.0" style="-fx-background-color: #4545;">
+         <children>
+            <Label layoutX="14.0" layoutY="29.0" text="Binary">
+               <font>
+                  <Font size="28.0" />
+               </font>
+            </Label>
+         </children>
+      </Pane>
+      <Label layoutX="14.0" layoutY="105.0" text="Parameters">
+         <font>
+            <Font size="20.0" />
+         </font>
+      </Label>
+      <Label layoutX="14.0" layoutY="139.0" prefHeight="20.0" prefWidth="57.0" text="filter :">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Label>
+      <JFXButton layoutX="232.0" layoutY="246.0" onMouseClicked="#runButton" style="-fx-background-color: #00FF00;" text="RUN">
+         <font>
+            <Font name="System Bold" size="14.0" />
+         </font>
+      </JFXButton>
+      <JFXButton layoutX="97.0" layoutY="246.0" onMouseClicked="#cancelButton" style="-fx-background-color: #FF2020;" text="CANCEL">
+         <font>
+            <Font name="System Bold" size="14.0" />
+         </font>
+      </JFXButton>
+      <JFXComboBox fx:id="filter" layoutX="71.0" layoutY="133.0" promptText="3*3" />
+      <Label layoutX="184.0" layoutY="139.0" prefHeight="20.0" prefWidth="73.0" text="threshold :">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Label>
+      <JFXTextField fx:id="threshold" layoutX="257.0" layoutY="133.0" prefHeight="25.0" prefWidth="107.0" promptText="150" text="150" />
+      <JFXRadioButton fx:id="fixedThreshold" layoutX="200.0" layoutY="176.0" text="fixed threshold">
+         <font>
+            <Font size="14.0" />
+         </font>
+         <toggleGroup>
+            <ToggleGroup fx:id="g1" />
+         </toggleGroup>
+      </JFXRadioButton>
+      <JFXRadioButton fx:id="adaptiveThreshold" layoutX="200.0" layoutY="196.0" selected="true" text="adaptive threshold" toggleGroup="$g1">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </JFXRadioButton>
+   </children>
+</AnchorPane>

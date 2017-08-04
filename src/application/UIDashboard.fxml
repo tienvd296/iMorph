@@ -16,56 +16,48 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.Pane?>
 
-<AnchorPane prefHeight="800.0" prefWidth="1000.0"
-	xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1"
-	fx:controller="application.ControlDashboard">
+<AnchorPane prefHeight="800.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.ControlDashboard">
 	<children>
-		<BorderPane prefHeight="800.0" prefWidth="1000.0"
-			AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
-			AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+		<BorderPane prefHeight="800.0" prefWidth="1000.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
 			<top>
-				<MenuBar prefHeight="20.0" prefWidth="1000.0"
-					BorderPane.alignment="CENTER">
+				<MenuBar prefHeight="20.0" prefWidth="1000.0" BorderPane.alignment="CENTER">
 					<menus>
 						<Menu mnemonicParsing="false" text="File">
 							<items>
-								<MenuItem mnemonicParsing="false" onAction="#newProject"
-									text="New" />
-								<MenuItem mnemonicParsing="false" onAction="#saveProject"
-									text="Save (CTRL + S)" />
-								<MenuItem mnemonicParsing="false" onAction="#saveAsProject"
-									text="Save As (CTRL + MAJ + S)" />
-								<MenuItem mnemonicParsing="false" onAction="#loadImages"
-									text="Load images" />
+								<MenuItem mnemonicParsing="false" onAction="#newProject" text="New" />
+								<MenuItem mnemonicParsing="false" onAction="#saveProject" text="Save (CTRL + S)" />
+								<MenuItem mnemonicParsing="false" onAction="#saveAsProject" text="Save As (CTRL + MAJ + S)" />
+								<MenuItem mnemonicParsing="false" onAction="#loadImages" text="Load images" />
 							</items>
 						</Menu>
 						<Menu mnemonicParsing="false" text="Edit">
 							<items>
-								<MenuItem mnemonicParsing="false" onAction="#undo"
-									text="Undo (CTRL + Z)" />
-								<MenuItem mnemonicParsing="false" onAction="#redo"
-									text="Redo (CTRL + Y)" />
+								<MenuItem mnemonicParsing="false" onAction="#undo" text="Undo (CTRL + Z)" />
+								<MenuItem mnemonicParsing="false" onAction="#redo" text="Redo (CTRL + Y)" />
 							</items>
 						</Menu>
 						<Menu mnemonicParsing="false" text="Image processing">
 							<items>
-								<MenuItem mnemonicParsing="false" onAction="#landmarkPrediction"
-									text="Landmark prediction" />
+								<MenuItem mnemonicParsing="false" onAction="#landmarkPrediction" text="Landmark detection" />
+                        <MenuItem mnemonicParsing="false" onAction="#crossPointDetection" text="Cross point detection" />
 								<Menu mnemonicParsing="false" text="Image pre-processing">
 									<items>
-										<MenuItem mnemonicParsing="false" onAction="#rgb2PP"
-											text="RGB2 Grey" />
-										<MenuItem mnemonicParsing="false" onAction="#binaryPP"
-											text="Binary" />
-										<MenuItem mnemonicParsing="false" onAction="#skeletonPP"
-											text="Skeleton" />
+										<MenuItem mnemonicParsing="false" onAction="#rgb2PP" text="RGB2 Grey" />
+										<MenuItem mnemonicParsing="false" onAction="#binaryPP" text="Binary" />
+										<MenuItem mnemonicParsing="false" onAction="#skeletonPP" text="Skeleton" />
+                              <MenuItem mnemonicParsing="false" onAction="#dotAndNoise" text="Dot and noise remover" />
 									</items>
 								</Menu>
 							</items>
 						</Menu>
 						<Menu mnemonicParsing="false" text="Machine learning">
 							<items>
-								<MenuItem mnemonicParsing="false" text="Training" />
+								<Menu mnemonicParsing="false" text="Training">
+									<items>
+										<MenuItem mnemonicParsing="false" onAction="#SVM" text="SVM" />
+										<MenuItem mnemonicParsing="false" onAction="#randomForest" text="Random Forest" />
+									</items>
+								</Menu>
 								<MenuItem mnemonicParsing="false" text="Landmark production" />
 							</items>
 						</Menu>
@@ -75,45 +67,27 @@
 				</MenuBar>
 			</top>
 			<center>
-				<SplitPane dividerPositions="0.6" prefHeight="160.0"
-					prefWidth="200.0" BorderPane.alignment="CENTER">
+				<SplitPane dividerPositions="0.6" prefHeight="160.0" prefWidth="200.0" BorderPane.alignment="CENTER">
 					<items>
-						<AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0"
-							prefWidth="100.0">
+						<AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
 							<children>
-								<SplitPane dividerPositions="0.7" orientation="VERTICAL"
-									prefHeight="773.0" prefWidth="294.0" AnchorPane.bottomAnchor="0.0"
-									AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
-									AnchorPane.topAnchor="0.0">
+								<SplitPane dividerPositions="0.7" orientation="VERTICAL" prefHeight="773.0" prefWidth="294.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
 									<items>
-										<AnchorPane minHeight="0.0" minWidth="0.0"
-											prefHeight="100.0" prefWidth="160.0">
+										<AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
 											<children>
-												<BorderPane fx:id="table" layoutX="143.0"
-													layoutY="68.0" prefHeight="383.0" prefWidth="572.0"
-													style="-fx-background-color: #454545;"
-													AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
-													AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+												<BorderPane fx:id="table" layoutX="143.0" layoutY="68.0" prefHeight="383.0" prefWidth="572.0" style="-fx-background-color: #454545;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
 													<center>
-														<Button alignment="CENTER" contentDisplay="CENTER"
-															mnemonicParsing="false" onMouseClicked="#startView" text="Load images"
-															BorderPane.alignment="CENTER" />
+														<Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onMouseClicked="#startView" text="Load images" BorderPane.alignment="CENTER" />
 													</center>
 													<left>
-														<Pane prefHeight="512.0" prefWidth="70.0"
-															BorderPane.alignment="CENTER">
+														<Pane prefHeight="512.0" prefWidth="70.0" BorderPane.alignment="CENTER">
 															<children>
-																<ImageView fitHeight="50.0" fitWidth="50.0"
-																	layoutX="10.0" layoutY="226.0" onMouseClicked="#previous"
-																	pickOnBounds="true" preserveRatio="true">
+																<ImageView fitHeight="50.0" fitWidth="50.0" layoutX="10.0" layoutY="226.0" onMouseClicked="#previous" pickOnBounds="true" preserveRatio="true">
 																	<image>
 																		<Image url="@chevron-sign-left.png" />
 																	</image>
 																</ImageView>
-																<ImageView fx:id="backFolder" fitHeight="50.0"
-																	fitWidth="50.0" layoutX="10.0" layoutY="10.0"
-																	onMouseClicked="#backFolder" pickOnBounds="true"
-																	preserveRatio="true" visible="false">
+																<ImageView fx:id="backFolder" fitHeight="50.0" fitWidth="50.0" layoutX="10.0" layoutY="10.0" onMouseClicked="#backFolder" pickOnBounds="true" preserveRatio="true" visible="false">
 																	<image>
 																		<Image url="@folder.png" />
 																	</image>
@@ -122,12 +96,9 @@
 														</Pane>
 													</left>
 													<right>
-														<Pane prefHeight="512.0" prefWidth="70.0"
-															BorderPane.alignment="CENTER">
+														<Pane prefHeight="512.0" prefWidth="70.0" BorderPane.alignment="CENTER">
 															<children>
-																<ImageView fitHeight="50.0" fitWidth="50.0"
-																	layoutX="10.0" layoutY="226.0" onMouseClicked="#next"
-																	pickOnBounds="true" preserveRatio="true" rotate="180.0">
+																<ImageView fitHeight="50.0" fitWidth="50.0" layoutX="10.0" layoutY="226.0" onMouseClicked="#next" pickOnBounds="true" preserveRatio="true" rotate="180.0">
 																	<image>
 																		<Image url="@chevron-sign-left.png" />
 																	</image>
@@ -136,54 +107,30 @@
 														</Pane>
 													</right>
 													<top>
-														<Pane prefHeight="27.0" prefWidth="594.0"
-															BorderPane.alignment="CENTER">
+														<Pane prefHeight="27.0" prefWidth="594.0" BorderPane.alignment="CENTER">
 															<children>
-																<JFXRadioButton layoutX="15.0" layoutY="5.0"
-																	onAction="#view1" prefHeight="17.0" prefWidth="113.0"
-																	style="-jfx-unselected-color: white;" text="Simple view"
-																	textFill="WHITE">
+																<JFXRadioButton layoutX="15.0" layoutY="5.0" onAction="#view1" prefHeight="17.0" prefWidth="113.0" style="-jfx-unselected-color: white;" text="Simple view" textFill="WHITE">
 																	<toggleGroup>
 																		<ToggleGroup fx:id="g1" />
 																	</toggleGroup>
 																</JFXRadioButton>
-																<JFXRadioButton layoutX="467.0" layoutY="5.0"
-																	onAction="#view25" prefHeight="17.0" prefWidth="113.0"
-																	style="-jfx-unselected-color: white;" text="25-view"
-																	textFill="WHITE" toggleGroup="$g1" />
-																<JFXRadioButton layoutX="128.0" layoutY="5.0"
-																	onAction="#view4" prefHeight="17.0" prefWidth="113.0"
-																	style="-jfx-unselected-color: white;" text="4-view"
-																	textFill="WHITE" toggleGroup="$g1" />
-																<JFXRadioButton layoutX="354.0" layoutY="5.0"
-																	onAction="#view16" prefHeight="17.0" prefWidth="113.0"
-																	selected="true" style="-jfx-unselected-color: white;"
-																	text="16-view" textFill="WHITE" toggleGroup="$g1" />
-																<JFXRadioButton layoutX="241.0" layoutY="5.0"
-																	onAction="#view9" prefHeight="17.0" prefWidth="113.0"
-																	style="-jfx-unselected-color: white;" text="9-view"
-																	textFill="WHITE" toggleGroup="$g1" />
+																<JFXRadioButton layoutX="467.0" layoutY="5.0" onAction="#view25" prefHeight="17.0" prefWidth="113.0" style="-jfx-unselected-color: white;" text="25-view" textFill="WHITE" toggleGroup="$g1" />
+																<JFXRadioButton layoutX="128.0" layoutY="5.0" onAction="#view4" prefHeight="17.0" prefWidth="113.0" style="-jfx-unselected-color: white;" text="4-view" textFill="WHITE" toggleGroup="$g1" />
+																<JFXRadioButton layoutX="354.0" layoutY="5.0" onAction="#view16" prefHeight="17.0" prefWidth="113.0" selected="true" style="-jfx-unselected-color: white;" text="16-view" textFill="WHITE" toggleGroup="$g1" />
+																<JFXRadioButton layoutX="241.0" layoutY="5.0" onAction="#view9" prefHeight="17.0" prefWidth="113.0" style="-jfx-unselected-color: white;" text="9-view" textFill="WHITE" toggleGroup="$g1" />
 															</children>
 														</Pane>
 													</top>
 												</BorderPane>
 											</children>
 										</AnchorPane>
-										<AnchorPane minHeight="0.0" minWidth="0.0"
-											prefHeight="100.0" prefWidth="160.0">
+										<AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
 											<children>
-												<TitledPane animated="false" layoutX="-7.0"
-													prefHeight="228.0" prefWidth="594.0" text="Console"
-													AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="-7.0"
-													AnchorPane.rightAnchor="7.0" AnchorPane.topAnchor="0.0">
+												<TitledPane animated="false" layoutX="-7.0" prefHeight="228.0" prefWidth="594.0" text="Console" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="-7.0" AnchorPane.rightAnchor="7.0" AnchorPane.topAnchor="0.0">
 													<content>
-														<AnchorPane minHeight="0.0" minWidth="0.0"
-															prefHeight="180.0" prefWidth="200.0">
+														<AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
 															<children>
-																<TextArea fx:id="console" prefHeight="202.0"
-																	prefWidth="592.0" AnchorPane.bottomAnchor="0.0"
-																	AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
-																	AnchorPane.topAnchor="0.0" />
+																<TextArea fx:id="console" prefHeight="202.0" prefWidth="592.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
 															</children>
 														</AnchorPane>
 													</content>
@@ -194,35 +141,25 @@
 								</SplitPane>
 							</children>
 						</AnchorPane>
-						<AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0"
-							prefWidth="100.0">
+						<AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
 							<children>
-								<AnchorPane minHeight="0.0" minWidth="0.0"
-									prefHeight="773.0" prefWidth="396.0" AnchorPane.bottomAnchor="0.0"
-									AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
-									AnchorPane.topAnchor="0.0">
+								<AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="773.0" prefWidth="396.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
 									<children>
-										<Accordion layoutX="64.0" layoutY="69.0" prefHeight="383.0"
-											prefWidth="394.0" AnchorPane.bottomAnchor="0.0"
-											AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
-											AnchorPane.topAnchor="0.0">
+										<Accordion layoutX="64.0" layoutY="69.0" prefHeight="383.0" prefWidth="394.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
 											<panes>
 												<TitledPane animated="false" text="Metadata">
 													<content>
-														<AnchorPane fx:id="metadataPane" minHeight="0.0"
-															minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+														<AnchorPane fx:id="metadataPane" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
 													</content>
 												</TitledPane>
 												<TitledPane animated="false" text="Properties">
 													<content>
-														<AnchorPane fx:id="propertiesPane" minHeight="0.0"
-															minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+														<AnchorPane fx:id="propertiesPane" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
 													</content>
 												</TitledPane>
 												<TitledPane animated="false" text="Landmarks">
 													<content>
-														<AnchorPane fx:id="landmarksPane" minHeight="0.0"
-															minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+														<AnchorPane fx:id="landmarksPane" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
 													</content>
 												</TitledPane>
 											</panes>

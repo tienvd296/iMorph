@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXComboBox?>
+<?import com.jfoenix.controls.JFXTextField?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane maxHeight="300.0" maxWidth="400.0" minHeight="238.0" minWidth="400.0" prefHeight="290.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.ControlSVM">
+   <children>
+      <Pane prefHeight="97.0" prefWidth="400.0" style="-fx-background-color: #4545;">
+         <children>
+            <Label layoutX="14.0" layoutY="29.0" text="SVM">
+               <font>
+                  <Font size="28.0" />
+               </font>
+            </Label>
+         </children>
+      </Pane>
+      <Label layoutX="14.0" layoutY="105.0" text="Parameters">
+         <font>
+            <Font size="20.0" />
+         </font>
+      </Label>
+      <Label layoutX="14.0" layoutY="139.0" prefHeight="20.0" prefWidth="57.0" text="kernel :">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Label>
+      <JFXButton layoutX="232.0" layoutY="246.0" onMouseClicked="#runButton" style="-fx-background-color: #00FF00;" text="RUN">
+         <font>
+            <Font name="System Bold" size="14.0" />
+         </font>
+      </JFXButton>
+      <JFXButton layoutX="97.0" layoutY="246.0" onMouseClicked="#cancelButton" style="-fx-background-color: #FF2020;" text="CANCEL">
+         <font>
+            <Font name="System Bold" size="14.0" />
+         </font>
+      </JFXButton>
+      <JFXComboBox fx:id="kernel" layoutX="71.0" layoutY="133.0" promptText="radical" />
+      <Label layoutX="200.0" layoutY="200.0" prefHeight="20.0" prefWidth="57.0" text="cross :">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Label>
+      <Label layoutX="200.0" layoutY="169.0" prefHeight="20.0" prefWidth="57.0" text="gamma :">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Label>
+      <Label layoutX="200.0" layoutY="139.0" prefHeight="20.0" prefWidth="57.0" text="cost :">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Label>
+      <JFXTextField fx:id="cost" layoutX="257.0" layoutY="133.0" prefHeight="25.0" prefWidth="107.0" />
+      <JFXTextField fx:id="gamma" layoutX="257.0" layoutY="163.0" prefHeight="25.0" prefWidth="107.0" />
+      <JFXTextField fx:id="cross" layoutX="257.0" layoutY="194.0" prefHeight="25.0" prefWidth="107.0" />
+   </children>
+</AnchorPane>
