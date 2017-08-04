@@ -434,7 +434,7 @@ public class Facade {
 		for(int i = 0; i<listPath.size(); i++)
 		{
 
-			ProcessBuilder pb = new ProcessBuilder(pathAPI, listPath.get(i) + " " + threshold + " " + filter + " " + thresholdType);
+			ProcessBuilder pb = new ProcessBuilder(pathAPI, listPath.get(i) , threshold , filter , thresholdType);
 			Process process;
 			try {
 				process = pb.start();
@@ -486,12 +486,12 @@ public class Facade {
 		Facade.undo.add(currentProject.clonage());	
 		String separator = System.getProperty("file.separator");
 		String originalPath = System.getProperty("user.dir");
-		String pathAPI = originalPath + separator + "landmarkDetection.exe";
+		String pathAPI = originalPath + separator +  ".." + separator + "landmarkDetection.exe";
 
 		for(int i = 0; i<listPath.size(); i++)
 		{
 
-			ProcessBuilder pb = new ProcessBuilder(pathAPI, listPath.get(i) + " " + features + " " + neighbor);
+			ProcessBuilder pb = new ProcessBuilder(pathAPI, listPath.get(i) , features , neighbor);
 			Process process;
 			try {
 				process = pb.start();
@@ -570,7 +570,8 @@ public class Facade {
 		for(int i = 0; i<listPath.size(); i++)
 		{
 
-			ProcessBuilder pb = new ProcessBuilder(pathAPI, listPath.get(i) + " " + ntree + " " + proximity);
+			ProcessBuilder pb = new ProcessBuilder(pathAPI, listPath.get(i) , ntree , proximity);
+			
 			Process process;
 			try {
 				process = pb.start();
@@ -599,7 +600,7 @@ public class Facade {
 		for(int i = 0; i<listPath.size(); i++)
 		{
 
-			ProcessBuilder pb = new ProcessBuilder(pathAPI, listPath.get(i) + " " + kernel + " " + cost + " " + gamma+ " " + cross);
+			ProcessBuilder pb = new ProcessBuilder(pathAPI, listPath.get(i) , kernel , cost , gamma, cross);
 			Process process;
 			try {
 				process = pb.start();
@@ -653,7 +654,7 @@ public class Facade {
 		for(int i = 0; i<listPath.size(); i++)
 		{
 
-			ProcessBuilder pb = new ProcessBuilder(pathAPI, listPath.get(i) + " " + dotSize);
+			ProcessBuilder pb = new ProcessBuilder(pathAPI, listPath.get(i) , dotSize);
 			Process process;
 			try {
 				process = pb.start();
@@ -682,7 +683,7 @@ public class Facade {
 		for(int i = 0; i<listPath.size(); i++)
 		{
 
-			ProcessBuilder pb = new ProcessBuilder(pathAPI, listPath.get(i) + " " + neighbor + " " + windowSize);
+			ProcessBuilder pb = new ProcessBuilder(pathAPI, listPath.get(i) , neighbor , windowSize);
 			Process process;
 			try {
 				process = pb.start();

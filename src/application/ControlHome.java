@@ -196,6 +196,7 @@ public class ControlHome {
 
 			ControlDashboard myController = loader.getController();
 
+			myController.refresh();
 
 
 		} catch (IOException e) {

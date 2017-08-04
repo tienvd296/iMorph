@@ -44,5 +44,11 @@ public class ControlLandmarkDetection {
 		this.pathToImageWing = pathToImageWing;	
 	}
 	
+	public void initialize() {
+		features.getItems().addAll("SIFT", "SURF", "CMI", "HOG");
+		features.setValue("SIFT");
+		neighbor.setText("10");
+		}
+	
 
 }
