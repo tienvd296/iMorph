@@ -404,13 +404,15 @@ public class XML {
 	{
 		ArrayList<Project> listP = new ArrayList<Project>();
 		String separator = System.getProperty("file.separator");
+		String originalPath = new java.io.File("").getAbsolutePath();
+		String pathFile = originalPath + separator +  "lastSave";
 
 		org.jdom2.Document document;
 		org.jdom2.Element racine;
 		SAXBuilder sxb = new SAXBuilder();
 
 		try {
-			document = sxb.build(new File("lastSave"));
+			document = sxb.build(new File(pathFile));
 
 			racine = document.getRootElement();
 

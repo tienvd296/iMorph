@@ -2,9 +2,14 @@ package facade;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 
 import application.ControlDashboard;
@@ -78,6 +83,7 @@ public class Facade {
 		ImageWing image = new ImageWing(path);
 		image.getProperties().put("HEIGHT", Double.toString(height));
 		image.getProperties().put("WIDTH", Double.toString(width));
+		image.getProperties().put("ORIGINAL", "TRUE");
 		if(fold == null)
 		{
 			Facade.currentProject.addImage(image);
@@ -433,7 +439,6 @@ public class Facade {
 
 		for(int i = 0; i<listPath.size(); i++)
 		{
-
 			ProcessBuilder pb = new ProcessBuilder(pathAPI, listPath.get(i) , threshold , filter , thresholdType);
 			Process process;
 			try {
@@ -485,9 +490,9 @@ public class Facade {
 	public static void landmarkDetection(ArrayList<String> listPath, HashMap<String, ImageWing> listImW, String features, String neighbor) {
 		Facade.undo.add(currentProject.clonage());	
 		String separator = System.getProperty("file.separator");
-		String originalPath = System.getProperty("user.dir");
-		String pathAPI = originalPath + separator +  ".." + separator + "landmarkDetection.exe";
-
+		String originalPath = new java.io.File("").getAbsolutePath();
+		String pathAPI = originalPath + separator +  "landmarkPrediction.exe";
+		Facade.activeView.writeConsole(pathAPI, "TEST");
 		for(int i = 0; i<listPath.size(); i++)
 		{
 
@@ -715,6 +720,38 @@ public class Facade {
 	}
 
 
+	
+	public static void saveOrignal(ImageWing imW, boolean b) throws IOException
+	{
+		String separator = System.getProperty("file.separator");
+		String original = imW.getProperties().get("ORIGINAL");
+		if((original.compareTo("TRUE") == 0) || b)
+		{
+			String version = "original.tif";
+			if(b)
+			{
+				Date d = new Date();
+				SimpleDateFormat formatter;
+				formatter = new SimpleDateFormat("yyyy_MM_dd_HH-mm");
+				String date = formatter.format(d);
+				version = date + ".version.tif";
+			}
 
+			File f=new File(imW.getPath());
+		    FileReader fr=new FileReader(f);
+		    String path = imW.getPath();
+		    File dir = new File (path + ".version");
+		    dir.mkdirs();
+		    File f2=new File(path + ".version" + separator + version);
+		    FileWriter fw=new FileWriter(f2);
+		    int a;
+		    while((a=fr.read()) !=-1) 
+		    {
+		        fw.write(a);
+		    }
+		    fw.close();
+		    fr.close();
+		}
+	}
 
 }

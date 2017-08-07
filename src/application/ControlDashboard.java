@@ -953,6 +953,9 @@ public class ControlDashboard {
 
 		final MenuItem itemImage3 = new MenuItem("Landmark editor");
 		itemImage3.setOnAction(e -> landmarkAdd());
+		
+		final MenuItem itemImage5 = new MenuItem("Save this image");
+		itemImage5.setOnAction(e -> saveCopy());
 
 		final MenuItem itemImage4 = new MenuItem("Delete image");
 		itemImage4.setOnAction(e -> deleteImages());
@@ -960,8 +963,24 @@ public class ControlDashboard {
 		contextMenuFolder.getItems().clear();
 		contextMenuFolder.getItems().addAll(item1, item2, item3, item4);
 		contextMenuImage.getItems().clear();
-		contextMenuImage.getItems().addAll(itemImage1, itemImage2, itemImage3, itemImage4);
+		contextMenuImage.getItems().addAll(itemImage1, itemImage2, itemImage3, itemImage4, itemImage5);
 
+	}
+
+	private void saveCopy() {
+		this.writeConsole("Saving a version of the image", "Image Browser");
+		Iterator<ImageView> it = this.selected.iterator();
+		while(it.hasNext())
+		{
+			ImageView imV = it.next();
+			String path = this.imageViewToPath.get(imV);
+			try {
+				Facade.saveOrignal(this.pathToImageWing.get(path), true);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 	}
 
 	private Menu getMoveTo(){
@@ -1081,6 +1100,13 @@ public class ControlDashboard {
 		{
 			ImageView imV = it.next();
 			String path = this.imageViewToPath.get(imV);
+			try {
+				System.out.println("OK");
+				Facade.saveOrignal(this.pathToImageWing.get(path), false);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			listPath.add(path);
 		}
 		Facade.listPath = listPath;
@@ -1113,6 +1139,13 @@ public class ControlDashboard {
 		{
 			ImageView imV = it.next();
 			String path = this.imageViewToPath.get(imV);
+			try {
+				System.out.println("OK");
+				Facade.saveOrignal(this.pathToImageWing.get(path), false);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			listPath.add(path);
 		}
 		Facade.listPath = listPath;
@@ -1128,6 +1161,13 @@ public class ControlDashboard {
 		{
 			ImageView imV = it.next();
 			String path = this.imageViewToPath.get(imV);
+			try {
+				System.out.println("OK");
+				Facade.saveOrignal(this.pathToImageWing.get(path), false);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			listPath.add(path);
 		}
 		Facade.listPath = listPath;
@@ -1195,6 +1235,13 @@ public class ControlDashboard {
 		{
 			ImageView imV = it.next();
 			String path = this.imageViewToPath.get(imV);
+			try {
+				System.out.println("OK");
+				Facade.saveOrignal(this.pathToImageWing.get(path), false);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			listPath.add(path);
 		}
 		Facade.listPath = listPath;
