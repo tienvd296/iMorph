@@ -88,7 +88,7 @@ public class TestML extends JCanvasMouseListener {
 		Point p = e.getPoint();
 		Dimension dim = new Dimension();
 		dim.setSize(i, i);
-		return new RectangleDrawable(Color.white, p, dim);
+		return null;//new RectangleDrawable(Color.white, p, dim);
 
 	}
 
@@ -97,7 +97,7 @@ public class TestML extends JCanvasMouseListener {
 		Point p = e.getPoint();
 		Dimension dim = new Dimension();
 		dim.setSize(i, i);
-		return new CircleDrawable(Color.white, p, dim);
+		return null; //new CircleDrawable(Color.white, p, dim);
 
 	}
 }

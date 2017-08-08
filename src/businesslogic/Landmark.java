@@ -108,4 +108,8 @@ public class Landmark {
 		// TODO Auto-generated method stub
 		return new Landmark(this.getPosX(), this.getPosY(), this.getIsLandmark());
 	}
+
+	public void setIsLandmark(boolean b) {
+this.isLandmark = b;		
+	}
 }
