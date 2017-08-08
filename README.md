@@ -6,9 +6,10 @@
 
 Pour pouvoir développer sur ce projet, il vous faut :
 
-- le dernier Java JDK 8 ou + (qui inclu JavaFX 8 ou +)
-http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html
-- Eclipse 4.4 ou supérieur avec le plugin e(fx)clipse. Le plus simple est de télécharger la distribution préconfigurée depuis le site e(fx)clipse.
+  - le dernier Java JDK 8 ou + (qui inclu JavaFX 8 ou +)
+  http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html
+
+  - Eclipse 4.4 ou supérieur avec le plugin e(fx)clipse. Le plus simple est de télécharger la distribution préconfigurée depuis le site   e(fx)clipse.
 http://efxclipse.bestsolution.at/install.html#all-in-one
 
 
@@ -28,14 +29,15 @@ Paramètrez Eclipse pour qu'il utilise le JDK 8 :
 
 Une fois Eclipse prêt, il faut récupérer le projet.
 
-1. Téléchargez le projet depuis ce dépot github et copiez le dossier PhleboMorph dans le dossier workspace que vous aurez choisi pour Eclipse
+  - Téléchargez le projet depuis ce dépot github et copiez le dossier PhleboMorph dans le dossier workspace que vous aurez choisi pour Eclipse
 
-2. Dans Eclipse, créez un nouveau projet JavaFX (File -> New -> Other... -> JavaFX Project)
+  - Dans Eclipse, créez un nouveau projet JavaFX (File -> New -> Other... -> JavaFX Project)
 
-3. Donnez le nom "PhleboMorph" au projet, celui récupérera automatiquement tous les fichier du dossier PhleboMorph
+  - Donnez le nom "PhleboMorph" au projet, celui récupérera automatiquement tous les fichier du dossier PhleboMorph
 
 
 Leo PERNELLE, aout 2017
 
 Configuration inspirée du tutoriel JavaFX de code.makery.ch
+
 Version multilingue : http://code.makery.ch/library/javafx-8-tutorial/part1/
