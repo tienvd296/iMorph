@@ -47,4 +47,9 @@ public class ControlBinary {
 		stage.close();
     }
 
+    public void initialize() {
+		filter.getItems().addAll("1*1", "2*2", "3*3", "4*4", "5*5", "6*6");
+		filter.setValue("3*3");
+		threshold.setText("150");
+		}
 }

@@ -62,7 +62,7 @@ public class Facade {
 		Project p = new Project(name);
 		p.setPathProject(path);
 		Facade.currentProject = p;
-		Facade.saveProject();
+		//Facade.saveProject();
 	}
 
 	/**

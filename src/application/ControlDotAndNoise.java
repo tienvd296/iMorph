@@ -26,4 +26,6 @@ public class ControlDotAndNoise {
 		Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
 		stage.close();
     }
+    
+    
 }

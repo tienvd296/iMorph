@@ -27,4 +27,8 @@ public class ControlSkeleton {
 		Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
 		stage.close();
     }
+    
+    public void initialize() {
+		length.setText("10");
+		}
 }

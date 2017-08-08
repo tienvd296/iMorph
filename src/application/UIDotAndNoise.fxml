@@ -11,7 +11,7 @@
    <children>
       <Pane prefHeight="97.0" prefWidth="400.0" style="-fx-background-color: #4545;">
          <children>
-            <Label layoutX="14.0" layoutY="29.0" text="Dot & noise remover">
+            <Label layoutX="14.0" layoutY="29.0" text="Dot and noise remover">
                <font>
                   <Font size="28.0" />
                </font>

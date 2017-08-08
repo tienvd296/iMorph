@@ -36,5 +36,13 @@ public class ControlSVM {
 		Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
 		stage.close();
 	}
+	
+	public void initialize() {
+		kernel.getItems().addAll("radical");
+		kernel.setValue("radical");
+		cost.setText("0");
+		gamma.setText("0");
+		cross.setText("0");
+	}
 
 }

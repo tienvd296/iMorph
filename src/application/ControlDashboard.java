@@ -928,10 +928,10 @@ public class ControlDashboard {
 
 		Facade.activeView = this;
 
+		
 		if(Facade.currentProject != null)
 		{
 			this.initImage(this.currentFolder);
-			writeConsole("Opening of the project: " + Facade.currentProject.name, "Project");
 		}
 
 		final MenuItem item1 = new MenuItem("New collection");

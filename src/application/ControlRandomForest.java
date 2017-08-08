@@ -40,5 +40,9 @@ public class ControlRandomForest {
 		Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
 		stage.close();
 	}
+	
+	public void initialize() {
+		ntree.setText("10");
+		}
 
 }
