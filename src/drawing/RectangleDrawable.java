@@ -11,8 +11,8 @@ import java.awt.Point;
 public class RectangleDrawable extends FormDrawable{
 	Double i = (double) affichage.Cadre2.slide.getValue();
 
-	public RectangleDrawable(Color color, Point pos, Dimension dim) {
-		super(color, pos, dim);
+	public RectangleDrawable(Color color, double x, double y, Dimension dim) {
+		super(color,x,y, dim);
 		
 	}
 

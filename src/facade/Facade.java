@@ -467,7 +467,7 @@ public class Facade {
 		for(int i = 0; i<listPath.size(); i++)
 		{
 
-			ProcessBuilder pb = new ProcessBuilder(pathAPI, listPath.get(i) + " " + length);
+			ProcessBuilder pb = new ProcessBuilder(pathAPI, listPath.get(i), length);
 			Process process;
 			try {
 				process = pb.start();

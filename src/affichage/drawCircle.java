@@ -10,11 +10,7 @@ public class drawCircle {
 	private int yCenter;
 	private int r;
 	private Boolean isLandmark; 
-	private double area;
 	private int isSelected;
-	private int displayLandmark;
-
-
 	public int getIsSelected() {
 		return isSelected;
 	}
@@ -34,9 +30,6 @@ public class drawCircle {
 		this.r = r;
 		this.isLandmark = isLandmark;
 		this.isSelected = isSelected;
-		this.displayLandmark = displayLandmark;
-
-
 		if(displayLandmark == 0 ) {
 
 
@@ -50,7 +43,6 @@ public class drawCircle {
 				else if( isLandmark == false) {
 					cg.setColor(Color.blue);
 					cg.fillOval(xCenter-r, yCenter-r, 2*r, 2*r);
-					area = 2*(Math.PI)*(r*r);
 				}
 			}else if(isSelected == 1){
 				cg.setColor(Color.green);
@@ -87,7 +79,6 @@ public class drawCircle {
 				else if( isLandmark == false) {
 					cg.setColor(Color.blue);
 					cg.fillOval(xCenter-r, yCenter-r, 2*r, 2*r);
-					area = 2*(Math.PI)*(r*r);
 				}
 			}else if(isSelected == 1){
 				cg.setColor(Color.green);

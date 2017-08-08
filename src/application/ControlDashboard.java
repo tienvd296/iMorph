@@ -25,6 +25,8 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
@@ -416,9 +418,9 @@ public class ControlDashboard {
 
 
 			//------IMAGE-----//
-			im1.setOnMouseClicked(e -> imageEditor(pathTab[y], im1, e, grid));
 			im1.setPreserveRatio(true);
 			im1.setImage(images[this.page]);
+			im1.setOnMouseClicked(e -> imageEditor(pathTab[y], im1, e, grid));
 			im1.setFitWidth(width - 10);
 			Pane pane = new Pane();
 			double ratioImg = images[this.page].getHeight()/images[this.page].getWidth();
@@ -443,7 +445,8 @@ public class ControlDashboard {
 			this.imageEditor(pathTab[y], im1, null, pane);
 			this.table.setCenter(grid);
 			grid.add(pane, 0, 0);
-
+			this.selected.add(im1);
+			this.imageViewToPath.put(im1, pathTab[y]);
 		}
 	}
 
@@ -928,7 +931,7 @@ public class ControlDashboard {
 
 		Facade.activeView = this;
 
-		
+
 		if(Facade.currentProject != null)
 		{
 			this.initImage(this.currentFolder);
@@ -953,7 +956,7 @@ public class ControlDashboard {
 
 		final MenuItem itemImage3 = new MenuItem("Landmark editor");
 		itemImage3.setOnAction(e -> landmarkAdd());
-		
+
 		final MenuItem itemImage5 = new MenuItem("Save this image");
 		itemImage5.setOnAction(e -> saveCopy());
 
@@ -1093,100 +1096,132 @@ public class ControlDashboard {
 	/* ------- START EXTERNAL FUNCTION ------- */
 	@FXML
 	void binaryPP(ActionEvent event) {
-		this.writeConsole("Binary is executing...", "Image Preprocessing");
-		ArrayList<String> listPath = new ArrayList<String>();
-		Iterator<ImageView> it = this.selected.iterator();
-		while(it.hasNext())
+		if(this.selected.isEmpty())
 		{
-			ImageView imV = it.next();
-			String path = this.imageViewToPath.get(imV);
+			Alert alert = new Alert(AlertType.WARNING);
+			alert.setTitle("Error");
+			alert.setHeaderText("No image selected !");
+			alert.setContentText("First choose one or many images before use binary function !");
+			alert.showAndWait();
+		}
+		else
+		{
+			this.writeConsole("Binary is executing...", "Image Preprocessing");
+			ArrayList<String> listPath = new ArrayList<String>();
+			Iterator<ImageView> it = this.selected.iterator();
+			while(it.hasNext())
+			{
+				ImageView imV = it.next();
+				String path = this.imageViewToPath.get(imV);
+				try {
+					System.out.println("OK");
+					Facade.saveOrignal(this.pathToImageWing.get(path), false);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				listPath.add(path);
+			}
+			Facade.listPath = listPath;
+			Parent root;
 			try {
-				System.out.println("OK");
-				Facade.saveOrignal(this.pathToImageWing.get(path), false);
+				FXMLLoader loader = new FXMLLoader(getClass().getResource("UIBinary.fxml"));
+				root = loader.load();
+				Scene scene = new Scene(root);			
+				Stage stage = new Stage();
+				stage.setResizable(false);
+				stage.setScene(scene);
+				stage.show();
+
+				ControlBinary myController = loader.getController();
+
+
+
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			listPath.add(path);
 		}
-		Facade.listPath = listPath;
-		Parent root;
-		try {
-			FXMLLoader loader = new FXMLLoader(getClass().getResource("UIBinary.fxml"));
-			root = loader.load();
-			Scene scene = new Scene(root);			
-			Stage stage = new Stage();
-			stage.setResizable(false);
-			stage.setScene(scene);
-			stage.show();
-
-			ControlBinary myController = loader.getController();
-
-
-
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
 	}
 
 	@FXML
 	void rgb2PP(ActionEvent event) {
-		this.writeConsole("RGB2 Grey is executing...", "Image Preprocessing");
-		ArrayList<String> listPath = new ArrayList<String>();
-		Iterator<ImageView> it = this.selected.iterator();
-		while(it.hasNext())
+		if(this.selected.isEmpty())
 		{
-			ImageView imV = it.next();
-			String path = this.imageViewToPath.get(imV);
-			try {
-				System.out.println("OK");
-				Facade.saveOrignal(this.pathToImageWing.get(path), false);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			listPath.add(path);
+			Alert alert = new Alert(AlertType.WARNING);
+			alert.setTitle("Error");
+			alert.setHeaderText("No image selected !");
+			alert.setContentText("First choose one or many images before use RGB2 Grey function !");
+			alert.showAndWait();
 		}
-		Facade.listPath = listPath;
-		Facade.rgb2();
+		else
+		{
+			this.writeConsole("RGB2 Grey is executing...", "Image Preprocessing");
+			ArrayList<String> listPath = new ArrayList<String>();
+			Iterator<ImageView> it = this.selected.iterator();
+			while(it.hasNext())
+			{
+				ImageView imV = it.next();
+				String path = this.imageViewToPath.get(imV);
+				try {
+					System.out.println("OK");
+					Facade.saveOrignal(this.pathToImageWing.get(path), false);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				listPath.add(path);
+			}
+			Facade.listPath = listPath;
+			Facade.rgb2();
+		}
 	}
 
 	@FXML
 	void skeletonPP(ActionEvent event) {
-		this.writeConsole("Skeleton is executing...", "Image Preprocessing");
-		ArrayList<String> listPath = new ArrayList<String>();
-		Iterator<ImageView> it = this.selected.iterator();
-		while(it.hasNext())
+		if(this.selected.isEmpty())
 		{
-			ImageView imV = it.next();
-			String path = this.imageViewToPath.get(imV);
+			Alert alert = new Alert(AlertType.WARNING);
+			alert.setTitle("Error");
+			alert.setHeaderText("No image selected !");
+			alert.setContentText("First choose one or many images before use skeleton function !");
+			alert.showAndWait();
+		}
+		else
+		{
+			this.writeConsole("Skeleton is executing...", "Image Preprocessing");
+			ArrayList<String> listPath = new ArrayList<String>();
+			Iterator<ImageView> it = this.selected.iterator();
+			while(it.hasNext())
+			{
+				ImageView imV = it.next();
+				String path = this.imageViewToPath.get(imV);
+				try {
+					System.out.println("OK");
+					Facade.saveOrignal(this.pathToImageWing.get(path), false);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				listPath.add(path);
+			}
+			Facade.listPath = listPath;
+			Parent root;
 			try {
-				System.out.println("OK");
-				Facade.saveOrignal(this.pathToImageWing.get(path), false);
+				FXMLLoader loader = new FXMLLoader(getClass().getResource("UISkeleton.fxml"));
+				root = loader.load();
+				Scene scene = new Scene(root);			
+				Stage stage = new Stage();
+				stage.setResizable(false);
+				stage.setScene(scene);
+				stage.show();
+
+				ControlSkeleton myController = loader.getController();
+
+
+
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			listPath.add(path);
-		}
-		Facade.listPath = listPath;
-		Parent root;
-		try {
-			FXMLLoader loader = new FXMLLoader(getClass().getResource("UISkeleton.fxml"));
-			root = loader.load();
-			Scene scene = new Scene(root);			
-			Stage stage = new Stage();
-			stage.setResizable(false);
-			stage.setScene(scene);
-			stage.show();
-
-			ControlSkeleton myController = loader.getController();
-
-
-
-		} catch (IOException e) {
-			e.printStackTrace();
 		}
 
 	}
@@ -1194,73 +1229,95 @@ public class ControlDashboard {
 
 	@FXML
 	void crossPointDetection(ActionEvent event) {
-		this.writeConsole("Cross point detection is executing...", "Cross point detection");
-		ArrayList<String> listPath = new ArrayList<String>();
-		Iterator<ImageView> it = this.selected.iterator();
-		while(it.hasNext())
+		if(this.selected.isEmpty())
 		{
-			ImageView imV = it.next();
-			String path = this.imageViewToPath.get(imV);
-			listPath.add(path);
+			Alert alert = new Alert(AlertType.WARNING);
+			alert.setTitle("Error");
+			alert.setHeaderText("No image selected !");
+			alert.setContentText("First choose one or many images before use cross-point-detection function !");
+			alert.showAndWait();
 		}
-		
-		Facade.listPath = listPath;
-		Parent root;
-		try {
-			FXMLLoader loader = new FXMLLoader(getClass().getResource("UICrossPointDetection.fxml"));
-			root = loader.load();
-			Scene scene = new Scene(root);			
-			Stage stage = new Stage();
-			stage.setResizable(false);
-			stage.setScene(scene);
-			stage.show();
+		else
+		{
+			this.writeConsole("Cross point detection is executing...", "Cross point detection");
+			ArrayList<String> listPath = new ArrayList<String>();
+			Iterator<ImageView> it = this.selected.iterator();
+			while(it.hasNext())
+			{
+				ImageView imV = it.next();
+				String path = this.imageViewToPath.get(imV);
+				listPath.add(path);
+			}
 
-			ControlCrossPointDetection myController = loader.getController();
-			myController.dataLD(listPath, pathToImageWing);
+			Facade.listPath = listPath;
+			Parent root;
+			try {
+				FXMLLoader loader = new FXMLLoader(getClass().getResource("UICrossPointDetection.fxml"));
+				root = loader.load();
+				Scene scene = new Scene(root);			
+				Stage stage = new Stage();
+				stage.setResizable(false);
+				stage.setScene(scene);
+				stage.show();
+
+				ControlCrossPointDetection myController = loader.getController();
+				myController.dataLD(listPath, pathToImageWing);
 
 
 
-		} catch (IOException e) {
-			e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
-	
+
 	@FXML
 	void dotAndNoise(ActionEvent event) {
-		this.writeConsole("Dot & noise remover is executing...", "Image Preprocessing");
-		ArrayList<String> listPath = new ArrayList<String>();
-		Iterator<ImageView> it = this.selected.iterator();
-		while(it.hasNext())
+		if(this.selected.isEmpty())
 		{
-			ImageView imV = it.next();
-			String path = this.imageViewToPath.get(imV);
+			Alert alert = new Alert(AlertType.WARNING);
+			alert.setTitle("Error");
+			alert.setHeaderText("No image selected !");
+			alert.setContentText("First choose one or many images before use dot-and-noise function !");
+			alert.showAndWait();
+		}
+		else
+		{
+			this.writeConsole("Dot & noise remover is executing...", "Image Preprocessing");
+			ArrayList<String> listPath = new ArrayList<String>();
+			Iterator<ImageView> it = this.selected.iterator();
+			while(it.hasNext())
+			{
+				ImageView imV = it.next();
+				String path = this.imageViewToPath.get(imV);
+				try {
+					System.out.println("OK");
+					Facade.saveOrignal(this.pathToImageWing.get(path), false);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				listPath.add(path);
+			}
+			Facade.listPath = listPath;
+			Parent root;
 			try {
-				System.out.println("OK");
-				Facade.saveOrignal(this.pathToImageWing.get(path), false);
+				FXMLLoader loader = new FXMLLoader(getClass().getResource("UIDotAndNoise.fxml"));
+				root = loader.load();
+				Scene scene = new Scene(root);			
+				Stage stage = new Stage();
+				stage.setResizable(false);
+				stage.setScene(scene);
+				stage.show();
+
+				ControlDotAndNoise myController = loader.getController();
+
+
+
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			listPath.add(path);
-		}
-		Facade.listPath = listPath;
-		Parent root;
-		try {
-			FXMLLoader loader = new FXMLLoader(getClass().getResource("UIDotAndNoise.fxml"));
-			root = loader.load();
-			Scene scene = new Scene(root);			
-			Stage stage = new Stage();
-			stage.setResizable(false);
-			stage.setScene(scene);
-			stage.show();
-
-			ControlDotAndNoise myController = loader.getController();
-
-
-
-		} catch (IOException e) {
-			e.printStackTrace();
 		}
 
 	}
@@ -1268,100 +1325,130 @@ public class ControlDashboard {
 
 	@FXML
 	void landmarkPrediction(ActionEvent event) {
-		this.writeConsole("Landmark prediction is executing...", "LandmarkPrediction");
-		ArrayList<String> listPath = new ArrayList<String>();
-		Iterator<ImageView> it = this.selected.iterator();
-		while(it.hasNext())
+		if(this.selected.isEmpty())
 		{
-			ImageView imV = it.next();
-			String path = this.imageViewToPath.get(imV);
-			listPath.add(path);
+			Alert alert = new Alert(AlertType.WARNING);
+			alert.setTitle("Error");
+			alert.setHeaderText("No image selected !");
+			alert.setContentText("First choose one or many images before use landmark-prediction function !");
+			alert.showAndWait();
 		}
-		
-		Facade.listPath = listPath;
-		Parent root;
-		try {
-			FXMLLoader loader = new FXMLLoader(getClass().getResource("UILandmarkDetection.fxml"));
-			root = loader.load();
-			Scene scene = new Scene(root);			
-			Stage stage = new Stage();
-			stage.setResizable(false);
-			stage.setScene(scene);
-			stage.show();
+		else
+		{
+			this.writeConsole("Landmark prediction is executing...", "LandmarkPrediction");
+			ArrayList<String> listPath = new ArrayList<String>();
+			Iterator<ImageView> it = this.selected.iterator();
+			while(it.hasNext())
+			{
+				ImageView imV = it.next();
+				String path = this.imageViewToPath.get(imV);
+				listPath.add(path);
+			}
 
-			ControlLandmarkDetection myController = loader.getController();
-			myController.dataLD(listPath, pathToImageWing);
+			Facade.listPath = listPath;
+			Parent root;
+			try {
+				FXMLLoader loader = new FXMLLoader(getClass().getResource("UILandmarkDetection.fxml"));
+				root = loader.load();
+				Scene scene = new Scene(root);			
+				Stage stage = new Stage();
+				stage.setResizable(false);
+				stage.setScene(scene);
+				stage.show();
+
+				ControlLandmarkDetection myController = loader.getController();
+				myController.dataLD(listPath, pathToImageWing);
 
 
 
-		} catch (IOException e) {
-			e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
 	@FXML
 	void randomForest(ActionEvent event) {
-		
-		this.writeConsole("Random Forest is executing...", "Machine learning");
-		ArrayList<String> listPath = new ArrayList<String>();
-		Iterator<ImageView> it = this.selected.iterator();
-		while(it.hasNext())
+		if(this.selected.isEmpty())
 		{
-			ImageView imV = it.next();
-			String path = this.imageViewToPath.get(imV);
-			listPath.add(path);
+			Alert alert = new Alert(AlertType.WARNING);
+			alert.setTitle("Error");
+			alert.setHeaderText("No image selected !");
+			alert.setContentText("First choose one or many images before use random-forest function !");
+			alert.showAndWait();
 		}
-		Facade.listPath = listPath;
-		Parent root;
-		try {
-			FXMLLoader loader = new FXMLLoader(getClass().getResource("UIRandomForest.fxml"));
-			root = loader.load();
-			Scene scene = new Scene(root);			
-			Stage stage = new Stage();
-			stage.setResizable(false);
-			stage.setScene(scene);
-			stage.show();
+		else
+		{
+			this.writeConsole("Random Forest is executing...", "Machine learning");
+			ArrayList<String> listPath = new ArrayList<String>();
+			Iterator<ImageView> it = this.selected.iterator();
+			while(it.hasNext())
+			{
+				ImageView imV = it.next();
+				String path = this.imageViewToPath.get(imV);
+				listPath.add(path);
+			}
+			Facade.listPath = listPath;
+			Parent root;
+			try {
+				FXMLLoader loader = new FXMLLoader(getClass().getResource("UIRandomForest.fxml"));
+				root = loader.load();
+				Scene scene = new Scene(root);			
+				Stage stage = new Stage();
+				stage.setResizable(false);
+				stage.setScene(scene);
+				stage.show();
 
-			ControlRandomForest myController = loader.getController();
+				ControlRandomForest myController = loader.getController();
 
 
 
-		} catch (IOException e) {
-			e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
-
 	}
-	
-	
+
+
 	@FXML
 	void SVM(ActionEvent event) {
-		
-		this.writeConsole("SVM is executing...", "Machine learning");
-		ArrayList<String> listPath = new ArrayList<String>();
-		Iterator<ImageView> it = this.selected.iterator();
-		while(it.hasNext())
+		if(this.selected.isEmpty())
 		{
-			ImageView imV = it.next();
-			String path = this.imageViewToPath.get(imV);
-			listPath.add(path);
+			Alert alert = new Alert(AlertType.WARNING);
+			alert.setTitle("Error");
+			alert.setHeaderText("No image selected !");
+			alert.setContentText("First choose one or many images before use SVM function !");
+			alert.showAndWait();
 		}
-		Facade.listPath = listPath;
-		Parent root;
-		try {
-			FXMLLoader loader = new FXMLLoader(getClass().getResource("UISVM.fxml"));
-			root = loader.load();
-			Scene scene = new Scene(root);			
-			Stage stage = new Stage();
-			stage.setResizable(false);
-			stage.setScene(scene);
-			stage.show();
+		else
+		{
+			this.writeConsole("SVM is executing...", "Machine learning");
+			ArrayList<String> listPath = new ArrayList<String>();
+			Iterator<ImageView> it = this.selected.iterator();
+			while(it.hasNext())
+			{
+				ImageView imV = it.next();
+				String path = this.imageViewToPath.get(imV);
+				listPath.add(path);
+			}
+			Facade.listPath = listPath;
+			Parent root;
+			try {
+				FXMLLoader loader = new FXMLLoader(getClass().getResource("UISVM.fxml"));
+				root = loader.load();
+				Scene scene = new Scene(root);			
+				Stage stage = new Stage();
+				stage.setResizable(false);
+				stage.setScene(scene);
+				stage.show();
 
-			ControlSVM myController = loader.getController();
+				ControlSVM myController = loader.getController();
 
 
 
-		} catch (IOException e) {
-			e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 
 	}

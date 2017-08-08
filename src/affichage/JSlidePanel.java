@@ -45,14 +45,15 @@ public class JSlidePanel implements ActionListener {
 		
 		
 		JSlider slider = new JSlider();
+		slider.setPaintTicks(true);
 		slider.setValue(100);
 		slider.setMaximum(300);
 		slider.setSnapToTicks(true);
 		slider.setToolTipText("\r\n");
 		slider.setBounds(10, 6, 200, 27);
 		frame.getContentPane().add(slider);
-		slider.setMinorTickSpacing(10);
-		slider.setMajorTickSpacing(10);
+		slider.setMinorTickSpacing(20);
+		slider.setMajorTickSpacing(20);
 		textField = new JTextArea();
 		textField.setFont(new Font("Monospaced", Font.PLAIN, 13));
 		textField.setToolTipText("\r\n\r\n\r\n");

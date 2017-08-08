@@ -6,15 +6,21 @@ package affichage;
 
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentListener;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -26,7 +32,11 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JRadioButtonMenuItem;
+import javax.swing.JScrollBar;
+import javax.swing.JScrollPane;
 import javax.swing.JSlider;
 import javax.swing.JSplitPane;
 import javax.swing.JToolBar;
@@ -34,14 +44,17 @@ import javax.swing.KeyStroke;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import application.ControlDashboard;
 import businesslogic.ImageWing;
+import businesslogic.Landmark;
 import drawing.JCanvas;
+import facade.Facade;
 
 
 
 
 
-public class Cadre2 extends JFrame implements ActionListener {
+public class Cadre2 extends JFrame implements ActionListener, WindowListener {
 
 
 
@@ -52,7 +65,7 @@ public class Cadre2 extends JFrame implements ActionListener {
 	private final JMenuItem ouvrirMenu = new JMenuItem();
 	private final JMenu landMarkMenu = new JMenu();
 
-	private Container c;
+
 
 
 	private final JMenu displayLandMark = new JMenu();
@@ -69,11 +82,11 @@ public class Cadre2 extends JFrame implements ActionListener {
 	private final JMenuItem enregistrerMenu = new JMenuItem();
 
 
-	private final JMenuItem addLandMarkMenu = new JMenuItem();
-	
-	
-	
-	
+	private final JRadioButtonMenuItem addLandMarkMenu = new JRadioButtonMenuItem();
+
+
+
+
 	private final JMenu EditingMenu = new JMenu();
 	private final JMenuItem editSubMenu = new JMenuItem();
 	private final JMenuItem cropMenu = new JMenuItem();
@@ -88,12 +101,12 @@ public class Cadre2 extends JFrame implements ActionListener {
 	private final JMenuItem skeleton = new JMenuItem();
 	private final JMenuItem resize = new JMenuItem();
 	private final JMenuItem landmarkPrediction = new JMenuItem();
-	
+
 	private JToolBar toolBar = new JToolBar();
 
 	static JCanvas jc ;	
+	private Container c;
 
-	
 
 	public static JSlider slide = new JSlider();
 	//Redimmensionnement d'images pour faire une toolBar fine
@@ -126,25 +139,60 @@ public class Cadre2 extends JFrame implements ActionListener {
 
 
 	public static JSplitPane split;
+	private final JScrollBar scrollBar = new JScrollBar();
+	private final JScrollBar scrollBar_1 = new JScrollBar();
 
-
+	public static ArrayList<Landmark> ListLandmarkCadre = new ArrayList<Landmark>(); 
+	protected static ArrayList<Landmark> ListLandmarkTemp = new ArrayList<Landmark>();
+	public static ArrayList<drawCircle> ListCircle = new ArrayList<drawCircle>();
+	public static ArrayList<drawCircle> ListCircleTemp = new ArrayList<drawCircle>();
+	public static ArrayList<Landmark> SelectionLandmark = new ArrayList<Landmark>();
+	public ImageWing im;
+	private JFrame instance_fenetre;
+	private JFrame instance_fenetre2;
 
 
 
 	public Cadre2(File fileImage, ImageWing im) {
 		super();
+		this.im = im;
+
+		// On vide les listes pour ne pas 
+		// Charger deux fois la même chose. Sinon Popup tt le temps 
+		// Utile pour la sauvegarde
+		//	System.out.println("ListLandmarkTemp.size() = "+ListLandmarkTemp.size());
+
+		System.out.println("INIT 1");
+		System.out.println("ListLandmarkCadre.size() 1 = "+ListLandmarkCadre.size());
+		ListLandmarkCadre = im.getLandmarks();
+
+		// Ici on charge toutes les listes utiles 
+		System.out.println("ListLandmarkCadre.size() 2 = "+ListLandmarkCadre.size());
+
+		SelectionLandmark.addAll(Affichage.SelectionLandmark);
+		
+
 		System.out.println("Lancement de Cadre2");
 		System.out.println("1st File : "+fileImage);
+		this.addWindowListener(this);
 
-		
-	
+
 
 		Go(im);
 		try {
+			System.out.println("INIT 2");
+			
+			for(int i = 0 ; i< ListLandmarkTemp.size() ; i++){
+				System.out.println(" LIST_TEMP "+ListLandmarkTemp.get(i).toString() );
+			}
+
 
 			System.out.println("Avant ajout image");
 			panneau.ajouterImage(fileImage);
+
 			panneau.setBounds(0, 0, this.getWidth(), this.getHeight());
+			scrollBar.add(panneau);
+			getContentPane().add(scrollBar);
 			System.out.println("Ajout de l'image après la fonction AjouterImage");
 			System.out.println("File : "+fileImage);
 			creerMenu();
@@ -153,6 +201,7 @@ public class Cadre2 extends JFrame implements ActionListener {
 
 		} catch (Throwable e) {
 			e.printStackTrace();
+			System.out.println("Catch du constructeur");
 		}
 		//
 	}
@@ -181,7 +230,7 @@ public class Cadre2 extends JFrame implements ActionListener {
 
 		landMarkMenu.add(addLandMarkMenu);
 		addLandMarkMenu.addActionListener((ActionListener)this);
-		addLandMarkMenu.setText("Add LandMark");
+		addLandMarkMenu.setText("Show Coordinates");
 
 		landMarkMenu.add(displayLandMark);
 		displayLandMark.addActionListener((ActionListener)this);
@@ -217,8 +266,8 @@ public class Cadre2 extends JFrame implements ActionListener {
 		menuBar.add(EditingMenu);
 		EditingMenu.setText("Image Editing");
 
-		
-		
+
+
 		EditingMenu.add(editSubMenu);
 		editSubMenu.addActionListener((ActionListener)this);
 		editSubMenu.setText("Edit Image");
@@ -253,25 +302,26 @@ public class Cadre2 extends JFrame implements ActionListener {
 		applyMethods.add(blackWhite);
 		blackWhite.addActionListener((ActionListener)this);
 		blackWhite.setText("Black & White");
-		
+
 		applyMethods.add(binary);
 		binary.addActionListener((ActionListener)this);
 		binary.setText("Binary");
-		
+
 		applyMethods.add(skeleton);
 		skeleton.addActionListener((ActionListener)this);
 		skeleton.setText("Skeleton");
-		
+
 		applyMethods.add(resize);
 		resize.addActionListener((ActionListener)this);
 		resize.setText("Resize");
-		
+
 		EditingMenu.add(landmarkPrediction);
 		landmarkPrediction.addActionListener((ActionListener)this);
 		landmarkPrediction.setText("Landmark Prediction");
-		
-		
-		this.add(toolBar, BorderLayout.PAGE_START);
+
+
+		getContentPane().add(scrollBar);
+		getContentPane().add(toolBar, BorderLayout.PAGE_START);
 
 
 		toolBar.add(squareButton);
@@ -315,24 +365,29 @@ public class Cadre2 extends JFrame implements ActionListener {
 		toolBar.add(combo);
 
 
+		//	JScrollPane scroll = new JScrollPane(panneau, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+
 
 		combo.setFocusable(false);
 		slide.setFocusable(true);
 		toolBar.setFloatable(false);
 
-		this.add(panneau);
+		getContentPane().add(panneau);
 
 		panData.setBounds(panneau.getX(), panneau.getY(), panneau.getWidth(), panneau.getHeight());
-
-
-		split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, panneau, panData);
-		split.setOneTouchExpandable(true);
-		this.getContentPane().add(split, BorderLayout.CENTER);
+		panData.setVisible(false);
 
 
 
 
 
+		this.getContentPane().add(scrollBar_1, BorderLayout.WEST);
+		scrollBar.setOrientation(JScrollBar.HORIZONTAL);
+
+		this.getContentPane().add(scrollBar, BorderLayout.SOUTH);
+
+		scrollBar.setEnabled(true);
+		scrollBar.setFocusable(true);
 
 		toolBar.setVisible(false);
 
@@ -353,10 +408,16 @@ public class Cadre2 extends JFrame implements ActionListener {
 
 		if(b==true) {
 			System.out.println("toolBarLandMark(true)");
+			split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, panneau, panData);
+			split.setOneTouchExpandable(true);
+			split.setDividerLocation(1000);
+			this.getContentPane().add(split, BorderLayout.CENTER);
+
 
 			panData.setVisible(true);
 			split.setVisible(true);
 			panneau.setVisible(true);
+
 			toolBarEditing(false);
 
 
@@ -377,17 +438,16 @@ public class Cadre2 extends JFrame implements ActionListener {
 		if(b==true){
 
 			System.out.println("toolBarEditing true");
-			toolBarLandMark(false);
+
 			///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-			c.add(panneau);
-			panneau.add(jc);
-			jc.setBounds(c.getX(), c.getY(),c.getWidth(), c.getHeight());
-			jc.setVisible(true);
+			//this.add(panneau);
+			//panneau.add(jc);
+
 			toolBar.setVisible(true);
 
 			slide.setVisible(true);
 			combo.setVisible(true);
-
+			toolBarLandMark(false);
 
 
 
@@ -444,17 +504,20 @@ public class Cadre2 extends JFrame implements ActionListener {
 
 
 		} else if (cliqueMenu.getSource().equals(enregistrerMenu)) {
-			JFileChooser fileEnregistrerImage = new JFileChooser();
+			/*	JFileChooser fileEnregistrerImage = new JFileChooser();
 			if (fileEnregistrerImage.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
 				File fichierEnregistrement = new File(fileEnregistrerImage.getSelectedFile().getAbsolutePath()+ ".JPG");
 				panneau.enregistrerImage(fichierEnregistrement);
 			}
+			 */
+			Facade.saveProject();
 		} else
 
 			if (cliqueMenu.getSource().equals(editSubMenu)) {
 				//	panneau.agrandirImage();
 				// Lance la correction, toolbar	
 				toolBarEditing(true);
+				getContentPane().add(panneau);
 				panneau.setVisible(true);
 
 			} else if (cliqueMenu.getSource().equals(zoomOut)) {
@@ -465,14 +528,32 @@ public class Cadre2 extends JFrame implements ActionListener {
 
 			}else if(cliqueMenu.getSource().equals(addLandMarkMenu)){
 
-				toolBarLandMark(true);
+				if(addLandMarkMenu.isSelected() == true){
+
+					toolBarLandMark(true);
+					this.setFocusable(true);
+					//getContentPane().add(split);
+					split.setEnabled(true);
+					split.setVisible(true);
+
+
+				}else 
+				{
+
+					panData.setVisible(false);
+
+
+					panneau.setVisible(true);
+					repaint();
+
+				}
 
 			}
 
 
 		if(cliqueMenu.getSource() == squareButton) {
 			System.out.println("squareButton");
-
+			//Affichage.reduireImage(4);
 
 		} 
 		if(cliqueMenu.getSource() == circleButton) {
@@ -500,11 +581,12 @@ public class Cadre2 extends JFrame implements ActionListener {
 		} else if (cliqueMenu.getSource().equals(Redo)) {
 
 			System.out.println("Redo");
-			//Affichage.RedoLandmark();
-			
+			Affichage.RedoLandmark();
+
 		} else if (cliqueMenu.getSource().equals(blackWhite)) {
 
 			System.out.println("Black & White");
+			TestMethodC();
 
 		} else if (cliqueMenu.getSource().equals(binary)) {
 
@@ -513,25 +595,47 @@ public class Cadre2 extends JFrame implements ActionListener {
 		} else if (cliqueMenu.getSource().equals(skeleton)) {
 
 			System.out.println("Skeleton");
-			
+
 		} else if (cliqueMenu.getSource().equals(resize)) {
 
 			System.out.println("Resize");
 			new JSlidePanel();
-			
+
 
 		} else if (cliqueMenu.getSource().equals(landmarkPrediction)) {
 
 			System.out.println("Landmark Prediction");
 		} 
-		
-		
-		
+
+
+
 
 
 	}
 
 
+	public static String TestMethodC() {
+		String separator = System.getProperty("file.separator");
+		String originalPath = System.getProperty("user.dir");
+		String pathAPI = originalPath + separator + "landmarkPrediction.exe";
+
+		ProcessBuilder pb = new ProcessBuilder(pathAPI);
+		Process process;
+		try {
+			process = pb.start();
+			BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream())); 
+			String line = null;
+
+
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		System.out.println("Completed...");
+
+
+		return "OK";
+	}
 
 
 
@@ -546,20 +650,18 @@ public class Cadre2 extends JFrame implements ActionListener {
 		panData = new PanelData();
 		panneau = new Affichage(im);
 
-		panData.setVisible(false);
-
 		this.setSize(1100,650);
 
 
 		new TestML(jc);
 
 
-		panneau.add(jc);
+		//panneau.add(jc);
 
 		//panData.setVisible(true);
 
-		jc.setBackground(Color.green);
-		jc.setVisible(false);
+		//jc.setBackground(Color.green);
+		//jc.setVisible(false);
 		panneau.setVisible(true);
 
 		c.add(panneau);
@@ -567,6 +669,142 @@ public class Cadre2 extends JFrame implements ActionListener {
 
 		this.setVisible(true);
 
+
+	}
+
+
+
+
+	@Override
+	public void windowOpened(WindowEvent e) {
+		ListLandmarkTemp.removeAll(ListLandmarkTemp);
+		ListLandmarkTemp = new ArrayList<Landmark>(ListLandmarkCadre);
+
+	}
+
+
+
+
+	@Override
+	public void windowClosing(WindowEvent e) {
+
+		ListLandmarkCadre = Affichage.ListLandmark;
+		
+		for(int i = 0 ; i< ListLandmarkCadre.size(); i++) {
+			System.out.println(" ListLandmarkCadre = "+ListLandmarkCadre.get(i).getPosX()+ " Type = "+ListLandmarkCadre.get(i).getIsLandmark());
+			System.out.println(" ListLandmarkTemp = "+ListLandmarkTemp.get(i).getPosX()+ " Type = "+ListLandmarkTemp.get(i).getIsLandmark());
+
+			if(ListLandmarkTemp.size() == 0 && ListLandmarkCadre.size() !=0){
+				
+				
+				
+				int option =JOptionPane.showConfirmDialog(null, "Do you want to save before Leave?", "Attention",JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+
+				if(option == JOptionPane.YES_OPTION){
+					System.out.println("YES");
+					Facade.saveProject();
+					i = ListLandmarkCadre.size();
+				}
+				else if(option == JOptionPane.NO_OPTION ){
+					System.out.println("NO");
+					i = ListLandmarkCadre.size();
+				}
+
+				else if(option == JOptionPane.CANCEL_OPTION ){
+					System.out.println("Cancel");
+					instance_fenetre2 = null;
+					instance_fenetre2.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+					i = ListLandmarkCadre.size();
+				}
+				else if(option == JOptionPane.CLOSED_OPTION ){
+					System.out.println("CLOSE");
+					instance_fenetre = null;
+					instance_fenetre.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+					i = ListLandmarkCadre.size();
+				}
+				i = ListLandmarkCadre.size();
+				
+			}
+			
+			if(ListLandmarkCadre.size() != 0 && ListLandmarkTemp.size() != 0 ){
+				System.out.println("Rentréééé");
+				System.out.println("ListLandmark = "+ListLandmarkCadre.size()+ " ListLandmarkTemp = " +ListLandmarkTemp.size());
+				if( ListLandmarkCadre.get(i).getPosX() != ListLandmarkTemp.get(i).getPosX() || ListLandmarkCadre.size() != ListLandmarkTemp.size() || ListLandmarkCadre.get(i).getIsLandmark() != ListLandmarkTemp.get(i).getIsLandmark() || ListLandmarkTemp.size() ==0){
+
+					System.out.println("Rentréééé");
+					if(SelectionLandmark != null){
+						ListLandmarkCadre.addAll(SelectionLandmark);
+						System.out.println("Selection -> ListLandmarkCadre");
+					}
+					int option =JOptionPane.showConfirmDialog(null, "Do you want to save before Leave?", "Attention",JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+
+					if(option == JOptionPane.YES_OPTION){
+						System.out.println("YES");
+						Facade.saveProject();
+						i = ListLandmarkCadre.size();
+					}
+					else if(option == JOptionPane.NO_OPTION ){
+						System.out.println("NO");
+						i = ListLandmarkCadre.size();
+					}
+
+					else if(option == JOptionPane.CANCEL_OPTION ){
+						System.out.println("Cancel");
+						instance_fenetre2 = null;
+						instance_fenetre2.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+					}
+					else if(option == JOptionPane.CLOSED_OPTION ){
+						System.out.println("CLOSE");
+						instance_fenetre = null;
+						instance_fenetre.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+					}
+				}else 
+					System.out.println("Nothing to Do");
+			}else
+				System.out.println("ListLandmark = "+ListLandmarkCadre.size()+ " ListLandmarkTemp = " +ListLandmarkTemp.size());
+		}
+	}
+
+
+
+	@Override
+	public void windowClosed(WindowEvent e) {
+
+	}
+
+
+
+
+	@Override
+	public void windowIconified(WindowEvent e) {
+		// TODO Auto-generated method stub
+
+	}
+
+
+
+
+	@Override
+	public void windowDeiconified(WindowEvent e) {
+		// TODO Auto-generated method stub
+
+	}
+
+
+
+
+	@Override
+	public void windowActivated(WindowEvent e) {
+		// TODO Auto-generated method stub
+
+	}
+
+
+
+
+	@Override
+	public void windowDeactivated(WindowEvent e) {
+		// TODO Auto-generated method stub
 
 	}
 

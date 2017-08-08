@@ -18,10 +18,10 @@ public abstract class FormDrawable implements IMovableDrawable {
 	 * @param pos the coordinate of the center this form
 	 * @param dim the dimension of this form
 	 */
-	public FormDrawable(Color color, Point pos, Dimension dim){
+	public FormDrawable(Color color, double x, double y, Dimension dim){
 		this.color=color;
 		this.rect = new Rectangle(dim);
-		setPosition(pos);
+	//	setPosition(x,y);
 		
 	}
 	
