@@ -38,3 +38,4 @@ Une fois Eclipse prêt, il faut récupérer le projet.
 Leo PERNELLE, aout 2017
 
 Configuration inspirée du tutoriel JavaFX de code.makery.ch
+Version multilingue : http://code.makery.ch/library/javafx-8-tutorial/part1/
