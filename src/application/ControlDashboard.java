@@ -142,6 +142,7 @@ public class ControlDashboard {
 					ImagePlus im = new Opener().openTiff(result, "");
 					this.addImage(result, im.getHeight(), im.getWidth());
 				}
+				
 				else
 				{
 					error++;
