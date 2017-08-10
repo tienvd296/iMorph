@@ -178,7 +178,7 @@ public class Cadre2 extends JFrame implements ActionListener, WindowListener {
 			panneau.setBounds(0, 0, this.getWidth(), this.getHeight());
 			scrollBar.add(panneau);
 			getContentPane().add(scrollBar);
-			System.out.println("Ajout de l'image après la fonction AjouterImage");
+			System.out.println("Ajout de l'image apres la fonction AjouterImage");
 			System.out.println("File : "+fileImage);
 			creerMenu();
 
@@ -442,7 +442,7 @@ public class Cadre2 extends JFrame implements ActionListener, WindowListener {
 
 			toolBar.setVisible(false);
 
-			System.out.println("Toolbar Correction refusée");
+			System.out.println("Toolbar Correction refusee");
 
 		}
 
@@ -722,7 +722,7 @@ public class Cadre2 extends JFrame implements ActionListener, WindowListener {
 			}
 			
 			if(ListLandmarkCadre.size() != 0 && ListLandmarkTemp.size() != 0 ){
-				System.out.println("Rentréééé");
+				System.out.println("Rentree");
 				System.out.println("ListLandmark = "+ListLandmarkCadre.size()+ " ListLandmarkTemp = " +ListLandmarkTemp.size());
 				if( ListLandmarkCadre.get(i).getPosX() != ListLandmarkTemp.get(i).getPosX() || ListLandmarkCadre.size() != ListLandmarkTemp.size() || ListLandmarkCadre.get(i).getIsLandmark() != ListLandmarkTemp.get(i).getIsLandmark() || ListLandmarkTemp.size() ==0){
 

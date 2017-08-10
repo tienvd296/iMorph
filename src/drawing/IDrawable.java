@@ -12,13 +12,13 @@ import java.awt.Rectangle;
 public interface IDrawable {
 	/**
 	 * @pre: g!=null
-	 * @post: configuration de g inchangée
+	 * @post: configuration de g inchangee
 	 */
 	public abstract void draw(Graphics g);
 
 	/**
 	 * @pre:
-	 * @return le rectangle  qui contient complètement this.
+	 * @return le rectangle  qui contient completement this.
 	 */
 	public abstract Rectangle getRectangle();
 }
