@@ -102,7 +102,7 @@ public class ControlDashboard {
 
 	Menu itemImage2 = new Menu();
 
-
+ 
 	@FXML
 	void undo(ActionEvent event) {
 		Facade.undo();
