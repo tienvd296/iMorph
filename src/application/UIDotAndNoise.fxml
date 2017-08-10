@@ -38,14 +38,6 @@
             <Font size="14.0" />
          </font>
       </Label>
-      <JFXTextField fx:id="dotSize" layoutX="147.0" layoutY="134.0" prefHeight="25.0" prefWidth="32.0" promptText="150" text="10" />
+      <JFXTextField fx:id="dotSize" layoutX="154.0" layoutY="134.0" prefHeight="25.0" prefWidth="32.0" promptText="150" text="10" />
    </children>
 </AnchorPane>
-<?xml version="1.0" encoding="UTF-8"?>
-
-<?import javafx.scene.layout.AnchorPane?>
-
-<AnchorPane xmlns:fx="http://javafx.com/fxml/1">
-	<!-- TODO Add Nodes -->
-</AnchorPane>
-
