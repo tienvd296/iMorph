@@ -45,6 +45,7 @@ public class PanelData extends JPanel{
 
 		jText.setText("LandMarks :");
 		jText.setForeground(Color.BLACK);
+		
 		jText.setEnabled(false);
 	
 		jText.setForeground(Color.black);

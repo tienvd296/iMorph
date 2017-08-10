@@ -65,8 +65,8 @@ public class Affichage extends JPanel implements MouseListener, ActionListener, 
 	private double X = 0;
 	private double Y = 0;
 
-	public int WIDTH = 0;
-	public int HEIGHT = 0;
+	public static int WIDTH = 0;
+	public static int HEIGHT = 0;
 	public int indexOfSelectedLandmark = 0;
 	public int indexOfSelectedCircle = 0;
 	public static int SelectionLandmarkSize = 0;
@@ -147,13 +147,10 @@ public class Affichage extends JPanel implements MouseListener, ActionListener, 
 			public void mouseReleased(MouseEvent event){
 
 				if(event.isPopupTrigger()){       
-
-
-					// jpm.add(new Landmark(event.getX(), event.getY(), true));
+					
 					jpm.add(trueLandmark);
 					jpm.add(falseLandmark);
 					jpm.add(suppLandmark);
-					// jpm.add(new LandMark(e.getX(), e.getY(), true));  
 
 					X = event.getX();
 					Y = event.getY(); 
@@ -254,27 +251,18 @@ public class Affichage extends JPanel implements MouseListener, ActionListener, 
 
 
 
-	public static void addLandMark(double x, double y , boolean B){
+	public static void printCoordinates(){
 
-		//	String texte = PanelData.jText.getText();
 		PanelData.jText.setText(Cadre2.ListLandmarkTemp.toString()+ "\n");
-		//PanelData.jText.setText(texte+"\n Landmark n°"+i+" X = "+ListLandmark.get(i).getPosX()+ " Y = "+ListLandmark.get(i).getPosY()+ " Type = " +ListLandmark.get(i).getIsLandmark());
-		
 	}
 
 
 	protected void paintComponent(Graphics g)
 	{
 		super.paintComponent(g);
-		
-	/*	for(int i = 0 ; i< Cadre2.ListLandmarkTemp.size(); i++){
-			System.out.println("L_TEMP = " +Cadre2.ListLandmarkTemp.get(i).toString());
-		}
-	*/
-
+	
 		test = im.getProperties().get("WIDTH");
 		test2 = im.getProperties().get("HEIGHT");
-		// Les données sont des String donc on les convertis
 		WIDTH2 = Float.parseFloat(test);
 		HEIGHT2 = Float.parseFloat(test2);
 
@@ -293,26 +281,14 @@ public class Affichage extends JPanel implements MouseListener, ActionListener, 
 				temp= value;
 
 			}
-
-
 		}
 
-	
-		System.out.println("Before "+Cadre2.ListLandmarkTemp.toString());
-		addLandMark(0,0,true);
-		System.out.println("After "+Cadre2.ListLandmarkTemp.toString());
-	
+		printCoordinates();
 		g.drawImage(monImage, 0 ,0 , null);
 		
 		WIDTH = monImage.getWidth();
 		HEIGHT = monImage.getHeight();
-		//System.out.println("WIDTH = "+WIDTH+" HAIGHT =  "+HEIGHT);
-		// On récupère la Taille de l'image Via ses métadata
-
-
-
-		// On récupère la taille de l'image affichée à l'écran, redimensionnée ou non
-
+		
 		if( ListLandmark.size() != size ){
 
 			for(int i = 0; i<ListLandmark.size() ; i++){
@@ -332,8 +308,6 @@ public class Affichage extends JPanel implements MouseListener, ActionListener, 
 
 
 					boolean isLandmark = ListLandmark.get(i).getIsLandmark();
-
-    
 					ListTempCircle.add(new drawCircle(g,(int) XX,(int) YY, 5, isLandmark,0,displayLandmark));
 				
 					set.addAll(ListTempCircle) ;
@@ -369,14 +343,17 @@ public class Affichage extends JPanel implements MouseListener, ActionListener, 
 
 		for(int i = 0; i<ListLandmark.size() ; i++){
 
-			//System.out.println(" Boucle for pour dessiner des p*** de cercle, : taille = "+ListLandmark.size());
 			float XX = ListLandmark.get(i).getPosX();
 			float YY = ListLandmark.get(i).getPosY();
+			
 			XX = (XX / WIDTH2)*100; 
 			YY = (YY / HEIGHT2)*100;
+			
 			float X2 = (XX * WIDTH)/100;
 			float Y2 = (YY * HEIGHT)/100;
+			
 			boolean isLandmark = ListLandmark.get(i).getIsLandmark();
+			
 			new drawCircle(g,(int) X2,(int) Y2, 5, isLandmark,0,displayLandmark);
 
 		}
@@ -430,10 +407,7 @@ public class Affichage extends JPanel implements MouseListener, ActionListener, 
 
 	public int getValue(JSlider slide) {
 		int val = slide.getValue();
-
-
 		return val;
-
 	}
 
 	public static Mat bufferedImageToMat(BufferedImage in) {
@@ -638,12 +612,8 @@ public class Affichage extends JPanel implements MouseListener, ActionListener, 
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-
-
-		addLandMark(e.getX(), e.getY(), true);
 		System.out.println("X  : "+e.getX()+ " Y = "+e.getY());
 
-		
 	}
 
 	public int TESTX;
@@ -888,7 +858,7 @@ public class Affichage extends JPanel implements MouseListener, ActionListener, 
 
 						X = (X * WIDTH); 
 						Y = (Y * HEIGHT);
-						addLandMark(X, Y, true);
+						
 						System.out.println("2eme : " +X );
 						ListLandmark.add(new Landmark((float)X,(float) Y, true));
 				
