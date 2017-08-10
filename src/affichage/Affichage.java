@@ -57,7 +57,7 @@ public class Affichage extends JPanel implements MouseListener, ActionListener, 
 	public static ArrayList<Landmark> UndoListLandmark = new ArrayList<Landmark>();
 	public static List<IDrawable> drawables = new LinkedList<IDrawable>();
 	public static List<Graphics> graphic = new LinkedList<Graphics>();
-	public static HashSet<drawCircle> set = new HashSet<drawCircle>() ; // Utile pour éliminer les doublons
+	public static HashSet<drawCircle> set = new HashSet<drawCircle>() ; // Utile pour eliminer les doublons
 	public static ArrayList<drawCircle> ListCircle = new ArrayList<drawCircle>();
 	public static ArrayList<drawCircle> ListTempCircle = new ArrayList<drawCircle>();
 
@@ -217,8 +217,8 @@ public class Affichage extends JPanel implements MouseListener, ActionListener, 
 			if(SelectionLandmarkSize != 0 && SelectionLandmarkSize > UndoListLandmark.size() ){
 
 				while (compteur != 0) {
-					// Tant que la liste de séléction n'est pas vide on la décrémente 
-					//Sinon on sortirai trop tôt de ce cas 
+					// Tant que la liste de selection n'est pas vide on la decremente 
+					//Sinon on sortirai trop tot de ce cas 
 					SelectionLandmark.add(UndoListLandmark.get(SelectionLandmarkSize));
 					UndoListLandmark.remove(UndoListLandmark.get(UndoListLandmark.size() -1));
 					compteur  = compteur-1;
@@ -296,14 +296,14 @@ public class Affichage extends JPanel implements MouseListener, ActionListener, 
 				float XX = ListLandmark.get(i).getPosX();
 				float YY = ListLandmark.get(i).getPosY();
 
-				// Récupérer le poucentage de différence entre l'image redimensionné et l'image originale
+				// Recuperer le poucentage de difference entre l'image redimensionne et l'image originale
 
 				float width = WIDTH / WIDTH2;
 				float height = HEIGHT / HEIGHT2;
 
 				if ( width != 1 && height !=1) {
 
-					XX = XX * width;      // Utile pour conserver les position malgré un redimensionnement
+					XX = XX * width;      // Utile pour conserver les position malgre un redimensionnement
 					YY = YY * height;
 
 
@@ -570,7 +570,7 @@ public class Affichage extends JPanel implements MouseListener, ActionListener, 
 
 
 	protected BufferedImage getImagePanneau()
-	{      // récupérer une image du panneau
+	{      // recuperer une image du panneau
 		int width  = this.getWidth();
 		int height = this.getHeight();
 		BufferedImage image = new BufferedImage(width, height,  BufferedImage.TYPE_INT_RGB);
@@ -811,7 +811,7 @@ public class Affichage extends JPanel implements MouseListener, ActionListener, 
 
 		test = im.getProperties().get("WIDTH");
 		test2 = im.getProperties().get("HEIGHT");
-		// Les données sont des String donc on les convertis
+		// Les donnees sont des String donc on les convertis
 		float WIDTHREAL = Float.parseFloat(test);
 		float HEIGHTREAL = Float.parseFloat(test2);
 

@@ -425,7 +425,7 @@ public class Cadre2 extends JFrame implements ActionListener, WindowListener {
 
 	public void lectureEXE() {
 
-		System.out.println("Début du programme");
+		System.out.println("Dï¿½but du programme");
 		try {
 			String[] commande = {"OpenCV_Test.exe", CHEMIN, "\\C:\\Users\\Administrator\\Workspace_neon\\PM\\assets\\Image.tif" };
 			Process p = Runtime.getRuntime().exec(commande);
