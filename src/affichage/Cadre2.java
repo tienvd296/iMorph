@@ -106,11 +106,8 @@ public class Cadre2 extends JFrame implements ActionListener, WindowListener {
 
 	static JCanvas jc ;	
 	private Container c;
-
-
 	public static JSlider slide = new JSlider();
-	//Redimmensionnement d'images pour faire une toolBar fine
-
+	
 	ImageIcon squareT = new ImageIcon("assets/Carre_Blanc.jpg");
 
 	ImageIcon square = new ImageIcon(squareT.getImage().getScaledInstance(40, 40,java.awt.Image.SCALE_SMOOTH));
@@ -121,14 +118,9 @@ public class Cadre2 extends JFrame implements ActionListener, WindowListener {
 
 
 	static JPanel panShape = new JPanel();
-
-
-	public  JComboBox combo = new JComboBox();
-	public static JComboBox combo2 = new JComboBox();
+	public  JComboBox<String> combo = new JComboBox<String>();
+	public static JComboBox<String> combo2 = new JComboBox<String>();
 	public static int Value ;
-
-	private static List drawables = new LinkedList();
-
 
 	public static PanelData panData;	
 
@@ -157,16 +149,9 @@ public class Cadre2 extends JFrame implements ActionListener, WindowListener {
 		super();
 		this.im = im;
 
-		// On vide les listes pour ne pas 
-		// Charger deux fois la même chose. Sinon Popup tt le temps 
-		// Utile pour la sauvegarde
-		//	System.out.println("ListLandmarkTemp.size() = "+ListLandmarkTemp.size());
-
 		System.out.println("INIT 1");
 		System.out.println("ListLandmarkCadre.size() 1 = "+ListLandmarkCadre.size());
 		ListLandmarkCadre = im.getLandmarks();
-
-		// Ici on charge toutes les listes utiles 
 		System.out.println("ListLandmarkCadre.size() 2 = "+ListLandmarkCadre.size());
 
 		SelectionLandmark.addAll(Affichage.SelectionLandmark);
@@ -220,11 +205,12 @@ public class Cadre2 extends JFrame implements ActionListener, WindowListener {
 		fichierMenu.setText("File");
 		fichierMenu.add(ouvrirMenu);
 		ouvrirMenu.addActionListener((ActionListener)this);
-		ouvrirMenu.setText("ouvrir");
+		ouvrirMenu.setText("Open");
 
 		fichierMenu.add(enregistrerMenu);
 		enregistrerMenu.addActionListener((ActionListener)this);
-		enregistrerMenu.setText("enregistrer");
+		enregistrerMenu.setText("Save");
+		enregistrerMenu.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_MASK));
 		menuBar.add(landMarkMenu);	
 		landMarkMenu.setText("LandMark");
 
@@ -511,6 +497,7 @@ public class Cadre2 extends JFrame implements ActionListener, WindowListener {
 			}
 			 */
 			Facade.saveProject();
+			System.out.println("Saved");
 		} else
 
 			if (cliqueMenu.getSource().equals(editSubMenu)) {
@@ -628,7 +615,7 @@ public class Cadre2 extends JFrame implements ActionListener, WindowListener {
 
 
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		}
 		System.out.println("Completed...");
@@ -677,9 +664,17 @@ public class Cadre2 extends JFrame implements ActionListener, WindowListener {
 
 	@Override
 	public void windowOpened(WindowEvent e) {
+		System.out.println("WINDOW OPENED");
 		ListLandmarkTemp.removeAll(ListLandmarkTemp);
-		ListLandmarkTemp = new ArrayList<Landmark>(ListLandmarkCadre);
-
+		ListLandmarkTemp =new ArrayList<Landmark>();//new ArrayList<Landmark>(ListLandmarkCadre);
+		
+		for(Landmark a : ListLandmarkCadre)
+		{
+			ListLandmarkTemp.add(new Landmark(a.posX, a.posY,a.isLandmark));
+		}
+		for(int i = 0 ; i< ListLandmarkTemp.size() ; i++){
+			System.out.println(" LIST_TEMP IN WINDOWOPEN"+ListLandmarkTemp.get(i).toString() );
+		}
 	}
 
 
@@ -777,7 +772,7 @@ public class Cadre2 extends JFrame implements ActionListener, WindowListener {
 
 	@Override
 	public void windowIconified(WindowEvent e) {
-		// TODO Auto-generated method stub
+		
 
 	}
 
@@ -786,8 +781,7 @@ public class Cadre2 extends JFrame implements ActionListener, WindowListener {
 
 	@Override
 	public void windowDeiconified(WindowEvent e) {
-		// TODO Auto-generated method stub
-
+		
 	}
 
 
@@ -795,8 +789,7 @@ public class Cadre2 extends JFrame implements ActionListener, WindowListener {
 
 	@Override
 	public void windowActivated(WindowEvent e) {
-		// TODO Auto-generated method stub
-
+		
 	}
 
 
@@ -804,7 +797,7 @@ public class Cadre2 extends JFrame implements ActionListener, WindowListener {
 
 	@Override
 	public void windowDeactivated(WindowEvent e) {
-		// TODO Auto-generated method stub
+		
 
 	}
 

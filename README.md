@@ -25,9 +25,10 @@ Paramètrez Eclipse pour qu'il utilise le JDK 8 :
 
   - Sélectionnez la partie Java | Compiler. Définissez la Compiler compliance level à 1.8 !
   
-## Ajouter les librairies
+## Ajouter la librairie OpenCV
 
-Téléchargez les librairies suivantes et les placer dans le dossier lib (dans le dossier PhleboMorph :
+Téléchargez la librairie et la placer dans le dossier lib (dans le dossier PhleboMorph) :
+
 Opencv : https://github.com/opencv/opencv/archive/2.4.13.3.zip (à dezipper)
 
 

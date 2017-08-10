@@ -25,7 +25,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JSlider;
-import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.Size;
@@ -105,14 +104,9 @@ public class Affichage extends JPanel implements MouseListener, ActionListener, 
 
 	public Affichage(ImageWing im) {
 
-		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
+		
 		this.im = im;
-
-		ListLandmark = im.getLandmarks();
-		sliderValue = JSlidePanel.sliderValue;
-
 		this.addMouseListener(this);
-	
 		this.addMouseMotionListener(this);
 		this.setFocusable(true);
 		this.addKeyListener( new KeyListener() {
@@ -141,7 +135,8 @@ public class Affichage extends JPanel implements MouseListener, ActionListener, 
 			}
 		});
 
-
+		ListLandmark = im.getLandmarks();
+		sliderValue = JSlidePanel.sliderValue;
 		trueLandmark.addActionListener((ActionListener)this);
 		falseLandmark.addActionListener((ActionListener)this);
 		suppLandmark.addActionListener((ActionListener)this);
@@ -264,8 +259,7 @@ public class Affichage extends JPanel implements MouseListener, ActionListener, 
 		//	String texte = PanelData.jText.getText();
 		PanelData.jText.setText(Cadre2.ListLandmarkTemp.toString()+ "\n");
 		//PanelData.jText.setText(texte+"\n Landmark n°"+i+" X = "+ListLandmark.get(i).getPosX()+ " Y = "+ListLandmark.get(i).getPosY()+ " Type = " +ListLandmark.get(i).getIsLandmark());
-
-
+		
 	}
 
 
@@ -304,8 +298,9 @@ public class Affichage extends JPanel implements MouseListener, ActionListener, 
 		}
 
 	
-
+		System.out.println("Before "+Cadre2.ListLandmarkTemp.toString());
 		addLandMark(0,0,true);
+		System.out.println("After "+Cadre2.ListLandmarkTemp.toString());
 	
 		g.drawImage(monImage, 0 ,0 , null);
 		
@@ -677,8 +672,6 @@ public class Affichage extends JPanel implements MouseListener, ActionListener, 
 	}
 
 
-
-
 	@Override
 	public void mouseEntered(MouseEvent e) {
 		
@@ -693,7 +686,7 @@ public class Affichage extends JPanel implements MouseListener, ActionListener, 
 	@Override
 	public void mouseDragged(MouseEvent e) {
 
-		System.out.println(" mouseDragged X = "+e.getX()+ " Y = "+e.getY());
+		//System.out.println(" mouseDragged X = "+e.getX()+ " Y = "+e.getY());
 		if(selectedCircle != null || selectedLandmark != null || selectedLandmark2 != null) {
 
 			float width = WIDTH / WIDTH2;
@@ -705,8 +698,6 @@ public class Affichage extends JPanel implements MouseListener, ActionListener, 
 			selectedLandmark.setPosX((int) (e.getX()/ width));
 			selectedLandmark.setPosY((int) (e.getY()/ height));
 			
-		//	selectedLandmark2.setPosX((int) (e.getX()/ width));
-		//	selectedLandmark2.setPosY((int) (e.getY()/ height));
 		}
 		repaint();
 
@@ -753,12 +744,9 @@ public class Affichage extends JPanel implements MouseListener, ActionListener, 
 		}
 		else {
 			float width = WIDTH / WIDTH2;
-			float height = HEIGHT / HEIGHT2;
-
-		
-
-					
+			float height = HEIGHT / HEIGHT2;	
 			int i = 0;
+			
 			for(int j = 0; j<ListCircle.size() ; j++){
 
 				for( i = 0; i<ListLandmark.size(); i++){
@@ -777,24 +765,17 @@ public class Affichage extends JPanel implements MouseListener, ActionListener, 
 					float LAND2 = ListLandmark.get(i).getPosY();
 
 
-					if( (moinsX/ width) < LAND && LAND < (plusX/height)  &&( moinsY/ width) < LAND2 && LAND2 < (plusY/height) /*&& CIRCL == LAND && CIRCL2 == LAND2*/){
+					if( (moinsX/ width) < LAND && LAND < (plusX/height)  &&( moinsY/ width) < LAND2 && LAND2 < (plusY/height) ){
 						
-
-
-						//System.out.println(" mousePressed2  X = "+e.getX()+ " Y = "+e.getY()+ " I = "+i+ " J = " +j+ " LISTCIRCLE = "+ListCircle.size());
 						selectedCircle = ListCircle.get(j);
 						selectedLandmark = ListLandmark.get(i);
-				//		selectedLandmark2 = Cadre2.ListLandmark.get(i);
+				
 
 						indexOfSelectedLandmark = i;
 						indexOfSelectedCircle = j;
 
-
 						ListLandmark.get(i).setPosX(TESTX);
 						ListLandmark.get(i).setPosY(TESTY);
-						
-				//		Cadre2.ListLandmark.get(i).setPosX(TESTX);
-				//		Cadre2.ListLandmark.get(i).setPosY(TESTY);
 						
 						ListCircle.get(j).setxCenter(TESTX);
 						ListCircle.get(j).setyCenter(TESTY);
@@ -922,7 +903,7 @@ public class Affichage extends JPanel implements MouseListener, ActionListener, 
 		}
 
 
-		if (e.getSource().equals(falseLandmark))
+		else if (e.getSource().equals(falseLandmark))
 		{
 			System.out.println("FALSE ");
 			boolean type = ChangeTypeLandmark(false);
@@ -971,11 +952,11 @@ public class Affichage extends JPanel implements MouseListener, ActionListener, 
 
 					}
 				}
-			} 
+			}
+		}
+		else if (e.getSource().equals(suppLandmark)){
 
-			if (e.getSource().equals(suppLandmark)){
-
-				System.out.println("WOAW");
+				System.out.println("Delete");
 				if(SelectionLandmark.size() != 0){
 
 					for(int i=0; i<SelectionLandmark.size(); i++){
@@ -998,6 +979,6 @@ public class Affichage extends JPanel implements MouseListener, ActionListener, 
 			}
 
 		}
-	}
+	
 }
 

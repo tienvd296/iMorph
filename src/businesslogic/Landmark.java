@@ -19,7 +19,12 @@ public class Landmark {
 
    
 
-    /**
+    @Override
+	public String toString() {
+		return " " + posX + "    " + posY + "    " + isLandmark+ "\n" ;
+	}
+
+	/**
      * X position of the landmark
      * 
      * @see Landmark#getPosX()

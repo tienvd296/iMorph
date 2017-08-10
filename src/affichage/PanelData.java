@@ -8,10 +8,13 @@ import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
-import javax.swing.JTextField;
 
 public class PanelData extends JPanel{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	static JTextArea jText = new JTextArea();
 
 
@@ -37,7 +40,7 @@ public class PanelData extends JPanel{
 		/*
 		 * Partie du Panel qui va accepter les Metadata et la matrice des positions des landmarks
 		 */
-		Font police = new Font("Arial", Font.BOLD, 16);
+		Font police = new Font("Arial", Font.BOLD, 18);
 		jText.setFont(police);
 
 		jText.setText("LandMarks :");
