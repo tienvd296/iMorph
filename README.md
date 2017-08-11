@@ -19,7 +19,7 @@ Paramètrez Eclipse pour qu'il utilise le JDK 8 :
 
   - Ouvrez les préférences et sélectionnez la partie Java | Installed JREs.
 
-  - Cliquez sur le bouton Add... pour ajoutez le JDK 8 puis sur Standard VM et sélectionnez le dossier contenant le JDK 8.
+  - Cliquez sur le bouton Add... pour ajouter le JDK 8 puis sur Standard VM et sélectionnez le dossier contenant le JDK 8.
 
   - Supprimez les autres JREs et JDKs afin que le JDK 8 devienne le JDK par défaut (default) !
 
@@ -35,7 +35,7 @@ Une fois Eclipse prêt, il faut récupérer le projet.
 
   - Dans Eclipse, créez un nouveau projet JavaFX (File -> New -> Other... -> JavaFX Project)
 
-  - Donnez le nom "PhleboMorph" au projet, celui récupérera automatiquement tous les fichier du dossier PhleboMorph
+  - Donnez le nom "PhleboMorph" au projet, celui récupérera automatiquement tous les fichiers du dossier PhleboMorph
 
 
 Leo PERNELLE, aout 2017
