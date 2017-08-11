@@ -435,7 +435,7 @@ public class Facade {
 	public static void binaryPP(String threshold, String filter, String thresholdType) {
 		String separator = System.getProperty("file.separator");
 		String originalPath = System.getProperty("user.dir");
-		String pathAPI = originalPath + separator + "BINARY" + separator + "binary.exe";
+		String pathAPI = originalPath + separator + "binary.exe";
 
 		for(int i = 0; i<listPath.size(); i++)
 		{
