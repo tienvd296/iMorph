@@ -5,7 +5,6 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ComponentListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
@@ -15,14 +14,10 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -30,21 +25,20 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButtonMenuItem;
-
 import javax.swing.JSlider;
 import javax.swing.JSplitPane;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import application.ControlDashboard;
 import businesslogic.ImageWing;
 import businesslogic.Landmark;
 import drawing.JCanvas;
 import facade.Facade;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 
 
 
@@ -59,6 +53,8 @@ public class Cadre2 extends JFrame implements ActionListener, WindowListener {
 	private final JMenu landMarkMenu = new JMenu();
 
 
+
+	public static final String CHEMIN = "C:\\Users\\Administrator\\Workspace_neon\\PM";
 
 
 	private final JMenu displayLandMark = new JMenu();
@@ -135,11 +131,16 @@ public class Cadre2 extends JFrame implements ActionListener, WindowListener {
 	private JFrame instance_fenetre;
 	private JFrame instance_fenetre2;
 
-
+	public File fileImage;
 
 	public Cadre2(File fileImage, ImageWing im){
 		super();
+		
+		
+		
+		
 		this.im = im;
+		this.fileImage = fileImage;
 		this.setTitle("Image Processing Window");
 		this.addWindowListener(this);
 		
@@ -412,46 +413,58 @@ public class Cadre2 extends JFrame implements ActionListener, WindowListener {
 
 
 
-	public static final String CHEMIN = "C:\\Users\\Administrator\\Workspace_neon\\PM";
 
-	private static BufferedReader getOutput(Process p) {
-		return new BufferedReader(new InputStreamReader(p.getInputStream()));
-	}
+	public void lectureEXE(String[] commande) {
 
-	private static BufferedReader getError(Process p) {
-		return new BufferedReader(new InputStreamReader(p.getErrorStream()));
-	}
-
-
-	public void lectureEXE() {
-
-		System.out.println("D�but du programme");
+		System.out.println("Debut du programme");
+	
 		try {
-			String[] commande = {"OpenCV_Test.exe", CHEMIN, "\\C:\\Users\\Administrator\\Workspace_neon\\PM\\assets\\Image.tif" };
+		
 			Process p = Runtime.getRuntime().exec(commande);
-			BufferedReader output = getOutput(p);
-			BufferedReader error = getError(p);
-			String ligne = "";
-
-
-			while ((ligne = output.readLine()) != null) {
-				System.out.println(ligne);
-			}
-
-			while ((ligne = error.readLine()) != null) {
-				System.out.println(ligne);
-			}
-
-
-			p.waitFor();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		System.out.println("Fin du programme");
+			
+			AfficheurFlux fluxSortie = new AfficheurFlux(p.getInputStream());
+		
+	        AfficheurFlux fluxErreur = new AfficheurFlux(p.getErrorStream());
+	       
+	        new Thread(fluxSortie).start();
+	    
+	        new Thread(fluxErreur).start();
+	        
+	        //p.waitFor();
+	        
+        } catch (IOException e) {
+            e.printStackTrace();
+        }/* catch (InterruptedException e) {
+            e.printStackTrace();
+        }*/
+        System.out.println("Fin du programme");
 	}
 
+	public void landmarkPrediction(String[] commande) {
+
+		System.out.println("Debut du programme");
+	
+		try {
+		
+			Process p = Runtime.getRuntime().exec(commande);
+			
+			LandmarkPrediction fluxSortie = new LandmarkPrediction(p.getInputStream());
+		
+			LandmarkPrediction fluxErreur = new LandmarkPrediction(p.getErrorStream());
+	       
+	        new Thread(fluxSortie).start();
+	    
+	        new Thread(fluxErreur).start();
+	        
+	        //p.waitFor();
+	        
+        } catch (IOException e) {
+            e.printStackTrace();
+        }/* catch (InterruptedException e) {
+            e.printStackTrace();
+        }*/
+        System.out.println("Fin du programme");
+	}
 
 	public void actionPerformed(ActionEvent cliqueMenu) {
 
@@ -539,7 +552,11 @@ public class Cadre2 extends JFrame implements ActionListener, WindowListener {
 		} else if (cliqueMenu.getSource().equals(binary)) {
 
 			System.out.println("Binary");
-			lectureEXE();
+			
+			String result = fileImage.getAbsolutePath().toString();
+			String[] commande = {"OpenCV_Test.exe", CHEMIN, result};
+			System.out.println("GetPath : "+result);
+			lectureEXE(commande);
 
 		} else if (cliqueMenu.getSource().equals(skeleton)) {
 
@@ -554,6 +571,10 @@ public class Cadre2 extends JFrame implements ActionListener, WindowListener {
 		} else if (cliqueMenu.getSource().equals(landmarkPrediction)) {
 
 			System.out.println("Landmark Prediction");
+			String result = fileImage.getAbsolutePath().toString();
+			String[] commande = {"landmarkPrediction.exe", result, "HOG", "10"};
+			System.out.println("GetPath : "+result);
+			landmarkPrediction(commande);
 		} 
 	}
 
@@ -640,7 +661,7 @@ public class Cadre2 extends JFrame implements ActionListener, WindowListener {
 
 		for(int i = 0 ; i< ListLandmarkCadre.size(); i++) {
 			System.out.println(" ListLandmarkCadre = "+ListLandmarkCadre.get(i).getPosX()+ " Type = "+ListLandmarkCadre.get(i).getIsLandmark());
-			System.out.println(" ListLandmarkTemp = "+ListLandmarkTemp.get(i).getPosX()+ " Type = "+ListLandmarkTemp.get(i).getIsLandmark());
+			//System.out.println(" ListLandmarkTemp = "+ListLandmarkTemp.get(i).getPosX()+ " Type = "+ListLandmarkTemp.get(i).getIsLandmark());
 
 			if(ListLandmarkTemp.size() == 0 && ListLandmarkCadre.size() !=0){
 

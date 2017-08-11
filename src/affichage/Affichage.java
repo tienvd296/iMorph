@@ -253,7 +253,7 @@ public class Affichage extends JPanel implements MouseListener, ActionListener, 
 
 	public static void printCoordinates(){
 
-		PanelData.jText.setText(Cadre2.ListLandmarkTemp.toString()+ "\n");
+		PanelData.jText.setText(ListLandmark.toString()+ "\n");
 	}
 
 
