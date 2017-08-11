@@ -17,6 +17,8 @@ import businesslogic.*;
 import helper.MetadataExtractor;
 import helper.XML;
 import helper.landmarkFile;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 
 /**
  * <b>This class is a facade</b>
@@ -434,7 +436,7 @@ public class Facade {
 
 	public static void binaryPP(String threshold, String filter, String thresholdType) {
 		String separator = System.getProperty("file.separator");
-		String originalPath = System.getProperty("user.dir");
+		String originalPath = new java.io.File("").getAbsolutePath();
 		String pathAPI = originalPath + separator + "binary.exe";
 
 		for(int i = 0; i<listPath.size(); i++)
@@ -451,17 +453,22 @@ public class Facade {
 					Facade.activeView.writeConsole(line, "Binary");
 				}
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
+				Alert alert = new Alert(AlertType.WARNING);
+				alert.setTitle("Error");
+				alert.setHeaderText("function not available");
+				alert.setContentText(e.getMessage());
+				alert.showAndWait();
 				e.printStackTrace();
 			}
 		}
+		Facade.activeView.refresh();
 
 	}
 
 
 	public static void skeletonPP(String length) {
 		String separator = System.getProperty("file.separator");
-		String originalPath = System.getProperty("user.dir");
+		String originalPath = new java.io.File("").getAbsolutePath();
 		String pathAPI = originalPath + separator + "skeleton.exe";
 
 		for(int i = 0; i<listPath.size(); i++)
@@ -479,11 +486,15 @@ public class Facade {
 					Facade.activeView.writeConsole(line, "Skeleton");
 				}
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
+				Alert alert = new Alert(AlertType.WARNING);
+				alert.setTitle("Error");
+				alert.setHeaderText("function not available");
+				alert.setContentText(e.getMessage());
+				alert.showAndWait();
 				e.printStackTrace();
 			}
 		}
-
+		Facade.activeView.refresh();
 	}
 
 	
@@ -521,10 +532,15 @@ public class Facade {
 					landmarkFile.saveImage(imW);
 				}
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
+				Alert alert = new Alert(AlertType.WARNING);
+				alert.setTitle("Error");
+				alert.setHeaderText("function not available");
+				alert.setContentText(e.getMessage());
+				alert.showAndWait();
 				e.printStackTrace();
 			}
 		}
+		Facade.activeView.refresh();
 
 	}
 
@@ -569,7 +585,7 @@ public class Facade {
 	public static void randomForest(String ntree, String proximity) {
 
 		String separator = System.getProperty("file.separator");
-		String originalPath = System.getProperty("user.dir");
+		String originalPath = new java.io.File("").getAbsolutePath();
 		String pathAPI = originalPath + separator + "randomForest.exe";
 
 		for(int i = 0; i<listPath.size(); i++)
@@ -588,10 +604,15 @@ public class Facade {
 					Facade.activeView.writeConsole(line, "RandomForest");
 				}
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
+				Alert alert = new Alert(AlertType.WARNING);
+				alert.setTitle("Error");
+				alert.setHeaderText("function not available");
+				alert.setContentText(e.getMessage());
+				alert.showAndWait();
 				e.printStackTrace();
 			}
 		}
+		Facade.activeView.refresh();
 
 	}
 
@@ -599,7 +620,7 @@ public class Facade {
 	public static void SVM(String kernel, String cost, String gamma, String cross) {
 
 		String separator = System.getProperty("file.separator");
-		String originalPath = System.getProperty("user.dir");
+		String originalPath = new java.io.File("").getAbsolutePath();
 		String pathAPI = originalPath + separator + "svm.exe";
 
 		for(int i = 0; i<listPath.size(); i++)
@@ -617,16 +638,21 @@ public class Facade {
 					Facade.activeView.writeConsole(line, "SVM");
 				}
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
+				Alert alert = new Alert(AlertType.WARNING);
+				alert.setTitle("Error");
+				alert.setHeaderText("function not available");
+				alert.setContentText(e.getMessage());
+				alert.showAndWait();
 				e.printStackTrace();
 			}
 		}
+		Facade.activeView.refresh();
 
 	}
 
 	public static void rgb2() {
 		String separator = System.getProperty("file.separator");
-		String originalPath = System.getProperty("user.dir");
+		String originalPath = new java.io.File("").getAbsolutePath();
 		String pathAPI = originalPath + separator + "rgb2.exe";
 
 		for(int i = 0; i<listPath.size(); i++)
@@ -644,16 +670,21 @@ public class Facade {
 					Facade.activeView.writeConsole(line, "RGB2");
 				}
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
+				Alert alert = new Alert(AlertType.WARNING);
+				alert.setTitle("Error");
+				alert.setHeaderText("function not available");
+				alert.setContentText(e.getMessage());
+				alert.showAndWait();
 				e.printStackTrace();
 			}
-		}		
+		}
+		Facade.activeView.refresh();
 	}
 
 	
 	public static void dotAndNoise(String dotSize) {
 		String separator = System.getProperty("file.separator");
-		String originalPath = System.getProperty("user.dir");
+		String originalPath = new java.io.File("").getAbsolutePath();
 		String pathAPI = originalPath + separator + "dotAndNoise.exe";
 
 		for(int i = 0; i<listPath.size(); i++)
@@ -671,10 +702,16 @@ public class Facade {
 					Facade.activeView.writeConsole(line, "Dot & noise remover");
 				}
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
+				Alert alert = new Alert(AlertType.WARNING);
+				alert.setTitle("Error");
+				alert.setHeaderText("function not available");
+				alert.setContentText(e.getMessage());
+				alert.showAndWait();
 				e.printStackTrace();
 			}
+			
 		}
+		Facade.activeView.refresh();
 
 	}
 
@@ -682,7 +719,7 @@ public class Facade {
 	public static void crossPointDetection(ArrayList<String> listPath, HashMap<String, ImageWing> listImW, String windowSize, String neighbor) {
 		Facade.undo.add(currentProject.clonage());	
 		String separator = System.getProperty("file.separator");
-		String originalPath = System.getProperty("user.dir");
+		String originalPath = new java.io.File("").getAbsolutePath();
 		String pathAPI = originalPath + separator + "crossPointDetection.exe";
 
 		for(int i = 0; i<listPath.size(); i++)
@@ -713,10 +750,15 @@ public class Facade {
 					landmarkFile.saveImage(imW);
 				}
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
+				Alert alert = new Alert(AlertType.WARNING);
+				alert.setTitle("Error");
+				alert.setHeaderText("No image selected !");
+				alert.setContentText(e.getMessage());
+				alert.showAndWait();
 				e.printStackTrace();
 			}
 		}
+		Facade.activeView.refresh();
 	}
 
 
