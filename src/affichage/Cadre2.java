@@ -143,7 +143,7 @@ public class Cadre2 extends JFrame implements ActionListener, WindowListener {
 		
 		
 		
-		
+	
 		this.im = im;
 		this.fileImage = fileImage;
 		this.setTitle("Image Processing Window");
@@ -632,6 +632,7 @@ public class Cadre2 extends JFrame implements ActionListener, WindowListener {
 
 		this.setSize(longueur,hauteur);
 		
+		this.setLocationRelativeTo(null);
 		startWidth = this.getWidth();
 		startHeight = this.getHeight();
 		

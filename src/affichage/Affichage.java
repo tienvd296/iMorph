@@ -317,9 +317,7 @@ public class Affichage extends JPanel implements MouseListener, ActionListener, 
 		
 		WIDTH = monImage.getWidth();
 		HEIGHT = monImage.getHeight();
-		
-
-		
+				
 		if (longeur == Cadre2.startWidth && hauteur == Cadre2.startHeight) {
 			
 			if( WIDTH > longeur || HEIGHT > hauteur ){
