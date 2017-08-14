@@ -3,6 +3,7 @@ package affichage;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -94,7 +95,7 @@ public class Cadre2 extends JFrame implements ActionListener, WindowListener {
 	private JToolBar toolBar = new JToolBar();
 
 	static JCanvas jc ;	
-	private Container c;
+	public static Container c;
 	public static JSlider slide = new JSlider();
 
 	ImageIcon squareT = new ImageIcon("assets/Carre_Blanc.jpg");
@@ -127,6 +128,8 @@ public class Cadre2 extends JFrame implements ActionListener, WindowListener {
 	public static ArrayList<drawCircle> ListCircle = new ArrayList<drawCircle>();
 	public static ArrayList<drawCircle> ListCircleTemp = new ArrayList<drawCircle>();
 	public static ArrayList<Landmark> SelectionLandmark = new ArrayList<Landmark>();
+	public static int longueur;
+	public static int hauteur;
 	public ImageWing im;
 	private JFrame instance_fenetre;
 	private JFrame instance_fenetre2;
@@ -482,10 +485,10 @@ public class Cadre2 extends JFrame implements ActionListener, WindowListener {
 				panneau.setVisible(true);
 
 			} else if (cliqueMenu.getSource().equals(zoomOut)) {
-				//panneau.reduireImage();
+				panneau.reduireImage(1);
 
 			} else if (cliqueMenu.getSource().equals(zoomIn)) {
-				//panneau.agrandirImage();
+				panneau.agrandirImage(1);
 
 			}else if(cliqueMenu.getSource().equals(addLandMarkMenu)){
 
@@ -614,13 +617,20 @@ public class Cadre2 extends JFrame implements ActionListener, WindowListener {
 		panData = new PanelData();
 		panneau = new Affichage(im);
 
-		String test = im.getProperties().get("WIDTH");
+/*		String test = im.getProperties().get("WIDTH");
 		String test2 = im.getProperties().get("HEIGHT");
 		// Les donnees sont des String donc on les convertis
 		float WIDTH2 = Float.parseFloat(test);
 		float HEIGHT2 = Float.parseFloat(test2);
+	*/	
+		//récuperer la dimension de l'écran
+		Dimension tailleMoniteur = Toolkit.getDefaultToolkit().getScreenSize();
+		longueur = tailleMoniteur.width * 2/3;
+		hauteur = tailleMoniteur.height * 2/3;
+		//régler la taille de JFrame à 2/3 la taille de l'écran
+		
 
-		this.setSize((int)WIDTH2, (int) HEIGHT2);
+		this.setSize(longueur,hauteur);
 		
 		
 		panneau.setVisible(true);

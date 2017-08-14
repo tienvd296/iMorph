@@ -47,8 +47,11 @@ public class Affichage extends JPanel implements MouseListener, ActionListener, 
 	private static final long serialVersionUID = 1L;
 	private JPopupMenu jpm = new JPopupMenu();
 
-	private JMenuItem trueLandmark = new JMenuItem("True Landmark");      
-	private JMenuItem falseLandmark = new JMenuItem("False Landmark");
+	private JMenuItem trueLandmark = new JMenuItem("Add True Landmark");      
+	private JMenuItem falseLandmark = new JMenuItem("Add False Landmark");
+
+	private JMenuItem trueLandmark2 = new JMenuItem("Set True Landmark");      
+	private JMenuItem falseLandmark2 = new JMenuItem("Set False Landmark");
 	public JMenuItem suppLandmark = new JMenuItem("Delete Landmark");
 
 
@@ -104,14 +107,14 @@ public class Affichage extends JPanel implements MouseListener, ActionListener, 
 
 	public Affichage(ImageWing im) {
 
-		
+
 		this.im = im;
 		this.addMouseListener(this);
 		this.addMouseMotionListener(this);
 		this.setFocusable(true);
 		this.addKeyListener( new KeyListener() {
 
-			
+
 			public void keyTyped(KeyEvent e) {
 				System.out.println("TEST CONTROL");
 
@@ -139,6 +142,8 @@ public class Affichage extends JPanel implements MouseListener, ActionListener, 
 		sliderValue = JSlidePanel.sliderValue;
 		trueLandmark.addActionListener((ActionListener)this);
 		falseLandmark.addActionListener((ActionListener)this);
+		trueLandmark2.addActionListener((ActionListener)this);
+		falseLandmark2.addActionListener((ActionListener)this);
 		suppLandmark.addActionListener((ActionListener)this);
 		setLayout(null);
 
@@ -147,15 +152,33 @@ public class Affichage extends JPanel implements MouseListener, ActionListener, 
 			public void mouseReleased(MouseEvent event){
 
 				if(event.isPopupTrigger()){       
-					
+
 					jpm.add(trueLandmark);
 					jpm.add(falseLandmark);
+					jpm.add(trueLandmark2);
+					jpm.add(falseLandmark2);
 					jpm.add(suppLandmark);
 
-					X = event.getX();
-					Y = event.getY(); 
 
-					jpm.show(Cadre2.panneau, event.getX(), event.getY());
+					if(SelectionLandmark.size() != 0 ){
+
+						jpm.remove(trueLandmark);
+						jpm.remove(falseLandmark);
+						X = event.getX();
+						Y = event.getY(); 
+
+						jpm.show(Cadre2.panneau, event.getX(), event.getY());
+
+					}else {
+
+						jpm.remove(trueLandmark2);
+						jpm.remove(falseLandmark2);
+						jpm.remove(suppLandmark);
+						X = event.getX();
+						Y = event.getY(); 
+
+						jpm.show(Cadre2.panneau, event.getX(), event.getY());
+					}
 				}
 			}
 		});
@@ -260,7 +283,7 @@ public class Affichage extends JPanel implements MouseListener, ActionListener, 
 	protected void paintComponent(Graphics g)
 	{
 		super.paintComponent(g);
-	
+
 		test = im.getProperties().get("WIDTH");
 		test2 = im.getProperties().get("HEIGHT");
 		WIDTH2 = Float.parseFloat(test);
@@ -284,11 +307,23 @@ public class Affichage extends JPanel implements MouseListener, ActionListener, 
 		}
 
 		printCoordinates();
-		g.drawImage(monImage, 0 ,0 , null);
+		g.drawImage(monImage,0 ,0 , null);
 		
+		
+		int longeur =  Cadre2.longueur;
+		int hauteur = Cadre2.hauteur;
+
 		WIDTH = monImage.getWidth();
 		HEIGHT = monImage.getHeight();
 		
+
+		if( WIDTH > longeur || HEIGHT > hauteur ){
+
+			reduireImage(1);
+		}
+
+
+
 		if( ListLandmark.size() != size ){
 
 			for(int i = 0; i<ListLandmark.size() ; i++){
@@ -309,7 +344,7 @@ public class Affichage extends JPanel implements MouseListener, ActionListener, 
 
 					boolean isLandmark = ListLandmark.get(i).getIsLandmark();
 					ListTempCircle.add(new drawCircle(g,(int) XX,(int) YY, 5, isLandmark,0,displayLandmark));
-				
+
 					set.addAll(ListTempCircle) ;
 					set.clone();
 
@@ -330,7 +365,7 @@ public class Affichage extends JPanel implements MouseListener, ActionListener, 
 
 					ListTempCircle.add(new drawCircle(g,(int) X2,(int) Y2, 5, isLandmark,0,displayLandmark));
 					set.addAll(ListTempCircle) ;
-					
+
 					set.clone();
 					ListCircle = new ArrayList<drawCircle>(set);
 					repaint();
@@ -340,23 +375,27 @@ public class Affichage extends JPanel implements MouseListener, ActionListener, 
 			size = ListLandmark.size();
 
 		}
+		
+		int rayon = circleSize();
 
 		for(int i = 0; i<ListLandmark.size() ; i++){
 
 			float XX = ListLandmark.get(i).getPosX();
 			float YY = ListLandmark.get(i).getPosY();
-			
+
 			XX = (XX / WIDTH2)*100; 
 			YY = (YY / HEIGHT2)*100;
-			
+
 			float X2 = (XX * WIDTH)/100;
 			float Y2 = (YY * HEIGHT)/100;
-			
+
 			boolean isLandmark = ListLandmark.get(i).getIsLandmark();
-			
-			new drawCircle(g,(int) X2,(int) Y2, 5, isLandmark,0,displayLandmark);
+
+			new drawCircle(g,(int) X2,(int) Y2, rayon, isLandmark,0,displayLandmark);
 
 		}
+		
+		
 
 		for(int i = 0 ; i<SelectionLandmark.size(); i++) {
 
@@ -402,6 +441,32 @@ public class Affichage extends JPanel implements MouseListener, ActionListener, 
 
 	}
 
+
+
+
+	private int circleSize() {
+		
+		int W = monImage.getWidth();
+		int H = monImage.getHeight();
+		
+		if(W < 500 && H < 500){
+			
+			return 3;
+			
+		}else if(W < 1000 && W > 500 && H <1000 && H > 500){
+			
+			return 4;
+			
+		}else if (W < 1500 && W > 1000 && H <1500 && H > 1000){
+			
+			return 5;
+			
+		}else if(W < 2000 && W > 1500 && H <2000 && H > 1500){
+			
+			return 6;
+		}
+		return 5;
+	}
 
 
 
@@ -612,7 +677,8 @@ public class Affichage extends JPanel implements MouseListener, ActionListener, 
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		System.out.println("X  : "+e.getX()+ " Y = "+e.getY());
+		System.out.println("MouseClicked  X  : "+e.getX()+ " Y = "+e.getY());
+
 
 	}
 
@@ -621,9 +687,22 @@ public class Affichage extends JPanel implements MouseListener, ActionListener, 
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
+		float width = WIDTH / WIDTH2;
+		float height = HEIGHT / HEIGHT2;
+		if(selectedCircle != null || selectedLandmark != null || selectedLandmark2 != null) {
 
-		TESTX = e.getX();
-		TESTY = e.getY();
+
+
+			selectedCircle.setxCenter((int) (e.getX()/ width));
+			selectedCircle.setyCenter((int) (e.getY()/ height));
+
+			selectedLandmark.setPosX((int) (e.getX()/ width));
+			selectedLandmark.setPosY((int) (e.getY()/ height));
+
+		}
+
+		TESTX = (int) (e.getX()/width);
+		TESTY = (int) (e.getY() / height);
 		System.out.println(" mouseRelease X = "+e.getX()+ " Y = "+e.getY());
 		selectedCircle = null;
 		selectedLandmark = null;
@@ -644,13 +723,13 @@ public class Affichage extends JPanel implements MouseListener, ActionListener, 
 
 	@Override
 	public void mouseEntered(MouseEvent e) {
-		
+
 
 	}
 
 	@Override
 	public void mouseExited(MouseEvent e) {
-		
+
 	}
 
 	@Override
@@ -667,7 +746,7 @@ public class Affichage extends JPanel implements MouseListener, ActionListener, 
 
 			selectedLandmark.setPosX((int) (e.getX()/ width));
 			selectedLandmark.setPosY((int) (e.getY()/ height));
-			
+
 		}
 		repaint();
 
@@ -716,7 +795,7 @@ public class Affichage extends JPanel implements MouseListener, ActionListener, 
 			float width = WIDTH / WIDTH2;
 			float height = HEIGHT / HEIGHT2;	
 			int i = 0;
-			
+
 			for(int j = 0; j<ListCircle.size() ; j++){
 
 				for( i = 0; i<ListLandmark.size(); i++){
@@ -736,71 +815,41 @@ public class Affichage extends JPanel implements MouseListener, ActionListener, 
 
 
 					if( (moinsX/ width) < LAND && LAND < (plusX/height)  &&( moinsY/ width) < LAND2 && LAND2 < (plusY/height) ){
-						
+
 						selectedCircle = ListCircle.get(j);
 						selectedLandmark = ListLandmark.get(i);
-				
+
 
 						indexOfSelectedLandmark = i;
 						indexOfSelectedCircle = j;
 
 						ListLandmark.get(i).setPosX(TESTX);
 						ListLandmark.get(i).setPosY(TESTY);
-						
+
 						ListCircle.get(j).setxCenter(TESTX);
 						ListCircle.get(j).setyCenter(TESTY);
 						repaint();
 
-					
+
 					}
 				}
 			}
 		}
 	}
 
-	public boolean ChangeTypeLandmark(boolean b ){
+	public void ChangeTypeLandmark(boolean b ){
 
-		
-		for(int j = 0; j<ListLandmark.size() ; j++){
+		System.out.println(" SALUUUUUUT");
+		for(int j = 0; j<SelectionLandmark.size() ; j++){
+			nbTempUndoList = ListLandmark.size();
+			ListLandmark.add(new Landmark((float)SelectionLandmark.get(j).getPosX(),(float) SelectionLandmark.get(j).getPosY(), b));
 
-			float width = WIDTH / WIDTH2;
-			float height = HEIGHT / HEIGHT2;
+			repaint();
 
-			float moinsX = (float) (X-9);
-			float plusX = (float) (X+9);
-			System.out.println("X = "+X/width);
-			float moinsY = (float) (Y-9);
-			System.out.println("Y = "+Y/height);
-			float plusY = (float) (Y+9);
-
-			float LAND = ListLandmark.get(j).getPosX();
-			float LAND2 = ListLandmark.get(j).getPosY();
-			System.out.println("Land = "+LAND);
-			System.out.println("Land2 = "+LAND2);
-		
-
-			if( (moinsX/width) < LAND && LAND < (plusX/width)  && (moinsY / height) < LAND2 && LAND2 < (plusY/height) ){
-				nbTempUndoList = ListLandmark.size();
-
-				ListLandmark.get(j).setIsLandmark(b);
-				
-				repaint();
-				System.out.println(" Return B = "+b);
-				return b;
-			}
-
-		} 
-		if ( b == true){
-			// Utile si on ne rentre pas dans la boucle if, on retourne l'inverse de b pour que l'ajout de landmark se fasse normalement
-			return false;
-
-		}else if( b == false) {
-
-			return true;
 		}
-		System.out.println("End Function");
-		return false;
-	}
+		SelectionLandmark.removeAll(SelectionLandmark);
+	} 
+
 
 
 	@Override
@@ -818,137 +867,134 @@ public class Affichage extends JPanel implements MouseListener, ActionListener, 
 
 		if (e.getSource().equals(trueLandmark))
 		{
-
+			/*
 			boolean type = ChangeTypeLandmark(true);
 			System.out.println(" Type = "+type);
 			if (type == true){
 				System.out.println("State changed");
 
 			}else {
+			 */
+			//	X = (X/WIDTH);
+			//	Y = (Y/HEIGHT);
 
-				//	X = (X/WIDTH);
-				//	Y = (Y/HEIGHT);
+			X = (X/WIDTH);
+			Y = (Y/HEIGHT);
+			if(X> 1 || Y > 1) {
 
-				X = (X/WIDTH);
-				Y = (Y/HEIGHT);
-				if(X> 1 || Y > 1) {
+				JOptionPane.showMessageDialog(null, "You are not on the image", "Attention", JOptionPane.WARNING_MESSAGE);
+			}
 
-					JOptionPane.showMessageDialog(null, "You are not on the image", "Attention", JOptionPane.WARNING_MESSAGE);
-				}
+			else if( X <=1 || Y <= 1){
 
-				else if( X <=1 || Y <= 1){
+				if ( WIDTH != WIDTHREAL && HEIGHT != HEIGHTREAL){
 
-					if ( WIDTH != WIDTHREAL && HEIGHT != HEIGHTREAL){
+					float tempX = WIDTH / WIDTHREAL;
+					float tempY = HEIGHT / HEIGHTREAL;
 
-						float tempX = WIDTH / WIDTHREAL;
-						float tempY = HEIGHT / HEIGHTREAL;
+					X = (X * WIDTH);     //Passage en pixels
+					Y = (Y * HEIGHT);	 //Passage en pixels
 
-						X = (X * WIDTH);     //Passage en pixels
-						Y = (Y * HEIGHT);	 //Passage en pixels
+					X = X /tempX;		 
+					Y = Y /tempY;
+					System.out.println(" ADD LANDMARK ");
+					ListLandmark.add(new Landmark((float)X,(float) Y, true));
 
-						X = X /tempX;		 
-						Y = Y /tempY;
-						System.out.println(" ADD LANDMARK ");
-						ListLandmark.add(new Landmark((float)X,(float) Y, true));
-						
-						Facade.addLandmark(im, ListLandmark);
+					Facade.addLandmark(im, ListLandmark);
 
-					}else{
-
-
-						X = (X * WIDTH); 
-						Y = (Y * HEIGHT);
-						
-						System.out.println("2eme : " +X );
-						ListLandmark.add(new Landmark((float)X,(float) Y, true));
-				
+				}else{
 
 
-						Facade.addLandmark(im, ListLandmark);
+					X = (X * WIDTH); 
+					Y = (Y * HEIGHT);
 
-						System.out.println("True = "+X+ "  "+Y);
-					}
+					System.out.println("2eme : " +X );
+					ListLandmark.add(new Landmark((float)X,(float) Y, true));
+
+
+
+					Facade.addLandmark(im, ListLandmark);
+
+					System.out.println("True = "+X+ "  "+Y);
 				}
 			}
-		}
-
-
-		else if (e.getSource().equals(falseLandmark))
+		}else if (e.getSource().equals(falseLandmark))
 		{
 			System.out.println("FALSE ");
-			boolean type = ChangeTypeLandmark(false);
+			/*boolean type = ChangeTypeLandmark(false);
 			System.out.println(" Type = "+type);
 			if (type == false){
 				System.out.println("State changed");
 
 			}else {
+			 */
+			X = (X/WIDTH);
+			Y = (Y/HEIGHT); 
 
-				X = (X/WIDTH);
-				Y = (Y/HEIGHT); 
-
-				if(X> 1 || Y > 1) {
-
-
-					JOptionPane.showMessageDialog(null, "You are not in the image", "Attention", JOptionPane.WARNING_MESSAGE);
-
-				}
-				else if( X <=1 || Y <= 1){
-
-					if ( WIDTH != WIDTHREAL && HEIGHT != HEIGHTREAL){
-
-						float tempX = WIDTH / WIDTHREAL;
-						float tempY = HEIGHT / HEIGHTREAL;
-
-						X = (X * WIDTH); 
-						Y = (Y * HEIGHT);
-
-						X = X /tempX;
-						Y = Y /tempY;
-						ListLandmark.add(new Landmark((float)X,(float) Y, false));
-						
-						Facade.addLandmark(im, ListLandmark);
-
-					}else{
+			if(X> 1 || Y > 1) {
 
 
-						X = (X * WIDTH); 
-						Y = (Y * HEIGHT);
+				JOptionPane.showMessageDialog(null, "You are not in the image", "Attention", JOptionPane.WARNING_MESSAGE);
 
-						ListLandmark.add(new Landmark((float) X, (float) Y, false));	
-						
-						Facade.addLandmark(im, ListLandmark);
-
-						System.out.println("False = "+X+ "  "+Y);
-
-					}
-				}
 			}
-		}
-		else if (e.getSource().equals(suppLandmark)){
+			else if( X <=1 || Y <= 1){
 
-				System.out.println("Delete");
-				if(SelectionLandmark.size() != 0){
+				if ( WIDTH != WIDTHREAL && HEIGHT != HEIGHTREAL){
 
-					for(int i=0; i<SelectionLandmark.size(); i++){
-						SelectionLandmark.remove(i);
-						SelectionLandmark.removeAll(SelectionLandmark);
-						SelectionLandmarkSize =0;
-						System.out.println("SelectionLandmarkSize = "+SelectionLandmarkSize);
-						repaint();
+					float tempX = WIDTH / WIDTHREAL;
+					float tempY = HEIGHT / HEIGHTREAL;
 
-					}
+					X = (X * WIDTH); 
+					Y = (Y * HEIGHT);
+
+					X = X /tempX;
+					Y = Y /tempY;
+					ListLandmark.add(new Landmark((float)X,(float) Y, false));
+
+					Facade.addLandmark(im, ListLandmark);
 
 				}else{
 
-					ListLandmark.remove(indexOfSelectedLandmark);
-					
-					SelectionLandmarkSize = SelectionLandmarkSize -1;
-					System.out.println("SelectionLandmarkSize = "+SelectionLandmarkSize);
-					repaint();
+
+					X = (X * WIDTH); 
+					Y = (Y * HEIGHT);
+
+					ListLandmark.add(new Landmark((float) X, (float) Y, false));	
+
+					Facade.addLandmark(im, ListLandmark);
+
+					System.out.println("False = "+X+ "  "+Y);
+
 				}
 			}
+		}else if(e.getSource().equals(trueLandmark2)){
 
+			System.out.println(" LOL TRUE");
+			ChangeTypeLandmark(true);
+
+		}else if(e.getSource().equals(falseLandmark2)){
+			System.out.println(" LOL FALSE");
+			ChangeTypeLandmark(false);
+			
+			
+		}else if (e.getSource().equals(suppLandmark)){
+
+			System.out.println("Delete");
+			if(SelectionLandmark.size() != 0){
+
+				for(int i=0; i<SelectionLandmark.size(); i++){
+					SelectionLandmark.remove(i);
+					SelectionLandmark.removeAll(SelectionLandmark);
+					SelectionLandmarkSize =0;
+					System.out.println("SelectionLandmarkSize = "+SelectionLandmarkSize);
+					repaint();
+
+				}
+			}
 		}
-	
+		
+
+	}
+
 }
 
