@@ -284,6 +284,7 @@ public class Affichage extends JPanel implements MouseListener, ActionListener, 
 	{
 		super.paintComponent(g);
 
+		repaint();
 		test = im.getProperties().get("WIDTH");
 		test2 = im.getProperties().get("HEIGHT");
 		WIDTH2 = Float.parseFloat(test);
@@ -311,17 +312,21 @@ public class Affichage extends JPanel implements MouseListener, ActionListener, 
 		
 		
 		int longeur =  Cadre2.longueur;
-		int hauteur = Cadre2.hauteur;
+		int hauteur =  Cadre2.hauteur;
 
+		
 		WIDTH = monImage.getWidth();
 		HEIGHT = monImage.getHeight();
 		
 
-		if( WIDTH > longeur || HEIGHT > hauteur ){
-
-			reduireImage(1);
+		
+		if (longeur == Cadre2.startWidth && hauteur == Cadre2.startHeight) {
+			
+			if( WIDTH > longeur || HEIGHT > hauteur ){
+				reduireImage(1);
+			}
+			
 		}
-
 
 
 		if( ListLandmark.size() != size ){
@@ -449,21 +454,29 @@ public class Affichage extends JPanel implements MouseListener, ActionListener, 
 		int W = monImage.getWidth();
 		int H = monImage.getHeight();
 		
-		if(W < 500 && H < 500){
+		if(W < 300 || H < 300){
+			
+			return 2;
+			
+		}else if(W < 750 && W > 500 || H < 500){
 			
 			return 3;
 			
-		}else if(W < 1000 && W > 500 && H <1000 && H > 500){
+		}else if(W < 1000 && W > 750 || H <750 && H > 500){
 			
 			return 4;
 			
-		}else if (W < 1500 && W > 1000 && H <1500 && H > 1000){
+		}else if(W < 1250 && W > 1000 || H <1000 && H > 750){
 			
 			return 5;
 			
-		}else if(W < 2000 && W > 1500 && H <2000 && H > 1500){
+		}else if (W < 1500 && W > 1250 ||H <1250 && H > 1000 ){
 			
 			return 6;
+			
+		}else if(W < 2000 && W > 1500 || H <1500 && H > 1250){
+			
+			return 7;
 		}
 		return 5;
 	}

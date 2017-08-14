@@ -119,7 +119,9 @@ public class Cadre2 extends JFrame implements ActionListener, WindowListener {
 
 	BufferedImage monImage = null;
 
-
+	public static int startWidth;
+	public static int startHeight;
+	
 	public static JSplitPane split;
 
 
@@ -238,7 +240,7 @@ public class Cadre2 extends JFrame implements ActionListener, WindowListener {
 
 		EditingMenu.add(resizeMenu);
 		resizeMenu.addActionListener((ActionListener)this);
-		resizeMenu.setText("Resize Image");
+		resizeMenu.setText("Zoom");
 
 
 		resizeMenu.add(zoomIn);
@@ -350,22 +352,26 @@ public class Cadre2 extends JFrame implements ActionListener, WindowListener {
 			split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, panneau, panData);
 			split.setOneTouchExpandable(true);
 			split.setDividerLocation(1600);
-			this.getContentPane().add(split, BorderLayout.CENTER);
+			this.getContentPane().add(split);
 
 
 			panData.setVisible(true);
 			split.setVisible(true);
 			panneau.setVisible(true);
-
+	
 			toolBarEditing(false);
-
-
+			
 
 		} else if(b == false) {
 			
-
+			
 			panData.setVisible(false);
-			split.setVisible(false);
+	
+			split.setVisible(true);
+			this.getContentPane().remove(split);
+			this.getContentPane().add(panneau);
+			panneau.setVisible(true);
+			repaint();
 		}
 
 
@@ -381,7 +387,7 @@ public class Cadre2 extends JFrame implements ActionListener, WindowListener {
 			slide.setVisible(true);
 			combo.setVisible(true);
 			toolBarLandMark(false);
-
+			addLandMarkMenu.setSelected(false);
 
 
 		} else if(b == false)  {
@@ -495,19 +501,13 @@ public class Cadre2 extends JFrame implements ActionListener, WindowListener {
 				if(addLandMarkMenu.isSelected() == true){
 
 					toolBarLandMark(true);
-					this.setFocusable(true);
-					//getContentPane().add(split);
-					split.setEnabled(true);
-					split.setVisible(true);
-
-
+						
 				}else 
 				{
-
+					toolBarLandMark(false);
 					panData.setVisible(false);
-
-
 					panneau.setVisible(true);
+					
 					repaint();
 
 				}
@@ -568,7 +568,7 @@ public class Cadre2 extends JFrame implements ActionListener, WindowListener {
 		} else if (cliqueMenu.getSource().equals(resize)) {
 
 			System.out.println("Resize");
-			new JSlidePanel();
+			//new JSlidePanel();
 
 
 		} else if (cliqueMenu.getSource().equals(landmarkPrediction)) {
@@ -632,6 +632,8 @@ public class Cadre2 extends JFrame implements ActionListener, WindowListener {
 
 		this.setSize(longueur,hauteur);
 		
+		startWidth = this.getWidth();
+		startHeight = this.getHeight();
 		
 		panneau.setVisible(true);
 
