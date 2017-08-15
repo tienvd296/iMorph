@@ -1,4 +1,4 @@
-package affichage;
+package application;
 
 
 import java.awt.event.ActionEvent;
@@ -10,6 +10,8 @@ import javax.swing.JTextArea;
 
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+
+import affichage.Affichage;
 
 import javax.swing.JTextPane;
 import java.awt.Font;

@@ -18,9 +18,9 @@ import org.opencv.core.Mat;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
-import affichage.AfficheurFlux;
-import affichage.LandmarkPrediction;
+import application.AfficheurFlux;
 import application.ControlDashboard;
+import application.LandmarkPrediction;
 import businesslogic.*;
 import helper.MetadataExtractor;
 import helper.XML;

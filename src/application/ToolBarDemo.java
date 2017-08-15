@@ -1,4 +1,4 @@
-package affichage;
+package application;
 
 
 import javax.swing.JToolBar;

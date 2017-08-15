@@ -32,6 +32,8 @@ import javax.swing.KeyStroke;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import application.PanelData;
+import application.drawCircle;
 import businesslogic.ImageWing;
 import businesslogic.Landmark;
 

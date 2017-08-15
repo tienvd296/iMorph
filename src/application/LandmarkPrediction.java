@@ -1,10 +1,11 @@
-package affichage;
+package application;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
+import affichage.Affichage;
 import businesslogic.Landmark;
 import facade.Facade;
 

@@ -25,6 +25,9 @@ import javax.swing.JPopupMenu;
 import javax.swing.JScrollBar;
 import javax.swing.JSlider;
 
+import application.JSlidePanel;
+import application.PanelData;
+import application.drawCircle;
 import businesslogic.ImageWing;
 import businesslogic.Landmark;
 import facade.Facade;

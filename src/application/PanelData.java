@@ -1,4 +1,4 @@
-package affichage;
+package application;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -15,7 +15,7 @@ public class PanelData extends JPanel{
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	static JTextArea jText = new JTextArea();
+	public static JTextArea jText = new JTextArea();
 
 
 	public PanelData() {
