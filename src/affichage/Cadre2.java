@@ -10,10 +10,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.awt.image.BufferedImage;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
+
 import java.util.ArrayList;
 
 import javax.swing.ImageIcon;
@@ -26,6 +24,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButtonMenuItem;
+import javax.swing.JScrollPane;
 import javax.swing.JSlider;
 import javax.swing.JSplitPane;
 import javax.swing.JToolBar;
@@ -35,11 +34,9 @@ import javax.swing.event.ChangeListener;
 
 import businesslogic.ImageWing;
 import businesslogic.Landmark;
-import drawing.JCanvas;
+
 import facade.Facade;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
+
 
 
 
@@ -94,7 +91,7 @@ public class Cadre2 extends JFrame implements ActionListener, WindowListener {
 
 	private JToolBar toolBar = new JToolBar();
 
-	static JCanvas jc ;	
+	
 	public static Container c;
 	public static JSlider slide = new JSlider();
 
@@ -137,7 +134,13 @@ public class Cadre2 extends JFrame implements ActionListener, WindowListener {
 	private JFrame instance_fenetre2;
 
 	public File fileImage;
+	JScrollPane scrollBar;
 
+	
+	
+	
+	
+	
 	public Cadre2(File fileImage, ImageWing im){
 		super();
 		
@@ -149,6 +152,8 @@ public class Cadre2 extends JFrame implements ActionListener, WindowListener {
 		this.setTitle("Image Processing Window");
 		this.addWindowListener(this);
 		
+		
+		
 		ListLandmarkCadre = im.getLandmarks();
 		
 		SelectionLandmark.addAll(Affichage.SelectionLandmark);
@@ -157,7 +162,7 @@ public class Cadre2 extends JFrame implements ActionListener, WindowListener {
 		
 		try {
 			
-			panneau.ajouterImage(fileImage);
+			panneau.printImageOnScreen(fileImage);
 
 			panneau.setBounds(0, 0, this.getWidth(), this.getHeight());
 			creerMenu();
@@ -326,6 +331,10 @@ public class Cadre2 extends JFrame implements ActionListener, WindowListener {
 		toolBar.setFloatable(false);
 
 		getContentPane().add(panneau);
+		
+	
+		
+		
 
 		panData.setBounds(panneau.getX(), panneau.getY(), panneau.getWidth(), panneau.getHeight());
 		panData.setVisible(false);
@@ -420,61 +429,7 @@ public class Cadre2 extends JFrame implements ActionListener, WindowListener {
 		}  
 	}    
 
-
-
-
-	public void lectureEXE(String[] commande) {
-
-		System.out.println("Debut du programme");
 	
-		try {
-		
-			Process p = Runtime.getRuntime().exec(commande);
-			
-			AfficheurFlux fluxSortie = new AfficheurFlux(p.getInputStream());
-		
-	        AfficheurFlux fluxErreur = new AfficheurFlux(p.getErrorStream());
-	       
-	        new Thread(fluxSortie).start();
-	    
-	        new Thread(fluxErreur).start();
-	        
-	        //p.waitFor();
-	        
-        } catch (IOException e) {
-            e.printStackTrace();
-        }/* catch (InterruptedException e) {
-            e.printStackTrace();
-        }*/
-        System.out.println("Fin du programme");
-	}
-
-	public void landmarkPrediction(String[] commande) {
-
-		System.out.println("Debut du programme");
-	
-		try {
-		
-			Process p = Runtime.getRuntime().exec(commande);
-			
-			LandmarkPrediction fluxSortie = new LandmarkPrediction(p.getInputStream());
-		
-			LandmarkPrediction fluxErreur = new LandmarkPrediction(p.getErrorStream());
-	       
-	        new Thread(fluxSortie).start();
-	    
-	        new Thread(fluxErreur).start();
-	        
-	        //p.waitFor();
-	        
-        } catch (IOException e) {
-            e.printStackTrace();
-        }/* catch (InterruptedException e) {
-            e.printStackTrace();
-        }*/
-        System.out.println("Fin du programme");
-	}
-
 	public void actionPerformed(ActionEvent cliqueMenu) {
 
 		if (cliqueMenu.getSource().equals(enregistrerMenu)) {
@@ -491,10 +446,10 @@ public class Cadre2 extends JFrame implements ActionListener, WindowListener {
 				panneau.setVisible(true);
 
 			} else if (cliqueMenu.getSource().equals(zoomOut)) {
-				panneau.reduireImage(1);
+				panneau.zoomOut();
 
 			} else if (cliqueMenu.getSource().equals(zoomIn)) {
-				panneau.agrandirImage(1);
+				panneau.zoomIn();
 
 			}else if(cliqueMenu.getSource().equals(addLandMarkMenu)){
 
@@ -550,7 +505,7 @@ public class Cadre2 extends JFrame implements ActionListener, WindowListener {
 		} else if (cliqueMenu.getSource().equals(blackWhite)) {
 
 			System.out.println("Black & White");
-			TestMethodC();
+			
 
 		} else if (cliqueMenu.getSource().equals(binary)) {
 
@@ -559,7 +514,7 @@ public class Cadre2 extends JFrame implements ActionListener, WindowListener {
 			String result = fileImage.getAbsolutePath().toString();
 			String[] commande = {"OpenCV_Test.exe", CHEMIN, result};
 			System.out.println("GetPath : "+result);
-			lectureEXE(commande);
+			Facade.lectureEXE(commande);
 
 		} else if (cliqueMenu.getSource().equals(skeleton)) {
 
@@ -577,46 +532,21 @@ public class Cadre2 extends JFrame implements ActionListener, WindowListener {
 			String result = fileImage.getAbsolutePath().toString();
 			String[] commande = {"landmarkPrediction.exe", result, "HOG", "10"};
 			System.out.println("GetPath : "+result);
-			landmarkPrediction(commande);
+			Facade.landmarkPrediction(commande);
 		} 
 	}
 
 
-	public static String TestMethodC() {
-		String separator = System.getProperty("file.separator");
-		String originalPath = System.getProperty("user.dir");
-		String pathAPI = originalPath + separator + "landmarkPrediction.exe";
-
-		ProcessBuilder pb = new ProcessBuilder(pathAPI);
-		Process process;
-		try {
-			process = pb.start();
-			BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream())); 
-			String line = null;
-
-
-		} catch (IOException e) {
-
-			e.printStackTrace();
-		}
-		System.out.println("Completed...");
-
-
-		return "OK";
-	}
-
-
-
-
-
 	private void Go(ImageWing im) {
 
-
+		
 		c = this.getContentPane();
 
 		panData = new PanelData();
 		panneau = new Affichage(im);
-
+		
+		
+		
 /*		String test = im.getProperties().get("WIDTH");
 		String test2 = im.getProperties().get("HEIGHT");
 		// Les donnees sont des String donc on les convertis
@@ -636,11 +566,10 @@ public class Cadre2 extends JFrame implements ActionListener, WindowListener {
 		startWidth = this.getWidth();
 		startHeight = this.getHeight();
 		
+	     
 		panneau.setVisible(true);
 
 		c.add(panneau);
-
-
 		this.setVisible(true);
 
 

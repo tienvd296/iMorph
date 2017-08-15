@@ -5,15 +5,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-class AfficheurFlux implements Runnable {
+public class AfficheurFlux implements Runnable {
 
     private final InputStream inputStream;
 
-    AfficheurFlux(InputStream inputStream) {
+    public AfficheurFlux(InputStream inputStream) {
         this.inputStream = inputStream;
     }
 
-    private BufferedReader getBufferedReader(InputStream is) {
+    public BufferedReader getBufferedReader(InputStream is) {
         return new BufferedReader(new InputStreamReader(is));
     }
 

@@ -9,8 +9,7 @@ import javax.swing.JFrame;
 import javax.swing.JTextArea;
 import javax.swing.JScrollPane;
 import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
+
  
 import java.net.URL;
  
@@ -21,7 +20,11 @@ import java.awt.event.ActionListener;
  
 public class ToolBarDemo extends JPanel
                          implements ActionListener {
-    protected JTextArea textArea;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	protected JTextArea textArea;
     protected String newline = "\n";
     static final private String PREVIOUS = "previous";
     static final private String UP = "up";

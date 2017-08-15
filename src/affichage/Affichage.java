@@ -1,7 +1,6 @@
 package affichage;
 
 import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -14,25 +13,20 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import javax.imageio.ImageIO;
+
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.JScrollBar;
 import javax.swing.JSlider;
-import org.opencv.core.CvType;
-import org.opencv.core.Mat;
-import org.opencv.core.Size;
-import org.opencv.imgproc.Imgproc;
 
 import businesslogic.ImageWing;
 import businesslogic.Landmark;
-import drawing.IDrawable;
 import facade.Facade;
 import ij.ImagePlus;
 import ij.io.Opener;
@@ -58,7 +52,7 @@ public class Affichage extends JPanel implements MouseListener, ActionListener, 
 	public static ArrayList<Landmark> ListLandmark = new ArrayList<Landmark>();
 	public static ArrayList<Landmark> SelectionLandmark = new ArrayList<Landmark>();
 	public static ArrayList<Landmark> UndoListLandmark = new ArrayList<Landmark>();
-	public static List<IDrawable> drawables = new LinkedList<IDrawable>();
+	
 	public static List<Graphics> graphic = new LinkedList<Graphics>();
 	public static HashSet<drawCircle> set = new HashSet<drawCircle>() ; // Utile pour eliminer les doublons
 	public static ArrayList<drawCircle> ListCircle = new ArrayList<drawCircle>();
@@ -94,7 +88,8 @@ public class Affichage extends JPanel implements MouseListener, ActionListener, 
 	public Landmark selectedLandmark2;
 	public boolean isCtrlDown = false;
 
-
+	
+	public int onlyOnceForconnection = 0;
 	public drawCircle selectedCircle;
 
 	private ImageWing im;
@@ -112,6 +107,7 @@ public class Affichage extends JPanel implements MouseListener, ActionListener, 
 		this.addMouseListener(this);
 		this.addMouseMotionListener(this);
 		this.setFocusable(true);
+		
 		this.addKeyListener( new KeyListener() {
 
 
@@ -146,8 +142,8 @@ public class Affichage extends JPanel implements MouseListener, ActionListener, 
 		falseLandmark2.addActionListener((ActionListener)this);
 		suppLandmark.addActionListener((ActionListener)this);
 		setLayout(null);
-
-
+		
+	
 		this.addMouseListener(new MouseAdapter(){
 			public void mouseReleased(MouseEvent event){
 
@@ -183,15 +179,11 @@ public class Affichage extends JPanel implements MouseListener, ActionListener, 
 			}
 		});
 
-
-
+		
 	}
 
-
-
 	public static void UndoLandmark(){
-
-
+		
 		if(nbTempUndoList < UndoListSize ){
 
 			int tmp = UndoListSize - nbTempUndoList;
@@ -265,15 +257,6 @@ public class Affichage extends JPanel implements MouseListener, ActionListener, 
 	}
 
 
-
-	public void addDrawable(IDrawable d) {
-		drawables.add(d);
-		repaint();
-	}
-
-
-
-
 	public static void printCoordinates(){
 
 		PanelData.jText.setText(ListLandmark.toString()+ "\n");
@@ -290,25 +273,10 @@ public class Affichage extends JPanel implements MouseListener, ActionListener, 
 		WIDTH2 = Float.parseFloat(test);
 		HEIGHT2 = Float.parseFloat(test2);
 
-
-		float value = 0;
-		value = JSlidePanel.getSliderValue();
-
-		if( value != temp){
-			if(value < temp){
-				reduireImage(value);
-				temp = value;
-
-			}else if(value > temp)
-			{
-				agrandirImage(value);
-				temp= value;
-
-			}
-		}
-
 		printCoordinates();
 		g.drawImage(monImage,0 ,0 , null);
+		
+		this.add(new JScrollBar());
 		
 		
 		int longeur =  Cadre2.longueur;
@@ -317,15 +285,19 @@ public class Affichage extends JPanel implements MouseListener, ActionListener, 
 		
 		WIDTH = monImage.getWidth();
 		HEIGHT = monImage.getHeight();
+		
 				
-		if (longeur == Cadre2.startWidth && hauteur == Cadre2.startHeight) {
+		if(onlyOnceForconnection == 0){
+		
 			
-			if( WIDTH > longeur || HEIGHT > hauteur ){
-				reduireImage(1);
+			while( WIDTH > longeur || HEIGHT > hauteur ){
+				zoomOut();
+				WIDTH = monImage.getWidth();
+				HEIGHT = monImage.getHeight();
 			}
 			
+		onlyOnceForconnection = 1;
 		}
-
 
 		if( ListLandmark.size() != size ){
 
@@ -486,111 +458,11 @@ public class Affichage extends JPanel implements MouseListener, ActionListener, 
 		return val;
 	}
 
-	public static Mat bufferedImageToMat(BufferedImage in) {
-		/*	System.out.println("Etape 2.1");
-		Mat mat = new Mat(bi.getHeight(), bi.getWidth(), CvType.CV_8UC3);
-		System.out.println("Etape 2.2");
-		byte[] data = ((DataBufferByte) bi.getRaster().getDataBuffer()).getData();
-		System.out.println("Etape 2.3");
-		mat.put(0, 0, data);
-		System.out.println("Etape 2.4");
-		 */
-		Mat out;
-		byte[] data;
-		int r, g, b;
-
-		if(in.getType() == BufferedImage.TYPE_INT_RGB)
-		{
-			out = new Mat(1728, 1296, CvType.CV_8UC3);
-			data = new byte[1728 * 1296* (int)out.elemSize()];
-			int[] dataBuff = in.getRGB(0, 0,320,240, null, 0, 320);
-			for(int i = 0; i < dataBuff.length; i++)
-			{
-				data[i*3] = (byte) ((dataBuff[i] >> 16) & 0xFF);
-				data[i*3 + 1] = (byte) ((dataBuff[i] >> 8) & 0xFF);
-				data[i*3 + 2] = (byte) ((dataBuff[i] >> 0) & 0xFF);
-			}
-		}
-		else
-		{
-			out = new Mat(1728, 1296, CvType.CV_8UC1);
-			data = new byte[1728*1296* (int)out.elemSize()];
-			int[] dataBuff = in.getRGB(0, 0, 1728, 1296, null, 0, 320);
-			for(int i = 0; i < dataBuff.length; i++)
-			{
-				r = (byte) ((dataBuff[i] >> 16) & 0xFF);
-				g = (byte) ((dataBuff[i] >> 8) & 0xFF);
-				b = (byte) ((dataBuff[i] >> 0) & 0xFF);
-				data[i] = (byte)((0.21 * r) + (0.71 * g) + (0.07 * b)); //luminosity
-			}
-		}
-		out.put(0, 0, data);
-
-		return out;
-
-
-
-		//return mat;
-	}
-
-	public static BufferedImage mat2Img(Mat in)
+	
+	
+	protected void zoomOut()
 	{
-		BufferedImage out;
-		byte[] data = new byte[1728 * 1296 * (int)in.elemSize()];
-		int type;
-		in.get(0, 0, data);
-
-		if(in.channels() == 1)
-			type = BufferedImage.TYPE_BYTE_GRAY;
-		else
-			type = BufferedImage.TYPE_3BYTE_BGR;
-
-		out = new BufferedImage(1728, 1296, type);
-
-		out.getRaster().setDataElements(0, 0, 1728, 1296, data);
-		return out;
-	} 
-
-
-
-	static boolean resizeIfNeeded(Mat img, int desiredWidth, int desiredHeight) {
-		Size size = img.size();
-		Size desiredSize = new Size(desiredWidth, desiredHeight);
-		if (size.width != desiredWidth || size.height != desiredHeight) {
-			Imgproc.resize(img, img, desiredSize);
-			return true;
-		}
-		return false;
-	}
-
-	protected void reduireImage(float sliderValue)
-	{
-
-
-		/*	System.out.println("R2DUIRE");
-		System.out.println("WIDTH2 "+WIDTH2+ "  HEINGHT2  "+HEIGHT2);
-
-		sliderValue = sliderValue/100;
-		System.out.println("slidervalue "+sliderValue);
-		 */
-
-		if(sliderValue > 0){
-
-			/*		System.out.println("Etape 1");
-			Mat imgMat;
-			System.out.println("Etape 2");		
-
-			imgMat =bufferedImageToMat(monImage);
-			System.out.println("Etape 3");
-
-		//	resizeIfNeeded(imgMat,(int) (monImage.getWidth() * 0.9), (int)(monImage.getHeight()*0.9));
-			 System.out.println("Etape 4");
-			monImage=  mat2Img(imgMat);
-			System.out.println("Etape 5");
-			 */	
-
-
-
+		
 			BufferedImage imageReduite = new BufferedImage((int) (monImage.getWidth()*0.9) ,(int) (monImage.getHeight()*0.9), monImage.getType());
 			AffineTransform reduire = AffineTransform.getScaleInstance(0.9, 0.9);
 			int interpolation = AffineTransformOp.TYPE_BICUBIC;
@@ -603,17 +475,13 @@ public class Affichage extends JPanel implements MouseListener, ActionListener, 
 			System.out.println("Etape 6");
 			repaint();
 			System.out.println("Etape 7");
-		}
-
+		
 
 	}
 
 
-	protected void agrandirImage(float sliderValue)
+	protected void zoomIn()
 	{
-
-		sliderValue = 0;
-
 
 		BufferedImage imageZoomer = new BufferedImage((int) (monImage.getWidth()*1.1)  ,(int)(monImage.getHeight()*1.1), monImage.getType());
 		AffineTransform agrandir = AffineTransform.getScaleInstance(1.1,1.1);
@@ -627,7 +495,7 @@ public class Affichage extends JPanel implements MouseListener, ActionListener, 
 
 
 
-	protected void ajouterImage(File fichierImage)
+	protected void printImageOnScreen(File fichierImage)
 	{  
 
 		String result = fichierImage.getAbsolutePath().toString();
@@ -636,53 +504,11 @@ public class Affichage extends JPanel implements MouseListener, ActionListener, 
 
 
 		System.out.println("Chargement image dans la fonction Ajouter Image");
-		System.out.println("File ajouterImage : "+fichierImage);
+		System.out.println("File printImageOnScreen : "+fichierImage);
 		monImage = bufferedImage;
 
 		System.out.println("Image 2 : "+monImage);
 	}
-
-
-
-
-	protected BufferedImage getImagePanneau()
-	{      // recuperer une image du panneau
-		int width  = this.getWidth();
-		int height = this.getHeight();
-		BufferedImage image = new BufferedImage(width, height,  BufferedImage.TYPE_INT_RGB);
-		Graphics2D g = image.createGraphics();
-
-		this.paintAll(g);
-		g.dispose();
-		return image;
-	}
-
-	protected void enregistrerImage(File fichierImage)
-	{
-		String format ="JPG";
-		BufferedImage image = getImagePanneau();
-		try {
-			ImageIO.write(image, format, fichierImage);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-	}
-
-	protected void enregistrerImage2(BufferedImage image2, File fichierImage)
-	{
-		String format ="JPG";
-
-		BufferedImage image = image2;
-		try {
-			ImageIO.write(image, format, fichierImage);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-	}
-
-
 
 
 
@@ -848,15 +674,12 @@ public class Affichage extends JPanel implements MouseListener, ActionListener, 
 		}
 	}
 
-	public void ChangeTypeLandmark(boolean b ){
+	public static void ChangeTypeLandmark(boolean b ){
 
 		System.out.println(" SALUUUUUUT");
 		for(int j = 0; j<SelectionLandmark.size() ; j++){
 			nbTempUndoList = ListLandmark.size();
 			ListLandmark.add(new Landmark((float)SelectionLandmark.get(j).getPosX(),(float) SelectionLandmark.get(j).getPosY(), b));
-
-			repaint();
-
 		}
 		SelectionLandmark.removeAll(SelectionLandmark);
 	} 
@@ -1006,6 +829,5 @@ public class Affichage extends JPanel implements MouseListener, ActionListener, 
 		
 
 	}
-
 }
 

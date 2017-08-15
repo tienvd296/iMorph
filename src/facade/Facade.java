@@ -1,5 +1,6 @@
 package facade;
 
+import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -12,6 +13,13 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 
+import org.opencv.core.CvType;
+import org.opencv.core.Mat;
+import org.opencv.core.Size;
+import org.opencv.imgproc.Imgproc;
+
+import affichage.AfficheurFlux;
+import affichage.LandmarkPrediction;
 import application.ControlDashboard;
 import businesslogic.*;
 import helper.MetadataExtractor;
@@ -497,7 +505,7 @@ public class Facade {
 		Facade.activeView.refresh();
 	}
 
-	
+
 	public static void landmarkDetection(ArrayList<String> listPath, HashMap<String, ImageWing> listImW, String features, String neighbor) {
 		Facade.undo.add(currentProject.clonage());	
 		String separator = System.getProperty("file.separator");
@@ -592,7 +600,7 @@ public class Facade {
 		{
 
 			ProcessBuilder pb = new ProcessBuilder(pathAPI, listPath.get(i) , ntree , proximity);
-			
+
 			Process process;
 			try {
 				process = pb.start();
@@ -681,7 +689,7 @@ public class Facade {
 		Facade.activeView.refresh();
 	}
 
-	
+
 	public static void dotAndNoise(String dotSize) {
 		String separator = System.getProperty("file.separator");
 		String originalPath = new java.io.File("").getAbsolutePath();
@@ -709,13 +717,13 @@ public class Facade {
 				alert.showAndWait();
 				e.printStackTrace();
 			}
-			
+
 		}
 		Facade.activeView.refresh();
 
 	}
 
-	
+
 	public static void crossPointDetection(ArrayList<String> listPath, HashMap<String, ImageWing> listImW, String windowSize, String neighbor) {
 		Facade.undo.add(currentProject.clonage());	
 		String separator = System.getProperty("file.separator");
@@ -762,7 +770,7 @@ public class Facade {
 	}
 
 
-	
+
 	public static void saveOrignal(ImageWing imW, boolean b) throws IOException
 	{
 		String separator = System.getProperty("file.separator");
@@ -780,20 +788,141 @@ public class Facade {
 			}
 
 			File f=new File(imW.getPath());
-		    FileReader fr=new FileReader(f);
-		    String path = imW.getPath();
-		    File dir = new File (path + ".version");
-		    dir.mkdirs();
-		    File f2=new File(path + ".version" + separator + version);
-		    FileWriter fw=new FileWriter(f2);
-		    int a;
-		    while((a=fr.read()) !=-1) 
-		    {
-		        fw.write(a);
-		    }
-		    fw.close();
-		    fr.close();
+			FileReader fr=new FileReader(f);
+			String path = imW.getPath();
+			File dir = new File (path + ".version");
+			dir.mkdirs();
+			File f2=new File(path + ".version" + separator + version);
+			FileWriter fw=new FileWriter(f2);
+			int a;
+			while((a=fr.read()) !=-1) 
+			{
+				fw.write(a);
+			}
+			fw.close();
+			fr.close();
 		}
+	}
+
+	public static void lectureEXE(String[] commande) {
+
+		System.out.println("Debut du programme");
+
+		try {
+
+			Process p = Runtime.getRuntime().exec(commande);
+
+			AfficheurFlux fluxSortie = new AfficheurFlux(p.getInputStream());
+
+			AfficheurFlux fluxErreur = new AfficheurFlux(p.getErrorStream());
+
+			new Thread(fluxSortie).start();
+
+			new Thread(fluxErreur).start();
+
+			//p.waitFor();
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}/* catch (InterruptedException e) {
+            e.printStackTrace();
+        }*/
+		System.out.println("Fin du programme");
+	}
+
+
+
+	public static void landmarkPrediction(String[] commande) {
+
+		System.out.println("Debut du programme");
+
+		try {
+
+			Process p = Runtime.getRuntime().exec(commande);
+
+			LandmarkPrediction fluxSortie = new LandmarkPrediction(p.getInputStream());
+
+			LandmarkPrediction fluxErreur = new LandmarkPrediction(p.getErrorStream());
+
+			new Thread(fluxSortie).start();
+
+			new Thread(fluxErreur).start();
+
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		System.out.println("Fin du programme");
+	}
+
+	public static Mat bufferedImageToMat(BufferedImage in) {
+
+		Mat out;
+		byte[] data;
+		int r, g, b;
+
+		if(in.getType() == BufferedImage.TYPE_INT_RGB)
+		{
+			out = new Mat(1728, 1296, CvType.CV_8UC3);
+			data = new byte[1728 * 1296* (int)out.elemSize()];
+			int[] dataBuff = in.getRGB(0, 0,320,240, null, 0, 320);
+			for(int i = 0; i < dataBuff.length; i++)
+			{
+				data[i*3] = (byte) ((dataBuff[i] >> 16) & 0xFF);
+				data[i*3 + 1] = (byte) ((dataBuff[i] >> 8) & 0xFF);
+				data[i*3 + 2] = (byte) ((dataBuff[i] >> 0) & 0xFF);
+			}
+		}
+		else
+		{
+			out = new Mat(1728, 1296, CvType.CV_8UC1);
+			data = new byte[1728*1296* (int)out.elemSize()];
+			int[] dataBuff = in.getRGB(0, 0, 1728, 1296, null, 0, 320);
+			for(int i = 0; i < dataBuff.length; i++)
+			{
+				r = (byte) ((dataBuff[i] >> 16) & 0xFF);
+				g = (byte) ((dataBuff[i] >> 8) & 0xFF);
+				b = (byte) ((dataBuff[i] >> 0) & 0xFF);
+				data[i] = (byte)((0.21 * r) + (0.71 * g) + (0.07 * b)); //luminosity
+			}
+		}
+		out.put(0, 0, data);
+
+		return out;
+
+
+
+		//return mat;
+	}
+
+	public static BufferedImage mat2Img(Mat in)
+	{
+		BufferedImage out;
+		byte[] data = new byte[1728 * 1296 * (int)in.elemSize()];
+		int type;
+		in.get(0, 0, data);
+
+		if(in.channels() == 1)
+			type = BufferedImage.TYPE_BYTE_GRAY;
+		else
+			type = BufferedImage.TYPE_3BYTE_BGR;
+
+		out = new BufferedImage(1728, 1296, type);
+
+		out.getRaster().setDataElements(0, 0, 1728, 1296, data);
+		return out;
+	} 
+
+
+
+	public static boolean resizeIfNeeded(Mat img, int desiredWidth, int desiredHeight) {
+		Size size = img.size();
+		Size desiredSize = new Size(desiredWidth, desiredHeight);
+		if (size.width != desiredWidth || size.height != desiredHeight) {
+			Imgproc.resize(img, img, desiredSize);
+			return true;
+		}
+		return false;
 	}
 
 }

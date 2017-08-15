@@ -1,20 +1,19 @@
 package affichage;
 
-import java.awt.EventQueue;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JFrame;
 import javax.swing.JSlider;
 import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.border.EtchedBorder;
+
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import javax.swing.border.BevelBorder;
+
 import javax.swing.JTextPane;
 import java.awt.Font;
-import javax.swing.JButton;
+
 
 public class JSlidePanel implements ActionListener {
 

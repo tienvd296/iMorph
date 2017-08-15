@@ -8,11 +8,11 @@ import java.io.InputStreamReader;
 import businesslogic.Landmark;
 import facade.Facade;
 
-class LandmarkPrediction implements Runnable {
+public class LandmarkPrediction implements Runnable {
 
     private final InputStream inputStream;
 
-    LandmarkPrediction(InputStream inputStream) {
+    public LandmarkPrediction(InputStream inputStream) {
         this.inputStream = inputStream;
     }
 
