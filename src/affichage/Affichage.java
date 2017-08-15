@@ -53,6 +53,7 @@ public class Affichage extends JPanel implements MouseListener, ActionListener, 
 
 
 	public static ArrayList<Landmark> ListLandmark = new ArrayList<Landmark>();
+	
 	public static ArrayList<Landmark> SelectionLandmark = new ArrayList<Landmark>();
 	public static ArrayList<Landmark> UndoListLandmark = new ArrayList<Landmark>();
 	
@@ -96,7 +97,8 @@ public class Affichage extends JPanel implements MouseListener, ActionListener, 
 	public drawCircle selectedCircle;
 
 	private ImageWing im;
-
+	public static String imHeight;
+	public static float imHEIGHT;
 	BufferedImage monImage;
 	MouseEvent e;
 
@@ -110,7 +112,8 @@ public class Affichage extends JPanel implements MouseListener, ActionListener, 
 		this.addMouseListener(this);
 		this.addMouseMotionListener(this);
 		this.setFocusable(true);
-		
+		String imHeight = im.getProperties().get("HEIGHT");
+		imHEIGHT = Float.parseFloat(imHeight);
 		this.addKeyListener( new KeyListener() {
 
 
@@ -138,6 +141,7 @@ public class Affichage extends JPanel implements MouseListener, ActionListener, 
 		});
 
 		ListLandmark = im.getLandmarks();
+		
 		sliderValue = JSlidePanel.sliderValue;
 		trueLandmark.addActionListener((ActionListener)this);
 		falseLandmark.addActionListener((ActionListener)this);
@@ -259,10 +263,26 @@ public class Affichage extends JPanel implements MouseListener, ActionListener, 
 		}
 	}
 
-
+	public static void changeCoordinates(){
+		
+		for(int i = 0; i < ListLandmark.size(); i++){
+			
+			float j = ListLandmark.get(i).getPosY();
+			ListLandmark.get(i).setPosY( (int) (imHEIGHT - j) );
+		}
+	}
+	
+	
 	public static void printCoordinates(){
-
-		PanelData.jText.setText(ListLandmark.toString()+ "\n");
+		
+		/*for(int i =0; i < ListLandmark.size(); i++) {
+			float t = ListLandmark.get(i).getPosY();
+			t = imHEIGHT - t;
+			*/
+		//String texte = PanelData.jText.getText();
+		//PanelData.jText.setText(texte+ ""+ListLandmark.get(i).getPosX()+ " "+t+ " "+ListLandmark.get(i).getIsLandmark()+ "\n");
+		PanelData.jText.setText(ListLandmark.toString()+  "\n");
+		//}
 	}
 
 

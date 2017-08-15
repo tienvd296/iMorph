@@ -93,7 +93,7 @@ public class Cadre2 extends JFrame implements ActionListener, WindowListener {
 
 	private JToolBar toolBar = new JToolBar();
 
-	
+
 	public static Container c;
 	public static JSlider slide = new JSlider();
 
@@ -120,7 +120,7 @@ public class Cadre2 extends JFrame implements ActionListener, WindowListener {
 
 	public static int startWidth;
 	public static int startHeight;
-	
+
 	public static JSplitPane split;
 
 
@@ -138,43 +138,52 @@ public class Cadre2 extends JFrame implements ActionListener, WindowListener {
 	public File fileImage;
 	JScrollPane scrollBar;
 
-	
-	
-	
-	
-	
+
+
+
+
+
 	public Cadre2(File fileImage, ImageWing im){
 		super();
-		
-		
-		
-	
+
+
+
+
 		this.im = im;
 		this.fileImage = fileImage;
 		this.setTitle("Image Processing Window");
 		this.addWindowListener(this);
-		
-		
-		
+
 		ListLandmarkCadre = im.getLandmarks();
-		
+
+		String test = im.getProperties().get("HEIGHT");
+		float HEIGHT = Float.parseFloat(test);
+
+		for(int i = 0; i < ListLandmarkCadre.size(); i++){
+
+			float j = ListLandmarkCadre.get(i).getPosY();
+			ListLandmarkCadre.get(i).setPosY( (int) (HEIGHT - j) );
+		}
+
+
+
 		SelectionLandmark.addAll(Affichage.SelectionLandmark);
-		
+
 		Go(im);
-		
+
 		try {
-			
+
 			panneau.printImageOnScreen(fileImage);
 
 			panneau.setBounds(0, 0, this.getWidth(), this.getHeight());
 			creerMenu();
 
-			
+
 		} catch (Throwable e) {
 			e.printStackTrace();
-			
+
 		}
-		
+
 	}
 
 
@@ -333,10 +342,10 @@ public class Cadre2 extends JFrame implements ActionListener, WindowListener {
 		toolBar.setFloatable(false);
 
 		getContentPane().add(panneau);
-		
-	
-		
-		
+
+
+
+
 
 		panData.setBounds(panneau.getX(), panneau.getY(), panneau.getWidth(), panneau.getHeight());
 		panData.setVisible(false);
@@ -359,7 +368,7 @@ public class Cadre2 extends JFrame implements ActionListener, WindowListener {
 	public void toolBarLandMark(Boolean b){
 
 		if(b==true) {
-			
+
 			split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, panneau, panData);
 			split.setOneTouchExpandable(true);
 			split.setDividerLocation(1600);
@@ -369,15 +378,15 @@ public class Cadre2 extends JFrame implements ActionListener, WindowListener {
 			panData.setVisible(true);
 			split.setVisible(true);
 			panneau.setVisible(true);
-	
+
 			toolBarEditing(false);
-			
+
 
 		} else if(b == false) {
-			
-			
+
+
 			panData.setVisible(false);
-	
+
 			split.setVisible(true);
 			this.getContentPane().remove(split);
 			this.getContentPane().add(panneau);
@@ -411,19 +420,19 @@ public class Cadre2 extends JFrame implements ActionListener, WindowListener {
 	class FormeListener implements ActionListener{
 		public void actionPerformed(ActionEvent e) {
 			if(combo.getSelectedItem() == "CIRCLE"){
-				
+
 				combo2.addItem("CIRCLE");
 				Value = 0;
 				//mouseAction(e, 1);
 			}
 			else if(combo.getSelectedItem() == "SQUARE"){
-				
+
 
 				combo2.addItem("SQUARE");
 				Value=1;
 			}
 			else if(combo.getSelectedItem() == "ERASE"){
-				
+
 
 				combo2.addItem("ERASE");
 				Value=2;
@@ -431,12 +440,28 @@ public class Cadre2 extends JFrame implements ActionListener, WindowListener {
 		}  
 	}    
 
-	
+
 	public void actionPerformed(ActionEvent cliqueMenu) {
 
 		if (cliqueMenu.getSource().equals(enregistrerMenu)) {
+			String test = im.getProperties().get("HEIGHT");
+			float HEIGHT = Float.parseFloat(test);
+
+			for(int i = 0; i < ListLandmarkCadre.size(); i++){
+
+				float j = ListLandmarkCadre.get(i).getPosY();
+				ListLandmarkCadre.get(i).setPosY( (int) (HEIGHT - j) );
+			}
+		
 			Facade.saveProject();
 			System.out.println("Saved");
+
+			for(int i = 0; i < ListLandmarkCadre.size(); i++){
+
+				float j = ListLandmarkCadre.get(i).getPosY();
+				ListLandmarkCadre.get(i).setPosY( (int) (HEIGHT - j) );
+			}
+
 
 		} else
 
@@ -458,13 +483,13 @@ public class Cadre2 extends JFrame implements ActionListener, WindowListener {
 				if(addLandMarkMenu.isSelected() == true){
 
 					toolBarLandMark(true);
-						
+
 				}else 
 				{
 					toolBarLandMark(false);
 					panData.setVisible(false);
 					panneau.setVisible(true);
-					
+
 					repaint();
 
 				}
@@ -474,7 +499,7 @@ public class Cadre2 extends JFrame implements ActionListener, WindowListener {
 
 		if(cliqueMenu.getSource() == squareButton) {
 			System.out.println("squareButton");
-			//Affichage.reduireImage(4);
+
 
 		} 
 		if(cliqueMenu.getSource() == circleButton) {
@@ -507,12 +532,12 @@ public class Cadre2 extends JFrame implements ActionListener, WindowListener {
 		} else if (cliqueMenu.getSource().equals(blackWhite)) {
 
 			System.out.println("Black & White");
-			
+
 
 		} else if (cliqueMenu.getSource().equals(binary)) {
 
 			System.out.println("Binary");
-			
+
 			String result = fileImage.getAbsolutePath().toString();
 			String[] commande = {"OpenCV_Test.exe", CHEMIN, result};
 			System.out.println("GetPath : "+result);
@@ -541,34 +566,34 @@ public class Cadre2 extends JFrame implements ActionListener, WindowListener {
 
 	private void Go(ImageWing im) {
 
-		
+
 		c = this.getContentPane();
 
 		panData = new PanelData();
 		panneau = new Affichage(im);
-		
-		
-		
-/*		String test = im.getProperties().get("WIDTH");
+
+
+
+		/*		String test = im.getProperties().get("WIDTH");
 		String test2 = im.getProperties().get("HEIGHT");
 		// Les donnees sont des String donc on les convertis
 		float WIDTH2 = Float.parseFloat(test);
 		float HEIGHT2 = Float.parseFloat(test2);
-	*/	
+		 */	
 		//récuperer la dimension de l'écran
 		Dimension tailleMoniteur = Toolkit.getDefaultToolkit().getScreenSize();
 		longueur = tailleMoniteur.width * 2/3;
 		hauteur = tailleMoniteur.height * 2/3;
 		//régler la taille de JFrame à 2/3 la taille de l'écran
-		
+
 
 		this.setSize(longueur,hauteur);
-		
+
 		this.setLocationRelativeTo(null);
 		startWidth = this.getWidth();
 		startHeight = this.getHeight();
-		
-	     
+
+
 		panneau.setVisible(true);
 
 		c.add(panneau);
@@ -604,12 +629,9 @@ public class Cadre2 extends JFrame implements ActionListener, WindowListener {
 		ListLandmarkCadre = Affichage.ListLandmark;
 
 		for(int i = 0 ; i< ListLandmarkCadre.size(); i++) {
-			System.out.println(" ListLandmarkCadre = "+ListLandmarkCadre.get(i).getPosX()+ " Type = "+ListLandmarkCadre.get(i).getIsLandmark());
-			//System.out.println(" ListLandmarkTemp = "+ListLandmarkTemp.get(i).getPosX()+ " Type = "+ListLandmarkTemp.get(i).getIsLandmark());
+		
 
 			if(ListLandmarkTemp.size() == 0 && ListLandmarkCadre.size() !=0){
-
-
 
 				int option =JOptionPane.showConfirmDialog(null, "Do you want to save before Leave?", "Attention",JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
 
@@ -640,7 +662,7 @@ public class Cadre2 extends JFrame implements ActionListener, WindowListener {
 			}
 
 			if(ListLandmarkCadre.size() != 0 && ListLandmarkTemp.size() != 0 ){
-				
+
 				System.out.println("ListLandmark = "+ListLandmarkCadre.size()+ " ListLandmarkTemp = " +ListLandmarkTemp.size());
 				if( ListLandmarkCadre.get(i).getPosX() != ListLandmarkTemp.get(i).getPosX() || ListLandmarkCadre.size() != ListLandmarkTemp.size() || ListLandmarkCadre.get(i).getIsLandmark() != ListLandmarkTemp.get(i).getIsLandmark() || ListLandmarkTemp.size() ==0){
 
@@ -675,6 +697,17 @@ public class Cadre2 extends JFrame implements ActionListener, WindowListener {
 			}else
 				System.out.println("ListLandmark = "+ListLandmarkCadre.size()+ " ListLandmarkTemp = " +ListLandmarkTemp.size());
 		}
+
+
+		String test = im.getProperties().get("HEIGHT");
+		float HEIGHT = Float.parseFloat(test);
+
+		for(int i = 0; i < ListLandmarkCadre.size(); i++){
+
+			float j = ListLandmarkCadre.get(i).getPosY();
+			ListLandmarkCadre.get(i).setPosY( (int) (HEIGHT - j) );
+		}
+		
 	}
 
 
