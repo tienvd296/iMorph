@@ -275,14 +275,24 @@ public class Affichage extends JPanel implements MouseListener, ActionListener, 
 	
 	public static void printCoordinates(){
 		
-		/*for(int i =0; i < ListLandmark.size(); i++) {
-			float t = ListLandmark.get(i).getPosY();
-			t = imHEIGHT - t;
-			*/
-		//String texte = PanelData.jText.getText();
-		//PanelData.jText.setText(texte+ ""+ListLandmark.get(i).getPosX()+ " "+t+ " "+ListLandmark.get(i).getIsLandmark()+ "\n");
+		
+
+		for(int i = 0; i < ListLandmark.size(); i++){
+
+			float j = ListLandmark.get(i).getPosY();
+			ListLandmark.get(i).setPosY( (int) (imHEIGHT - j) );
+		}
+	
 		PanelData.jText.setText(ListLandmark.toString()+  "\n");
-		//}
+
+		for(int i = 0; i < ListLandmark.size(); i++){
+
+			float j = ListLandmark.get(i).getPosY();
+			ListLandmark.get(i).setPosY( (int) (imHEIGHT - j) );
+		}
+
+
+	
 	}
 
 
