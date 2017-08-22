@@ -21,7 +21,12 @@ public class Landmark {
 
     @Override
 	public String toString() {
-		return " " + posX + "    " + posY + "    " + isLandmark+ "\n" ;
+    	String X = String.valueOf(posX);
+    	String Y = String.valueOf(posY);
+    	String isLand = String.valueOf(isLandmark);
+    	//String[] tab = {" X ", " Y ", "isLand"};
+    	String test = X   +   "     "   +   Y   +   "     "   +   isLand   + "\n";
+    	return test;
 	}
 
 	/**

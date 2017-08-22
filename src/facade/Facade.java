@@ -3,7 +3,6 @@ package facade;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -13,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 
+import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.Size;
@@ -21,7 +21,10 @@ import org.opencv.imgproc.Imgproc;
 import application.AfficheurFlux;
 import application.ControlDashboard;
 import application.LandmarkPrediction;
-import businesslogic.*;
+import businesslogic.Folder;
+import businesslogic.ImageWing;
+import businesslogic.Landmark;
+import businesslogic.Project;
 import helper.MetadataExtractor;
 import helper.XML;
 import helper.landmarkFile;
@@ -803,7 +806,7 @@ public class Facade {
 			fr.close();
 		}
 	}
-
+	 
 	public static void lectureEXE(String[] commande) {
 
 		System.out.println("Debut du programme");
@@ -821,12 +824,16 @@ public class Facade {
 			new Thread(fluxErreur).start();
 
 			//p.waitFor();
-
+			
+			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}/* catch (InterruptedException e) {
             e.printStackTrace();
         }*/
+		
+		//Facade.activeView.refresh();
+		
 		System.out.println("Fin du programme");
 	}
 
@@ -855,17 +862,23 @@ public class Facade {
 		System.out.println("Fin du programme");
 	}
 
-	public static Mat bufferedImageToMat(BufferedImage in) {
+	public static Mat bufferedImageToMat(BufferedImage in, ImageWing im) {
 
+		String test = im.getProperties().get("WIDTH");
+		String test2 = im.getProperties().get("HEIGHT");
+		
+		float WIDTH = Float.parseFloat(test);
+		float HEIGHT = Float.parseFloat(test2);
 		Mat out;
 		byte[] data;
 		int r, g, b;
-
+		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
+		
 		if(in.getType() == BufferedImage.TYPE_INT_RGB)
 		{
-			out = new Mat(1728, 1296, CvType.CV_8UC3);
-			data = new byte[1728 * 1296* (int)out.elemSize()];
-			int[] dataBuff = in.getRGB(0, 0,320,240, null, 0, 320);
+			out = new Mat((int) WIDTH, (int)HEIGHT, CvType.CV_8UC3);
+			data = new byte[(int) WIDTH * (int) HEIGHT* (int)out.elemSize()];
+			int[] dataBuff = in.getRGB(0, 0,(int) WIDTH,(int) HEIGHT, null, 0, (int) WIDTH);
 			for(int i = 0; i < dataBuff.length; i++)
 			{
 				data[i*3] = (byte) ((dataBuff[i] >> 16) & 0xFF);
@@ -875,9 +888,9 @@ public class Facade {
 		}
 		else
 		{
-			out = new Mat(1728, 1296, CvType.CV_8UC1);
-			data = new byte[1728*1296* (int)out.elemSize()];
-			int[] dataBuff = in.getRGB(0, 0, 1728, 1296, null, 0, 320);
+			out = new Mat((int) WIDTH, (int)HEIGHT, CvType.CV_8UC1);
+			data = new byte[(int) WIDTH * (int) HEIGHT* (int)out.elemSize()];
+			int[] dataBuff = in.getRGB(0, 0, (int)WIDTH, (int) HEIGHT, null, 0, (int)WIDTH);
 			for(int i = 0; i < dataBuff.length; i++)
 			{
 				r = (byte) ((dataBuff[i] >> 16) & 0xFF);
@@ -895,10 +908,16 @@ public class Facade {
 		//return mat;
 	}
 
-	public static BufferedImage mat2Img(Mat in)
+	public static BufferedImage mat2Img(Mat in, ImageWing im)
 	{
+		String test = im.getProperties().get("WIDTH");
+		String test2 = im.getProperties().get("HEIGHT");
+		
+		float WIDTH = Float.parseFloat(test);
+		float HEIGHT = Float.parseFloat(test2);
+		
 		BufferedImage out;
-		byte[] data = new byte[1728 * 1296 * (int)in.elemSize()];
+		byte[] data = new byte[(int) WIDTH * (int) HEIGHT * (int)in.elemSize()];
 		int type;
 		in.get(0, 0, data);
 
@@ -907,9 +926,9 @@ public class Facade {
 		else
 			type = BufferedImage.TYPE_3BYTE_BGR;
 
-		out = new BufferedImage(1728, 1296, type);
+		out = new BufferedImage((int) WIDTH, (int) HEIGHT, type);
 
-		out.getRaster().setDataElements(0, 0, 1728, 1296, data);
+		out.getRaster().setDataElements(0, 0, (int) WIDTH, (int) HEIGHT, data);
 		return out;
 	} 
 

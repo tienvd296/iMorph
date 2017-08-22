@@ -24,6 +24,7 @@ public class AfficheurFlux implements Runnable {
         try {
             while ((ligne = br.readLine()) != null) {
                 System.out.println(ligne);
+                
             }
         } catch (IOException e) {
             e.printStackTrace();

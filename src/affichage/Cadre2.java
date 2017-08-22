@@ -3,6 +3,7 @@ package affichage;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.Frame;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -11,7 +12,6 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
-
 import java.util.ArrayList;
 
 import javax.swing.ImageIcon;
@@ -24,6 +24,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButtonMenuItem;
+import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JSlider;
 import javax.swing.JSplitPane;
@@ -32,12 +33,15 @@ import javax.swing.KeyStroke;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import org.opencv.core.Mat;
+
 import application.PanelData;
 import application.drawCircle;
 import businesslogic.ImageWing;
 import businesslogic.Landmark;
-
 import facade.Facade;
+import ij.ImagePlus;
+import ij.io.Opener;
 
 
 
@@ -135,11 +139,18 @@ public class Cadre2 extends JFrame implements ActionListener, WindowListener {
 	private JFrame instance_fenetre;
 	private JFrame instance_fenetre2;
 
+	
+	public static float imHEIGHT;
+	public static float imWIDTH;
+	
 	public File fileImage;
-	JScrollPane scrollBar;
+	
 
 
-
+	public ImageWing wing;
+	public File file2;
+	private final JScrollPane scrollPane = new JScrollPane();
+	private final JScrollBar scrollBar = new JScrollBar();
 
 
 
@@ -154,6 +165,10 @@ public class Cadre2 extends JFrame implements ActionListener, WindowListener {
 		this.setTitle("Image Processing Window");
 		this.addWindowListener(this);
 
+		
+		wing = im;
+		file2 = fileImage;
+	
 		ListLandmarkCadre = im.getLandmarks();
 
 		String test = im.getProperties().get("HEIGHT");
@@ -288,7 +303,7 @@ public class Cadre2 extends JFrame implements ActionListener, WindowListener {
 
 		applyMethods.add(resize);
 		resize.addActionListener((ActionListener)this);
-		resize.setText("Resize");
+		resize.setText("Resize ( test mat)");
 
 		EditingMenu.add(landmarkPrediction);
 		landmarkPrediction.addActionListener((ActionListener)this);
@@ -342,7 +357,8 @@ public class Cadre2 extends JFrame implements ActionListener, WindowListener {
 		toolBar.setFloatable(false);
 
 		getContentPane().add(panneau);
-
+		
+	
 
 
 
@@ -532,17 +548,25 @@ public class Cadre2 extends JFrame implements ActionListener, WindowListener {
 		} else if (cliqueMenu.getSource().equals(blackWhite)) {
 
 			System.out.println("Black & White");
-
+			;
 
 		} else if (cliqueMenu.getSource().equals(binary)) {
 
 			System.out.println("Binary");
-
+			this.dispose();
+			
+			System.out.println("fileImage path  "+ fileImage.getAbsolutePath().toString());
+			
 			String result = fileImage.getAbsolutePath().toString();
 			String[] commande = {"OpenCV_Test.exe", CHEMIN, result};
 			System.out.println("GetPath : "+result);
 			Facade.lectureEXE(commande);
-
+						
+			System.out.println("Image Path "+ result);
+			
+			new Cadre2(file2, wing);
+			
+			
 		} else if (cliqueMenu.getSource().equals(skeleton)) {
 
 			System.out.println("Skeleton");
@@ -550,9 +574,19 @@ public class Cadre2 extends JFrame implements ActionListener, WindowListener {
 		} else if (cliqueMenu.getSource().equals(resize)) {
 
 			System.out.println("Resize");
-			//new JSlidePanel();
-
-
+			String result = fileImage.getAbsolutePath().toString();
+			ImagePlus imagePlus = new Opener().openTiff(result, "");
+			BufferedImage bufferedImage = imagePlus.getBufferedImage();
+			
+			Mat Mat = Facade.bufferedImageToMat(bufferedImage, im);
+			
+			bufferedImage = null;
+			bufferedImage = Facade.mat2Img(Mat, im);
+			
+			Affichage.imgTest = bufferedImage;
+			System.out.println("Finis");
+			
+			
 		} else if (cliqueMenu.getSource().equals(landmarkPrediction)) {
 
 			System.out.println("Landmark Prediction");
@@ -560,6 +594,8 @@ public class Cadre2 extends JFrame implements ActionListener, WindowListener {
 			String[] commande = {"landmarkPrediction.exe", result, "HOG", "10"};
 			System.out.println("GetPath : "+result);
 			Facade.landmarkPrediction(commande);
+			
+			
 		} 
 	}
 
@@ -595,8 +631,31 @@ public class Cadre2 extends JFrame implements ActionListener, WindowListener {
 
 
 		panneau.setVisible(true);
-
+		
+	
+		String imHeight = im.getProperties().get("HEIGHT");
+		imHEIGHT = Float.parseFloat(imHeight);
+		
+		String imWidth = im.getProperties().get("WIDTH");
+		imWIDTH = Float.parseFloat(imWidth);
+		
+	
+		
 		c.add(panneau);
+		panneau.setPreferredSize(new Dimension((int) imWIDTH,(int) imHEIGHT));
+		
+		getContentPane().add(scrollPane, BorderLayout.SOUTH);
+		
+		getContentPane().add(scrollBar, BorderLayout.WEST);
+		scrollPane.setViewportView(panneau);
+		
+		this.getContentPane().add(scrollPane.add(panneau));
+		
+		//getContentPane().add(scrollBar_1, BorderLayout.WEST);
+		//scrollBar_1.add(panneau);
+		
+		
+		
 		this.setVisible(true);
 
 

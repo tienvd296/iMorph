@@ -1,6 +1,8 @@
 package affichage;
 
+import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.color.ColorSpace;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -12,17 +14,21 @@ import java.awt.event.MouseMotionListener;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
+import java.awt.image.ColorConvertOp;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
-import javax.swing.JScrollBar;
+import javax.swing.JScrollPane;
 import javax.swing.JSlider;
 
 import application.JSlidePanel;
@@ -50,7 +56,11 @@ public class Affichage extends JPanel implements MouseListener, ActionListener, 
 	private JMenuItem trueLandmark2 = new JMenuItem("Set True Landmark");      
 	private JMenuItem falseLandmark2 = new JMenuItem("Set False Landmark");
 	public JMenuItem suppLandmark = new JMenuItem("Delete Landmark");
-
+	
+	public JMenu imgFunction = new JMenu("Function");
+	public JMenuItem Normal = new JMenuItem("Normal");
+	public JMenuItem black = new JMenuItem("black and white");
+	
 
 	public static ArrayList<Landmark> ListLandmark = new ArrayList<Landmark>();
 	
@@ -93,17 +103,21 @@ public class Affichage extends JPanel implements MouseListener, ActionListener, 
 	public boolean isCtrlDown = false;
 
 	
-	public int onlyOnceForconnection = 0;
+	public  int onlyOnceForconnection = 0;
 	public drawCircle selectedCircle;
 
 	private ImageWing im;
 	public static String imHeight;
 	public static float imHEIGHT;
+	public static float imWIDTH;
+	
 	BufferedImage monImage;
+	BufferedImage imgTemp;
+	public static BufferedImage imgTest;
 	MouseEvent e;
 
-
-
+	public JScrollPane scroll = new JScrollPane();
+	public JLabel lab = new JLabel();
 
 	public Affichage(ImageWing im) {
 
@@ -112,8 +126,21 @@ public class Affichage extends JPanel implements MouseListener, ActionListener, 
 		this.addMouseListener(this);
 		this.addMouseMotionListener(this);
 		this.setFocusable(true);
+		
+	
+		
 		String imHeight = im.getProperties().get("HEIGHT");
 		imHEIGHT = Float.parseFloat(imHeight);
+		
+		String imWidth = im.getProperties().get("WIDTH");
+		imWIDTH = Float.parseFloat(imWidth);
+	
+		
+		
+		this.setPreferredSize(new Dimension((int) imWIDTH,(int) imHEIGHT));
+		
+		//this.add(Cadre2.scrollBar_1);
+		
 		this.addKeyListener( new KeyListener() {
 
 
@@ -148,7 +175,11 @@ public class Affichage extends JPanel implements MouseListener, ActionListener, 
 		trueLandmark2.addActionListener((ActionListener)this);
 		falseLandmark2.addActionListener((ActionListener)this);
 		suppLandmark.addActionListener((ActionListener)this);
+		black.addActionListener((ActionListener)this);
+		Normal.addActionListener((ActionListener)this);
+		imgFunction.addActionListener((ActionListener)this);
 		setLayout(null);
+		
 		
 	
 		this.addMouseListener(new MouseAdapter(){
@@ -161,7 +192,10 @@ public class Affichage extends JPanel implements MouseListener, ActionListener, 
 					jpm.add(trueLandmark2);
 					jpm.add(falseLandmark2);
 					jpm.add(suppLandmark);
-
+					jpm.add(imgFunction);
+					imgFunction.add(black);
+					imgFunction.add(Normal);
+					
 
 					if(SelectionLandmark.size() != 0 ){
 
@@ -185,8 +219,7 @@ public class Affichage extends JPanel implements MouseListener, ActionListener, 
 				}
 			}
 		});
-
-		
+				
 	}
 
 	public static void UndoLandmark(){
@@ -273,7 +306,7 @@ public class Affichage extends JPanel implements MouseListener, ActionListener, 
 	}
 	
 	
-	public static void printCoordinates(){
+	public void printCoordinates() {
 		
 		
 
@@ -282,8 +315,9 @@ public class Affichage extends JPanel implements MouseListener, ActionListener, 
 			float j = ListLandmark.get(i).getPosY();
 			ListLandmark.get(i).setPosY( (int) (imHEIGHT - j) );
 		}
-	
-		PanelData.jText.setText(ListLandmark.toString()+  "\n");
+		
+		
+		PanelData.jText.setText(" "+ListLandmark.toString().replace('[', ' ').replace(',', ' ').replace(']', ' ')+  "\n");
 
 		for(int i = 0; i < ListLandmark.size(); i++){
 
@@ -295,7 +329,9 @@ public class Affichage extends JPanel implements MouseListener, ActionListener, 
 	
 	}
 
-
+	
+	
+	
 	protected void paintComponent(Graphics g)
 	{
 		super.paintComponent(g);
@@ -309,9 +345,7 @@ public class Affichage extends JPanel implements MouseListener, ActionListener, 
 		printCoordinates();
 		g.drawImage(monImage,0 ,0 , null);
 		
-		this.add(new JScrollBar());
-		
-		
+	
 		int longeur =  Cadre2.longueur;
 		int hauteur =  Cadre2.hauteur;
 
@@ -527,7 +561,27 @@ public class Affichage extends JPanel implements MouseListener, ActionListener, 
 
 
 
-
+	public void BlackAndWhite(){
+		
+		 BufferedImage blackWhite = new BufferedImage(monImage.getWidth(), monImage.getHeight(), BufferedImage.TYPE_BYTE_BINARY);
+	
+		monImage = blackWhite;
+		repaint();
+	}
+	
+	
+	public void GreyScale(){
+		imgTemp = monImage;
+		ColorConvertOp op = new ColorConvertOp( ColorSpace.getInstance(ColorSpace.CS_GRAY), null); 
+		BufferedImage imageGrise = op.filter(monImage,null);
+		monImage = imageGrise;
+		repaint();
+	}
+	
+	public void imageNormal() {
+		monImage=imgTemp;
+		repaint();
+	}
 	protected void printImageOnScreen(File fichierImage)
 	{  
 
@@ -839,6 +893,19 @@ public class Affichage extends JPanel implements MouseListener, ActionListener, 
 			System.out.println(" LOL TRUE");
 			ChangeTypeLandmark(true);
 
+		}
+		else if(e.getSource().equals(black)){
+			System.out.println(" Greyyyyyyy");
+		//	GreyScale();
+		
+			monImage = imgTest;
+			
+			onlyOnceForconnection = 0;
+			
+		}else if(e.getSource().equals(Normal)){
+			System.out.println(" Normal");
+			imageNormal();
+			
 		}else if(e.getSource().equals(falseLandmark2)){
 			System.out.println(" LOL FALSE");
 			ChangeTypeLandmark(false);

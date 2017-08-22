@@ -8,6 +8,13 @@ import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
+import java.awt.SystemColor;
+import javax.swing.DropMode;
+import java.awt.GridLayout;
+import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.ColumnSpec;
+import com.jgoodies.forms.layout.RowSpec;
+import java.awt.CardLayout;
 
 public class PanelData extends JPanel{
 
@@ -41,32 +48,22 @@ public class PanelData extends JPanel{
 		 * Partie du Panel qui va accepter les Metadata et la matrice des positions des landmarks
 		 */
 		Font police = new Font("Arial", Font.BOLD, 18);
-		jText.setFont(police);
-
-		jText.setText("LandMarks :");
-		jText.setForeground(Color.BLACK);
-		
-		jText.setEnabled(false);
+		setLayout(new CardLayout(0, 0));
+		jText.setRows(10);
+		jText.setColumns(1);
+		jText.setEditable(false);
+		jText.setToolTipText("");
+		jText.setTabSize(50);
+		jText.setBackground(SystemColor.inactiveCaptionBorder);
+		jText.setFont(new Font("Ebrima", Font.PLAIN, 18));
+	
+		jText.setForeground(new Color(0, 0, 0));
 	
 		jText.setForeground(Color.black);
-
-
-
-		GroupLayout groupLayout = new GroupLayout(this);
-		groupLayout.setHorizontalGroup(
-				groupLayout.createParallelGroup(Alignment.LEADING).addComponent(jText, GroupLayout.DEFAULT_SIZE, 450, Short.MAX_VALUE)
-				);
-		groupLayout.setVerticalGroup(
-				groupLayout.createParallelGroup(Alignment.LEADING).addComponent(jText, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 300, Short.MAX_VALUE)
-				);
-		setLayout(groupLayout);
+		add(jText, "name_2266615044668");
 
 
 
 
 	}
-
-
-
-
 }

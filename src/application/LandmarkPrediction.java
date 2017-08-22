@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 import affichage.Affichage;
+import affichage.Cadre2;
 import businesslogic.Landmark;
 import facade.Facade;
 
@@ -40,7 +41,9 @@ public class LandmarkPrediction implements Runnable {
 				{
 					b = false;
 				}
-				Landmark l = new Landmark(Float.parseFloat(tab[0]), Float.parseFloat(tab[1]), b);
+				float t =  Float.parseFloat(tab[1]);
+
+				Landmark l = new Landmark(Float.parseFloat(tab[0]), Cadre2.imHEIGHT - t, b);
 			
 				Affichage.ListLandmark.add(l);
 			   
