@@ -12,8 +12,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-
-import affichage.Cadre2;
 import businesslogic.*;
 import facade.Facade;
 import helper.Keyboard;

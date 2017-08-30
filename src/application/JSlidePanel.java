@@ -10,9 +10,6 @@ import javax.swing.JTextArea;
 
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-
-import affichage.Affichage;
-
 import javax.swing.JTextPane;
 import java.awt.Font;
 

@@ -5,8 +5,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-import affichage.Affichage;
-import affichage.Cadre2;
 import businesslogic.Landmark;
 import facade.Facade;
 

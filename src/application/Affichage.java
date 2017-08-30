@@ -1,4 +1,4 @@
-package affichage;
+package application;
 
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -21,7 +21,6 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
@@ -31,9 +30,9 @@ import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JSlider;
 
-import application.JSlidePanel;
-import application.PanelData;
-import application.drawCircle;
+import org.opencv.core.Mat;
+import org.opencv.imgproc.Imgproc;
+
 import businesslogic.ImageWing;
 import businesslogic.Landmark;
 import facade.Facade;
@@ -56,17 +55,17 @@ public class Affichage extends JPanel implements MouseListener, ActionListener, 
 	private JMenuItem trueLandmark2 = new JMenuItem("Set True Landmark");      
 	private JMenuItem falseLandmark2 = new JMenuItem("Set False Landmark");
 	public JMenuItem suppLandmark = new JMenuItem("Delete Landmark");
-	
+
 	public JMenu imgFunction = new JMenu("Function");
 	public JMenuItem Normal = new JMenuItem("Normal");
 	public JMenuItem black = new JMenuItem("black and white");
 	
 
 	public static ArrayList<Landmark> ListLandmark = new ArrayList<Landmark>();
-	
+
 	public static ArrayList<Landmark> SelectionLandmark = new ArrayList<Landmark>();
 	public static ArrayList<Landmark> UndoListLandmark = new ArrayList<Landmark>();
-	
+
 	public static List<Graphics> graphic = new LinkedList<Graphics>();
 	public static HashSet<drawCircle> set = new HashSet<drawCircle>() ; // Utile pour eliminer les doublons
 	public static ArrayList<drawCircle> ListCircle = new ArrayList<drawCircle>();
@@ -87,6 +86,11 @@ public class Affichage extends JPanel implements MouseListener, ActionListener, 
 	public static int UndoListSize = UndoListLandmark.size();
 	public static int compteur = SelectionLandmarkSize;
 
+	public static JMenu fileOpencv = new JMenu();
+	public static JMenuItem blackNwhite = new JMenuItem();
+	public static JMenuItem normalImage = new JMenuItem();
+	public static JMenuItem squeleton = new JMenuItem("Squelton");
+	public static JMenuItem functionTest = new JMenuItem();
 
 	public float WIDTH2;
 	public float HEIGHT2;
@@ -102,7 +106,7 @@ public class Affichage extends JPanel implements MouseListener, ActionListener, 
 	public Landmark selectedLandmark2;
 	public boolean isCtrlDown = false;
 
-	
+
 	public  int onlyOnceForconnection = 0;
 	public drawCircle selectedCircle;
 
@@ -110,7 +114,7 @@ public class Affichage extends JPanel implements MouseListener, ActionListener, 
 	public static String imHeight;
 	public static float imHEIGHT;
 	public static float imWIDTH;
-	
+
 	BufferedImage monImage;
 	BufferedImage imgTemp;
 	public static BufferedImage imgTest;
@@ -126,21 +130,21 @@ public class Affichage extends JPanel implements MouseListener, ActionListener, 
 		this.addMouseListener(this);
 		this.addMouseMotionListener(this);
 		this.setFocusable(true);
-		
-	
-		
+
+
+
 		String imHeight = im.getProperties().get("HEIGHT");
 		imHEIGHT = Float.parseFloat(imHeight);
-		
+
 		String imWidth = im.getProperties().get("WIDTH");
 		imWIDTH = Float.parseFloat(imWidth);
-	
-		
-		
+
+
+
 		this.setPreferredSize(new Dimension((int) imWIDTH,(int) imHEIGHT));
-		
+
 		//this.add(Cadre2.scrollBar_1);
-		
+
 		this.addKeyListener( new KeyListener() {
 
 
@@ -168,7 +172,7 @@ public class Affichage extends JPanel implements MouseListener, ActionListener, 
 		});
 
 		ListLandmark = im.getLandmarks();
-		
+
 		sliderValue = JSlidePanel.sliderValue;
 		trueLandmark.addActionListener((ActionListener)this);
 		falseLandmark.addActionListener((ActionListener)this);
@@ -179,9 +183,29 @@ public class Affichage extends JPanel implements MouseListener, ActionListener, 
 		Normal.addActionListener((ActionListener)this);
 		imgFunction.addActionListener((ActionListener)this);
 		setLayout(null);
+
+		Cadre2.menuBar.add(Affichage.fileOpencv);
+		Affichage.fileOpencv.setText("OpenCV's Methods");
+
+		Affichage.fileOpencv.add(Affichage.normalImage);
+		Affichage.normalImage.setText("Image Normal");
+		Affichage.normalImage.addActionListener((ActionListener)this);
+
+		Affichage.fileOpencv.add(Affichage.blackNwhite);
+		Affichage.blackNwhite.setText("Black & White");
+		Affichage.blackNwhite.addActionListener((ActionListener)this);
+		
+		Affichage.fileOpencv.add(Affichage.squeleton);
+		Affichage.squeleton.setText("Squeleton");
+		Affichage.squeleton.addActionListener((ActionListener)this);
+
+		Affichage.fileOpencv.add(Affichage.functionTest);
+		Affichage.functionTest.setText("Function Test");
+		Affichage.functionTest.addActionListener((ActionListener)this);
+
 		
 		
-	
+
 		this.addMouseListener(new MouseAdapter(){
 			public void mouseReleased(MouseEvent event){
 
@@ -195,7 +219,7 @@ public class Affichage extends JPanel implements MouseListener, ActionListener, 
 					jpm.add(imgFunction);
 					imgFunction.add(black);
 					imgFunction.add(Normal);
-					
+
 
 					if(SelectionLandmark.size() != 0 ){
 
@@ -219,11 +243,12 @@ public class Affichage extends JPanel implements MouseListener, ActionListener, 
 				}
 			}
 		});
-				
+
+		imgTest = monImage;
 	}
 
 	public static void UndoLandmark(){
-		
+
 		if(nbTempUndoList < UndoListSize ){
 
 			int tmp = UndoListSize - nbTempUndoList;
@@ -297,26 +322,26 @@ public class Affichage extends JPanel implements MouseListener, ActionListener, 
 	}
 
 	public static void changeCoordinates(){
-		
+
 		for(int i = 0; i < ListLandmark.size(); i++){
-			
+
 			float j = ListLandmark.get(i).getPosY();
 			ListLandmark.get(i).setPosY( (int) (imHEIGHT - j) );
 		}
 	}
-	
-	
+
+
 	public void printCoordinates() {
-		
-		
+
+
 
 		for(int i = 0; i < ListLandmark.size(); i++){
 
 			float j = ListLandmark.get(i).getPosY();
 			ListLandmark.get(i).setPosY( (int) (imHEIGHT - j) );
 		}
-		
-		
+
+
 		PanelData.jText.setText(" "+ListLandmark.toString().replace('[', ' ').replace(',', ' ').replace(']', ' ')+  "\n");
 
 		for(int i = 0; i < ListLandmark.size(); i++){
@@ -326,12 +351,12 @@ public class Affichage extends JPanel implements MouseListener, ActionListener, 
 		}
 
 
-	
+
 	}
 
-	
-	
-	
+
+
+
 	protected void paintComponent(Graphics g)
 	{
 		super.paintComponent(g);
@@ -344,26 +369,26 @@ public class Affichage extends JPanel implements MouseListener, ActionListener, 
 
 		printCoordinates();
 		g.drawImage(monImage,0 ,0 , null);
-		
-	
+
+
 		int longeur =  Cadre2.longueur;
 		int hauteur =  Cadre2.hauteur;
 
-		
+
 		WIDTH = monImage.getWidth();
 		HEIGHT = monImage.getHeight();
-		
-				
+
+
 		if(onlyOnceForconnection == 0){
-		
-			
+
+
 			while( WIDTH > longeur || HEIGHT > hauteur ){
 				zoomOut();
 				WIDTH = monImage.getWidth();
 				HEIGHT = monImage.getHeight();
 			}
-			
-		onlyOnceForconnection = 1;
+
+			onlyOnceForconnection = 1;
 		}
 
 		if( ListLandmark.size() != size ){
@@ -417,7 +442,7 @@ public class Affichage extends JPanel implements MouseListener, ActionListener, 
 			size = ListLandmark.size();
 
 		}
-		
+
 		int rayon = circleSize();
 
 		for(int i = 0; i<ListLandmark.size() ; i++){
@@ -436,8 +461,8 @@ public class Affichage extends JPanel implements MouseListener, ActionListener, 
 			new drawCircle(g,(int) X2,(int) Y2, rayon, isLandmark,0,displayLandmark);
 
 		}
-		
-		
+
+
 
 		for(int i = 0 ; i<SelectionLandmark.size(); i++) {
 
@@ -487,32 +512,32 @@ public class Affichage extends JPanel implements MouseListener, ActionListener, 
 
 
 	private int circleSize() {
-		
+
 		int W = monImage.getWidth();
 		int H = monImage.getHeight();
-		
+
 		if(W < 300 || H < 300){
-			
+
 			return 2;
-			
+
 		}else if(W < 750 && W > 500 || H < 500){
-			
+
 			return 3;
-			
+
 		}else if(W < 1000 && W > 750 || H <750 && H > 500){
-			
+
 			return 4;
-			
+
 		}else if(W < 1250 && W > 1000 || H <1000 && H > 750){
-			
+
 			return 5;
-			
+
 		}else if (W < 1500 && W > 1250 ||H <1250 && H > 1000 ){
-			
+
 			return 6;
-			
+
 		}else if(W < 2000 && W > 1500 || H <1500 && H > 1250){
-			
+
 			return 7;
 		}
 		return 5;
@@ -525,23 +550,23 @@ public class Affichage extends JPanel implements MouseListener, ActionListener, 
 		return val;
 	}
 
-	
-	
+
+
 	protected void zoomOut()
 	{
+
+		BufferedImage imageReduite = new BufferedImage((int) (monImage.getWidth()*0.9) ,(int) (monImage.getHeight()*0.9), monImage.getType());
+		AffineTransform reduire = AffineTransform.getScaleInstance(0.9, 0.9);
+		int interpolation = AffineTransformOp.TYPE_BICUBIC;
+		AffineTransformOp retaillerImage = new AffineTransformOp(reduire, interpolation);
+		retaillerImage.filter(monImage, imageReduite );
+
+
+		monImage = imageReduite ;
+
 		
-			BufferedImage imageReduite = new BufferedImage((int) (monImage.getWidth()*0.9) ,(int) (monImage.getHeight()*0.9), monImage.getType());
-			AffineTransform reduire = AffineTransform.getScaleInstance(0.9, 0.9);
-			int interpolation = AffineTransformOp.TYPE_BICUBIC;
-			AffineTransformOp retaillerImage = new AffineTransformOp(reduire, interpolation);
-			retaillerImage.filter(monImage, imageReduite );
-
-
-			monImage = imageReduite ;
-
-			System.out.println("Etape 6");
-			repaint();
-			System.out.println("Etape 7");
+		repaint();
+		
 		
 
 	}
@@ -562,14 +587,14 @@ public class Affichage extends JPanel implements MouseListener, ActionListener, 
 
 
 	public void BlackAndWhite(){
-		
-		 BufferedImage blackWhite = new BufferedImage(monImage.getWidth(), monImage.getHeight(), BufferedImage.TYPE_BYTE_BINARY);
-	
+
+		BufferedImage blackWhite = new BufferedImage(monImage.getWidth(), monImage.getHeight(), BufferedImage.TYPE_BYTE_BINARY);
+
 		monImage = blackWhite;
 		repaint();
 	}
-	
-	
+
+
 	public void GreyScale(){
 		imgTemp = monImage;
 		ColorConvertOp op = new ColorConvertOp( ColorSpace.getInstance(ColorSpace.CS_GRAY), null); 
@@ -577,9 +602,11 @@ public class Affichage extends JPanel implements MouseListener, ActionListener, 
 		monImage = imageGrise;
 		repaint();
 	}
-	
+
 	public void imageNormal() {
-		monImage=imgTemp;
+
+		monImage = imgTemp;
+		onlyOnceForconnection = 0;
 		repaint();
 	}
 	protected void printImageOnScreen(File fichierImage)
@@ -594,6 +621,7 @@ public class Affichage extends JPanel implements MouseListener, ActionListener, 
 		System.out.println("File printImageOnScreen : "+fichierImage);
 		monImage = bufferedImage;
 
+		imgTemp = monImage;
 		System.out.println("Image 2 : "+monImage);
 	}
 
@@ -894,23 +922,11 @@ public class Affichage extends JPanel implements MouseListener, ActionListener, 
 			ChangeTypeLandmark(true);
 
 		}
-		else if(e.getSource().equals(black)){
-			System.out.println(" Greyyyyyyy");
-		//	GreyScale();
-		
-			monImage = imgTest;
-			
-			onlyOnceForconnection = 0;
-			
-		}else if(e.getSource().equals(Normal)){
-			System.out.println(" Normal");
-			imageNormal();
-			
-		}else if(e.getSource().equals(falseLandmark2)){
+		else if(e.getSource().equals(falseLandmark2)){
 			System.out.println(" LOL FALSE");
 			ChangeTypeLandmark(false);
-			
-			
+
+
 		}else if (e.getSource().equals(suppLandmark)){
 
 			System.out.println("Delete");
@@ -925,8 +941,83 @@ public class Affichage extends JPanel implements MouseListener, ActionListener, 
 
 				}
 			}
+		}else if(e.getSource().equals(squeleton)){
+			System.out.println(" Skeleton");
+			String result = Cadre2.fileImage.getAbsolutePath().toString();
+			ImagePlus imagePlus = new Opener().openTiff(result, "");
+			BufferedImage bufferedImage = imagePlus.getBufferedImage();
+
+			Mat Mat = Facade.bufferedImageToMat(bufferedImage, im);
+
+			Mat mat2 = Mat;
+			Imgproc.cvtColor(Mat, mat2, Imgproc.COLOR_Lab2BGR);
+			bufferedImage = null;
+
+			bufferedImage = Facade.mat2Img(mat2, im);
+
+			monImage = bufferedImage;
+			onlyOnceForconnection = 0;
+
+			System.out.println("Finis");
+			
+
+		}else if(e.getSource().equals(Normal)){
+			System.out.println(" Normal");
+			imageNormal();
+
+		}else if(e.getSource().equals(black)){
+			System.out.println(" Normal");
+			GreyScale();
+
+		}else if(e.getSource().equals(normalImage)){
+			System.out.println(" Normal");
+			imageNormal();
+
+		}else if(e.getSource().equals(blackNwhite)){
+			System.out.println(" blackNwhite ");
+
+			String result = Cadre2.fileImage.getAbsolutePath().toString();
+			ImagePlus imagePlus = new Opener().openTiff(result, "");
+			BufferedImage bufferedImage = imagePlus.getBufferedImage();
+
+			Mat Mat = Facade.bufferedImageToMat(bufferedImage, im);
+
+			Mat mat2 = Mat;
+			Imgproc.cvtColor(Mat, mat2, Imgproc.COLOR_BGR2GRAY);
+			bufferedImage = null;
+
+			bufferedImage = Facade.mat2Img(mat2, im);
+
+			monImage = bufferedImage;
+			onlyOnceForconnection = 0;
+
+			System.out.println("Finis");
+
+		}else if(e.getSource().equals(functionTest)){
+			System.out.println(" Skeleton");
+			String result = Cadre2.fileImage.getAbsolutePath().toString();
+			ImagePlus imagePlus = new Opener().openTiff(result, "");
+			BufferedImage bufferedImage = imagePlus.getBufferedImage();
+
+			Mat Mat = Facade.bufferedImageToMat(bufferedImage, im);
+
+			Mat mat2 = Mat;
+			Imgproc.cvtColor(Mat, mat2, Imgproc.COLOR_RGB2YUV);
+		
+			bufferedImage = null;
+
+			bufferedImage = Facade.mat2Img(mat2, im);
+
+			monImage = bufferedImage;
+			onlyOnceForconnection = 0;
+
+			System.out.println("Finis");
+			
+
 		}
 		
+		
+
 
 	}
 }

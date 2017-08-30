@@ -1,9 +1,10 @@
-package affichage;
+package application;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Frame;
+import java.awt.Graphics2D;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -11,9 +12,13 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
+import java.awt.image.WritableRaster;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
+import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -34,9 +39,8 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import org.opencv.core.Mat;
+import org.opencv.imgproc.Imgproc;
 
-import application.PanelData;
-import application.drawCircle;
 import businesslogic.ImageWing;
 import businesslogic.Landmark;
 import facade.Facade;
@@ -52,9 +56,9 @@ public class Cadre2 extends JFrame implements ActionListener, WindowListener {
 
 
 	private static final long serialVersionUID = 1L;
-	private final JMenuBar menuBar = new JMenuBar();
-	private final JMenu fichierMenu = new JMenu();
-	private final JMenu landMarkMenu = new JMenu();
+	final static JMenuBar menuBar = new JMenuBar();
+	public final JMenu fichierMenu = new JMenu();
+	public final JMenu landMarkMenu = new JMenu();
 
 
 
@@ -143,7 +147,7 @@ public class Cadre2 extends JFrame implements ActionListener, WindowListener {
 	public static float imHEIGHT;
 	public static float imWIDTH;
 	
-	public File fileImage;
+	public static File fileImage;
 	
 
 
@@ -303,14 +307,15 @@ public class Cadre2 extends JFrame implements ActionListener, WindowListener {
 
 		applyMethods.add(resize);
 		resize.addActionListener((ActionListener)this);
-		resize.setText("Resize ( test mat)");
+		resize.setText("Resize");
 
 		EditingMenu.add(landmarkPrediction);
 		landmarkPrediction.addActionListener((ActionListener)this);
 		landmarkPrediction.setText("Landmark Prediction");
 
-
-
+		
+		
+	
 		getContentPane().add(toolBar, BorderLayout.PAGE_START);
 
 
@@ -351,6 +356,7 @@ public class Cadre2 extends JFrame implements ActionListener, WindowListener {
 		combo.setMaximumSize(new Dimension(180,50));
 
 
+		
 		toolBar.add(combo);
 		combo.setFocusable(false);
 		slide.setFocusable(true);
@@ -358,8 +364,6 @@ public class Cadre2 extends JFrame implements ActionListener, WindowListener {
 
 		getContentPane().add(panneau);
 		
-	
-
 
 
 
@@ -468,6 +472,14 @@ public class Cadre2 extends JFrame implements ActionListener, WindowListener {
 				float j = ListLandmarkCadre.get(i).getPosY();
 				ListLandmarkCadre.get(i).setPosY( (int) (HEIGHT - j) );
 			}
+			
+			ListLandmarkTemp.removeAll(ListLandmarkTemp);
+			ListLandmarkTemp =new ArrayList<Landmark>();//new ArrayList<Landmark>(ListLandmarkCadre);
+
+			for(Landmark a : ListLandmarkCadre)
+			{
+				ListLandmarkTemp.add(new Landmark(a.posX, a.posY,a.isLandmark));
+			}
 		
 			Facade.saveProject();
 			System.out.println("Saved");
@@ -548,13 +560,16 @@ public class Cadre2 extends JFrame implements ActionListener, WindowListener {
 		} else if (cliqueMenu.getSource().equals(blackWhite)) {
 
 			System.out.println("Black & White");
-			;
+			
 
 		} else if (cliqueMenu.getSource().equals(binary)) {
 
 			System.out.println("Binary");
 			this.dispose();
 			
+			String test = im.getProperties().get("HEIGHT");
+			float HEIGHT = Float.parseFloat(test);
+
 			System.out.println("fileImage path  "+ fileImage.getAbsolutePath().toString());
 			
 			String result = fileImage.getAbsolutePath().toString();
@@ -563,6 +578,13 @@ public class Cadre2 extends JFrame implements ActionListener, WindowListener {
 			Facade.lectureEXE(commande);
 						
 			System.out.println("Image Path "+ result);
+			
+
+			for(int i = 0; i < ListLandmarkCadre.size(); i++){
+
+				float j = ListLandmarkCadre.get(i).getPosY();
+				ListLandmarkCadre.get(i).setPosY( (int) (HEIGHT - j) );
+			}
 			
 			new Cadre2(file2, wing);
 			
@@ -574,17 +596,7 @@ public class Cadre2 extends JFrame implements ActionListener, WindowListener {
 		} else if (cliqueMenu.getSource().equals(resize)) {
 
 			System.out.println("Resize");
-			String result = fileImage.getAbsolutePath().toString();
-			ImagePlus imagePlus = new Opener().openTiff(result, "");
-			BufferedImage bufferedImage = imagePlus.getBufferedImage();
-			
-			Mat Mat = Facade.bufferedImageToMat(bufferedImage, im);
-			
-			bufferedImage = null;
-			bufferedImage = Facade.mat2Img(Mat, im);
-			
-			Affichage.imgTest = bufferedImage;
-			System.out.println("Finis");
+		
 			
 			
 		} else if (cliqueMenu.getSource().equals(landmarkPrediction)) {
@@ -598,8 +610,10 @@ public class Cadre2 extends JFrame implements ActionListener, WindowListener {
 			
 		} 
 	}
+	
 
-
+	
+	
 	private void Go(ImageWing im) {
 
 
@@ -766,6 +780,7 @@ public class Cadre2 extends JFrame implements ActionListener, WindowListener {
 			float j = ListLandmarkCadre.get(i).getPosY();
 			ListLandmarkCadre.get(i).setPosY( (int) (HEIGHT - j) );
 		}
+		menuBar.removeAll();
 		
 	}
 
