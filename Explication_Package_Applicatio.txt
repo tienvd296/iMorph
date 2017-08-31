@@ -1,0 +1,164 @@
+
+
+		Explication of the package 'application' 
+
+	This report is to expain how works the frame made for edit and place the landmarks. 
+
+
+
+Class Cadre2 :
+
+	This is the main class of the frame. An object Jframe who contain all thestructure of the Editor.
+
+	Inside, there is all link to button & Menu. 
+
+	At the begining, the frame load an object from ImageWing, it contain all the information about the image. ( Metadata's, size, number and position of each Landmark's)
+	The fileImage is the file who contain the image. 
+
+	
+	IMPORTANT : 
+		The person's who manage the project want the origins of all coordinates to be on the lower-left corner ( the same in mathematics).
+		But in Java, if you change nothing, the origins is on the upper-left corner. 
+		That's why I have to apply a little loop that change the Y coordinate each time i load the landmark (Because they told me to change when my project was almost finished).
+		So it's very important to check that. 
+		
+
+	Cadre2 contain the method that call the object PanData (panel for the landmark on the right)
+	It is hide by a Jslider and Show or didn't show with the function ToolBarEditing and ToolBarLandmark
+
+	The action performed with circle and square was to check when the squareButton was pressed or not. 
+
+	
+
+	When you want to save : 
+	
+		Two ArrayList of Landmark are verify. One who contain all the landmark and their information  when you open the frame Cadre2, and an other who contain all your modification.
+		If their is no difference, when you close the frame, the program didn't ask you if you want to save. 
+		If you change the position of one landmark, the programm will propose to you to save. 
+		If you do "Ctrl + s" All the list are update so the program won't ask you if you want to save. 
+		Don't forget to send a list with the good origins of coordinates. 
+		And change after, if not, their will be a lot of bug. 
+
+
+
+	To call .exe file : 
+
+		I've create an object "Afficheurflux" for get the BufferReader and read the programm. 
+		It change the imager but as the image is open in your frame, it cannot refresh directly ! You have to close the frame and re-open it. 
+	
+		For the .exe file "LandmarkPrediction.exe", i get a String who contain two coordinate and a type (true or false). I add it to my list and it appear on screen. 
+
+
+	
+Class Affichage : 
+
+
+	The second most important class. 
+
+	This class contain all that remain to the image and the panel. 
+
+	With that class, I apply all my function for add Landmark, Remove, modify, Display them, Ctrl + clic on them. 
+
+	When a landmark is create, the location of the rightClick is saved. And it add to a list of landmark. 
+
+	For each members of that list, I take the coordinate and add it to the object DrawCircle. 
+	This object is for draw, display, change color and change the size of each circle. 
+
+	
+	All the mouse and Key Listener are create here. 
+	Mouse listener is for Knowing if you clic on a circle or not, if you add a landmark on the image or not, ect. 
+	Key Listener is to change the type of landmark. 
+
+	For Add landmark : 
+
+		You right click on a position, choose the type, and the Landmark is create. 
+	
+	For modify position : 
+
+		You drag and drop them where you want. All is refresh and the new position is set. Don't forget to save after ! 
+
+	For delete Landmark : 
+
+		You press "CTRL" on your keyboard, and you LeftClick on all the landmark you want to delete. 
+		All that landmark are add to an other list, that's why the color change. 
+		Then you right click, the menu as change because the "ListSelectionLandmark" is not empty, and you click on "Delete" it remove all Landmark from that list. 
+
+		If you have select a landmark that you don't want to modify, you can do "CTRL + Z" but after you can't "CTRL + Y" for put back in list. 
+
+	
+	For Change Type of landmark : 
+
+		You Ctrl + clic on them, you right click and choose the type you want. 
+
+	The method of Add landmark you want to delete or modify in an other list set easier to modify or delete them. In fact, when you put a landmark in the "SelectionLandmarkList" 
+	You remove a landmark. And if you change the type, you create a new landmark. It's easier. 
+
+
+	UNDO / REDO :
+
+		The Undo and Redo mathod's are efficent for add and remove landmark you have create. But if you change the place of a landmark, it will not put back at the previous place. 
+		The undo and redo mathod's are just Some list who save landmark and remove them but without forget their original position. 
+		If you close the frame, all list are remove, so you cannot Ctrl + Z. 
+		
+
+	PrintCoordinate : 
+
+		Function for print the coordinate on the PanData Panel. Their have the origins Change before write them on screen. 
+
+
+
+	Paint Component : 
+
+		Be very careful when you add or modify this function. 
+		It's use for print elements on screen and make all append at the time you do it (The dot follow your mouse, the coordinates change directly, etc..). 
+
+		When you resize image, all append here. 
+		That's why you have to be carefull.
+
+		When you resize the image (ZoomIn/ZoomOut), A coefficient is calculate. this Coefficient is the percentage of the Zoom. 
+
+		For example : If i Zoom Out the image, the width and height are multiply by 0.9. 
+				So, all the position of the landmark are multiply by 0.9. 
+				And that, each time you resize or you drag and drop them. 
+
+		If the image is ZoomIn and you add a landmark, the coefficient wil be apply on the coordinate of your mouse, like that the circle will be at the good place. 	
+		It may be not precise, because the chief of the project want the landmark to be "int".
+		So you will lose a lot of precision each time you zoom in and out. That's why the landmark move. 
+
+		But if you don't save and come back all will be good. 
+	 	If you change type to "double" everything must be better to my mind. 
+
+		
+	CircleSize : 
+		This is a very very basic function to change the size of the circle when you ZoomIn or ZoomOut the image. 
+		The return is the size of the circle 
+
+	all the functions below are use for add landmark at the good position. 
+
+
+
+
+
+Class drawCircle : 
+
+	This is an objectthat draw an modify circles. 
+	This class get a Graphic object,
+	A X and Y position 
+	A size (r)
+	a type 
+	A type to know if it's selected or not
+	And a int to dispalay them. 
+
+	When you draw a circle, if you know the width of the circle, it's important to draw the circle in the middle of the mouse. 
+	That's why i have to put the "xCenter - r" because if i didn't do that, the circle will not be center a the top of the mouse. 
+
+	
+class PanData : 
+
+	Class who welcome all the landmark to print them on a panel on the frame of Cadre2.
+	
+	
+
+	
+			    
+Every important static function are and should be in the Facade. 
