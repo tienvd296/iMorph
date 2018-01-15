@@ -1,0 +1,142 @@
+1.
+//		this.addMouseListener(new MouseAdapter(){
+//			public void mouseReleased(MouseEvent event){
+//				if(event.isPopupTrigger()){       
+//					jpm.add(trueLandmark);
+//					jpm.add(falseLandmark);
+//					jpm.add(trueLandmark2);
+//					jpm.add(falseLandmark2);
+//					jpm.add(suppLandmark);
+//					jpm.add(imgFunction);
+//					imgFunction.add(black);
+//					imgFunction.add(Normal);
+//
+//					if(SelectionLandmark.size() != 0 ){
+//						jpm.remove(trueLandmark);
+//						jpm.remove(falseLandmark);
+//						X = event.getX();
+//						Y = event.getY(); 
+//						jpm.show(Cadre2.panneau, event.getX(), event.getY());
+//					}else {
+//						jpm.remove(trueLandmark2);
+//						jpm.remove(falseLandmark2);
+//						jpm.remove(suppLandmark);
+//						X = event.getX();
+//						Y = event.getY(); 
+//						jpm.show(Cadre2.panneau, event.getX(), event.getY());
+//					}
+//				}
+//			}
+//		});
+2.
+			/*
+			boolean type = ChangeTypeLandmark(true);
+			System.out.println(" Type = "+type);
+			if (type == true){
+				System.out.println("State changed");
+
+			}else {
+			 */
+			//	X = (X/WIDTH);
+			//	Y = (Y/HEIGHT);
+
+//			try {
+//				String binaryMethod = "gaussian";
+//				ProcessBuilder pb = new ProcessBuilder(CALL_PYTHON, IMAGE_PROCESSING_PATH, im.path, "rgb2bin",
+//						binaryMethod);
+//				Process p = pb.start();
+//				BufferedReader in = new BufferedReader(new InputStreamReader(p.getInputStream()));
+//				String line;
+//				while ((line = in.readLine()) != null) {
+//					// No backup
+//					if (!line.trim().equals("")) {
+//						// im.path = line.trim();
+//						// terminate after get image
+//						System.out.println("Binary is created at:" + line);
+//						im.setPath(line.trim());
+//						monImage = ImageIO.read(new File(line.trim()));
+//						break;
+//					}
+//				}
+//				p.destroy();
+//				panneau.imgTemp = monImage;
+//				panneau.repaint();
+//
+//			} catch (IOException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+			// //NOTE: Origin Code
+			//
+			// this.dispose();
+			// String test = im.getProperties().get("HEIGHT");
+			// float HEIGHT = Float.parseFloat(test);
+			//
+			// System.out.println("fileImage path "+
+			// fileImage.getAbsolutePath().toString());
+			// for(int i = 0; i < ListLandmarkCadre.size(); i++){
+			// float j = ListLandmarkCadre.get(i).getPosY();
+			// }
+			// new Cadre2(file2, wing,false);
+
+				public static Mat bufferedImageToMat(BufferedImage in, ImageWing im) {
+
+		String test = im.getProperties().get("WIDTH");
+		String test2 = im.getProperties().get("HEIGHT");
+
+		float WIDTH = Float.parseFloat(test);
+		float HEIGHT = Float.parseFloat(test2);
+		Mat out;
+		byte[] data;
+		int r, g, b;
+		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
+
+		if (in.getType() == BufferedImage.TYPE_INT_RGB) {
+			out = new Mat((int) WIDTH, (int) HEIGHT, CvType.CV_8UC3);
+			data = new byte[(int) WIDTH * (int) HEIGHT * (int) out.elemSize()];
+			int[] dataBuff = in.getRGB(0, 0, (int) WIDTH, (int) HEIGHT, null, 0, (int) WIDTH);
+			for (int i = 0; i < dataBuff.length; i++) {
+				data[i * 3] = (byte) ((dataBuff[i] >> 16) & 0xFF);
+				data[i * 3 + 1] = (byte) ((dataBuff[i] >> 8) & 0xFF);
+				data[i * 3 + 2] = (byte) ((dataBuff[i] >> 0) & 0xFF);
+			}
+		} else {
+			out = new Mat((int) WIDTH, (int) HEIGHT, CvType.CV_8UC1);
+			data = new byte[(int) WIDTH * (int) HEIGHT * (int) out.elemSize()];
+			int[] dataBuff = in.getRGB(0, 0, (int) WIDTH, (int) HEIGHT, null, 0, (int) WIDTH);
+			for (int i = 0; i < dataBuff.length; i++) {
+				r = (byte) ((dataBuff[i] >> 16) & 0xFF);
+				g = (byte) ((dataBuff[i] >> 8) & 0xFF);
+				b = (byte) ((dataBuff[i] >> 0) & 0xFF);
+				data[i] = (byte) ((0.21 * r) + (0.71 * g) + (0.07 * b)); // luminosity
+			}
+		}
+		out.put(0, 0, data);
+
+		return out;
+
+		// return mat;
+	}
+
+	public static BufferedImage mat2Img(Mat in, ImageWing im) {
+		String test = im.getProperties().get("WIDTH");
+		String test2 = im.getProperties().get("HEIGHT");
+
+		float WIDTH = Float.parseFloat(test);
+		float HEIGHT = Float.parseFloat(test2);
+
+		BufferedImage out;
+		byte[] data = new byte[(int) WIDTH * (int) HEIGHT * (int) in.elemSize()];
+		int type;
+		in.get(0, 0, data);
+
+		if (in.channels() == 1)
+			type = BufferedImage.TYPE_BYTE_GRAY;
+		else
+			type = BufferedImage.TYPE_3BYTE_BGR;
+
+		out = new BufferedImage((int) WIDTH, (int) HEIGHT, type);
+
+		out.getRaster().setDataElements(0, 0, (int) WIDTH, (int) HEIGHT, data);
+		return out;
+	}
