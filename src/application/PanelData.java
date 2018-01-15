@@ -1,69 +1,205 @@
 package application;
 
-import java.awt.Color;
-import java.awt.Font;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+import java.util.Collections;
 
-
-import javax.swing.GroupLayout;
-import javax.swing.GroupLayout.Alignment;
+import javax.swing.JList;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.JTextArea;
-import java.awt.SystemColor;
-import javax.swing.DropMode;
-import java.awt.GridLayout;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.ColumnSpec;
-import com.jgoodies.forms.layout.RowSpec;
-import java.awt.CardLayout;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumn;
 
-public class PanelData extends JPanel{
+import businesslogic.Landmark;
+
+public class PanelData extends JPanel implements ActionListener, TableModelListener {
 
 	/**
 	 * 
 	 */
+	public ArrayList<Landmark> tableData = new ArrayList<Landmark>();
 	private static final long serialVersionUID = 1L;
+	private static JPopupMenu tableOption = new JPopupMenu();
+	public static int tableDataSize = 0;
+	private JMenuItem popOptDelete = new JMenuItem("Delete");
+	public static DefaultTableModel model;
 	public static JTextArea jText = new JTextArea();
-
+	public static JList<String> landmarkListView;
+	public static JTable landmarkTable;
+	public static ArrayList<Landmark> landmarkData;
 
 	public PanelData() {
 		super();
-		//setBounds(100, 100, 500, 375);
-
+		// setBounds(100, 100, 500, 375);
+		this.setFocusable(true);
+		this.requestFocusInWindow();
+		tableData = new ArrayList<Landmark>();
 		try {
-
-
 			creerPanel();
-
-
-
 		} catch (Throwable e) {
 			e.printStackTrace();
 		}
-		//
 	}
 
 	void creerPanel() {
+		this.setComponentPopupMenu(tableOption);
+		if (!tableData.isEmpty()) {
+			tableDataSize = tableData.size();
+			// createTable(tableData);
+		}
+	}
 
-		/*
-		 * Partie du Panel qui va accepter les Metadata et la matrice des positions des landmarks
-		 */
-		Font police = new Font("Arial", Font.BOLD, 18);
-		setLayout(new CardLayout(0, 0));
-		jText.setRows(10);
-		jText.setColumns(1);
-		jText.setEditable(false);
-		jText.setToolTipText("");
-		jText.setTabSize(50);
-		jText.setBackground(SystemColor.inactiveCaptionBorder);
-		jText.setFont(new Font("Ebrima", Font.PLAIN, 18));
-	
-		jText.setForeground(new Color(0, 0, 0));
-	
-		jText.setForeground(Color.black);
-		add(jText, "name_2266615044668");
+	public void createTable(ArrayList<Landmark> tmpLandmarkList) {
+		landmarkTable = new JTable(4, 0);
+		tableData = tmpLandmarkList;
+		landmarkData = tmpLandmarkList;
+		String[] header = { "X", "Y", "Type", "Status" };
+		Object[][] data = new Object[tmpLandmarkList.size()][];
+		for (int i = 0; i < tmpLandmarkList.size(); i++) {
+			String x = tmpLandmarkList.get(i).getPosX() + "";
+			String y = tmpLandmarkList.get(i).getPosY() + "";
+			String typeOfLandmark = tmpLandmarkList.get(i).getIsLandmark().toString();
+			Object[] rowData = { x, y, typeOfLandmark, "Loaded" };
+			data[i] = rowData;
+		}
+		model = new DefaultTableModel(data, header) {
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+			public Class[] types = new Class[] { java.lang.Object.class, java.lang.Object.class, java.lang.Object.class,
+					java.lang.Object.class };
 
+			@Override
+			public Class getColumnClass(int columnIndex) {
+				return types[columnIndex];
+			}
 
+			@Override
+			public boolean isCellEditable(int row, int column) {
+				// make read only fields except column
+				return false;
+			}
+		};
 
+		landmarkTable = new JTable(model);
+		for (int i = 0; i < landmarkTable.getColumnCount(); i++) {
+			TableColumn column1 = landmarkTable.getTableHeader().getColumnModel().getColumn(i);
+			column1.setHeaderValue(header[i]);
+		}
+		landmarkTable.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				if (e.getButton() == MouseEvent.BUTTON3) {
+					showPopupTable(e);
+				}
+			}
+
+			@Override
+			public void mousePressed(MouseEvent e) {
+				// TODO Auto-generated method stub
+				if (e.getButton() == MouseEvent.BUTTON3) {
+					showPopupTable(e);
+				}
+			}
+
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				// TODO Auto-generated method stub
+				if (e.getButton() == MouseEvent.BUTTON3) {
+					showPopupTable(e);
+				}
+			}
+		});
+		JScrollPane tableContainer = new JScrollPane(landmarkTable);
+		this.add(tableContainer, BorderLayout.CENTER);
+		JScrollPane scrollPane = new JScrollPane(landmarkTable);
+		scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+		scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+		scrollPane.setPreferredSize(new Dimension(200, 600));
+		tableDataSize = tableData.size();
+
+		this.add(scrollPane);
+		this.revalidate();
+		this.repaint();
+	}
+
+	public void showPopupTable(MouseEvent event) {
+		if (event.isPopupTrigger()) {
+			popOptDelete.addActionListener(this);
+			tableOption.add(popOptDelete);
+			tableOption.show(PanelData.landmarkTable, event.getX(), event.getY());
+		}
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		// TODO Auto-generated method stub
+		if (e.getSource().equals(popOptDelete)) {
+			int[] selRows = landmarkTable.getSelectedRows();
+			for (int i : selRows) {
+				float x = Float.parseFloat(model.getValueAt(i, 0).toString());
+				float y = Float.parseFloat(model.getValueAt(i, 1).toString());
+				for (int j = 0; j < Affichage.ListLandmark.size(); j++) {
+					Landmark l = Affichage.ListLandmark.get(j);
+					if (x == l.getPosX() && y == l.getPosY()) {
+						Affichage.selLandmark.add(j);
+						break;
+					}
+				}
+			}
+			Collections.sort(Affichage.selLandmark);
+			Collections.reverse(Affichage.selLandmark);
+			if (Affichage.selLandmark.size() > 0) {
+				for (int i = 0; i < Affichage.selLandmark.size(); i++) {
+					model.removeRow(i);
+					int item = Affichage.selLandmark.get(i);
+					Affichage.ListLandmark.remove(item);
+					this.revalidate();
+					this.repaint();
+				}
+				if (!Affichage.selLandmark.isEmpty())
+					Affichage.selLandmark.clear();
+			}
+		}
+	}
+
+	@Override
+	protected void paintComponent(Graphics g) {
+		// If landmark is changed
+		super.paintComponent(g);
+		if (!tableData.isEmpty()) {
+			if (tableData.size() != Affichage.ListLandmark.size()) {
+				for (Landmark l : Affichage.ListLandmark) {
+					boolean isExist = false;
+					for (Landmark k : tableData) {
+						if (l.getPosX() == k.getPosX() && l.getPosY() == k.getPosY()) {
+							isExist = true;
+							break;
+						}
+					}
+					if (!isExist)
+						tableData.add(l);
+				}
+			}
+		}
+	}
+
+	@Override
+	public void tableChanged(TableModelEvent arg0) {
+		// TODO Auto-generated method stub
 
 	}
 }

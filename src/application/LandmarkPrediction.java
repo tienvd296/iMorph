@@ -25,32 +25,25 @@ public class LandmarkPrediction implements Runnable {
         BufferedReader br = getBufferedReader(inputStream);
         BufferedReader stdInput = getBufferedReader(inputStream);
         String line = null;
-
-
 		try {
 			while ((line = stdInput.readLine()) != null) {
 			
 				String[] tab = line.split(" ");
 				Boolean b;
+				
 				if(tab[2] == "true"){
 					b = true;
-				}
-				else
-				{
+				}else{
 					b = false;
 				}
+				
 				float t =  Float.parseFloat(tab[1]);
-
 				Landmark l = new Landmark(Float.parseFloat(tab[0]), Cadre2.imHEIGHT - t, b);
-			
 				Affichage.ListLandmark.add(l);
-			   
-			        System.out.println(line);
-			    
 			}
 		} catch (NumberFormatException | IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		}
+	}
 }

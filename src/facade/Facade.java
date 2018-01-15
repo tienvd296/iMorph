@@ -12,16 +12,20 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 
+import javax.imageio.ImageIO;
+
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.Size;
+import org.opencv.highgui.Highgui;
 import org.opencv.imgproc.Imgproc;
 
 import application.AfficheurFlux;
 import application.ControlDashboard;
 import application.LandmarkPrediction;
 import businesslogic.Folder;
+import businesslogic.ImageProcessing;
 import businesslogic.ImageWing;
 import businesslogic.Landmark;
 import businesslogic.Project;
@@ -36,8 +40,8 @@ import javafx.scene.control.Alert.AlertType;
  * 
  * <p>
  * It is a bridge between the UI (user interface) and the BL (business logic).
- * All methods are static and there is one field, the current project.
- * When the UI needs to interact with the BL, it has to use the facade.
+ * All methods are static and there is one field, the current project. When the
+ * UI needs to interact with the BL, it has to use the facade.
  *
  */
 public class Facade {
@@ -57,39 +61,38 @@ public class Facade {
 
 	public static ArrayList<String> listPath = new ArrayList<String>();
 
-
-
+	public static ImageProcessing myImgProc = new ImageProcessing();
 
 	/**
 	 * Create a new empty project. Just the project's path is available.
 	 * 
-	 * @param path 
-	 * 			A String with the project path
+	 * @param path
+	 *            A String with the project path
 	 * 
 	 * @see Project
 	 */
 	public static void newProject(String path) {
-		//String separator = System.getProperty("file.separator");
+		// String separator = System.getProperty("file.separator");
 		String[] tab = path.split("\\\\");
 		String name = tab[tab.length - 1];
 		Project p = new Project(name);
 		p.setPathProject(path);
 		Facade.currentProject = p;
-		//Facade.saveProject();
+		// Facade.saveProject();
 	}
 
 	/**
 	 * Add a new Image to the current folder. The image is given in parameter.
 	 * 
 	 * @param path
-	 * 			A String with the image path
+	 *            A String with the image path
 	 * @param height
-	 * 			A Double equals to the height
+	 *            A Double equals to the height
 	 * @param width
-	 * 			A Double equals to the width
+	 *            A Double equals to the width
 	 * @param fold
-	 * 			The current folder, 
-	 * 			if the current folder is the root then fold = null
+	 *            The current folder, if the current folder is the root then fold =
+	 *            null
 	 */
 	public static void addImage(String path, double height, double width, Folder fold) {
 
@@ -97,58 +100,46 @@ public class Facade {
 		image.getProperties().put("HEIGHT", Double.toString(height));
 		image.getProperties().put("WIDTH", Double.toString(width));
 		image.getProperties().put("ORIGINAL", "TRUE");
-		if(fold == null)
-		{
+		if (fold == null) {
 			Facade.currentProject.addImage(image);
-		}
-		else
-		{
+		} else {
 			fold.addImage(image);
 		}
 	}
-
-
 
 	/**
 	 * Add an existing image to the current folder. The image is given in parameter.
 	 * 
 	 * @param imW
-	 * 			An ImageWing
+	 *            An ImageWing
 	 * @param fold1
-	 * 			The current folder, 
-	 * 			if the current folder is the root then fold = null
+	 *            The current folder, if the current folder is the root then fold =
+	 *            null
 	 */
 	public static void addImage(ImageWing imW, Folder fold1) {
 		ImageWing image = imW;
-		if(fold1 == null)
-		{
+		if (fold1 == null) {
 			Facade.currentProject.addImage(image);
-		}
-		else
-		{
+		} else {
 			fold1.addImage(image);
 		}
 
 	}
 
-
 	/**
 	 * Remove image to the current folder.
 	 * 
 	 * @param image
-	 * 			An ImageWing
+	 *            An ImageWing
 	 * @param fold
-	 * 			The current folder, 
-	 * 			if the current folder is the root then fold = null
+	 *            The current folder, if the current folder is the root then fold =
+	 *            null
 	 */
 	public static void deleteImage(ImageWing image, Folder fold) {
-		Facade.undo.add(currentProject.clonage());	
-		if(fold == null)
-		{
+		Facade.undo.add(currentProject.clonage());
+		if (fold == null) {
 			Facade.currentProject.deleteImage(image);
-		}
-		else
-		{
+		} else {
 			fold.deleteImage(image);
 		}
 	}
@@ -163,7 +154,8 @@ public class Facade {
 
 	/**
 	 * Save a copy of the current project
-	 * @param string 
+	 * 
+	 * @param string
 	 */
 	public static void saveAsProject(String path) {
 		Project p = Facade.currentProject;
@@ -175,26 +167,21 @@ public class Facade {
 
 	/**
 	 * Load an existing project, it becomes the current project
+	 * 
 	 * @param file
-	 * 			The project's backup file
+	 *            The project's backup file
 	 * 
 	 * @return true if the project's backup file is OK
 	 */
 	public static boolean loadProject(File file) {
 
-
 		Project p = XML.readProject(file);
-		if(p != null)
-		{
+		if (p != null) {
 			Facade.currentProject = p;
 			return true;
-		}
-		else
-		{
+		} else {
 			return false;
 		}
-
-
 
 	}
 
@@ -220,12 +207,11 @@ public class Facade {
 		return Facade.currentProject.getImages();
 	}
 
-
 	/**
 	 * Return image landmarks of the image passed as a parameter
 	 * 
 	 * @param im
-	 * 			the ImageWing
+	 *            the ImageWing
 	 * 
 	 * @return an ArrayList of Landmark
 	 * 
@@ -240,7 +226,7 @@ public class Facade {
 	 * Return if image has properties or not
 	 * 
 	 * @param image
-	 * 			the ImageWing
+	 *            the ImageWing
 	 * 
 	 * @return boolean, true if the image as properties
 	 * 
@@ -255,17 +241,17 @@ public class Facade {
 	 * Set the value of the property
 	 * 
 	 * @param image
-	 * 			the ImageWing
+	 *            the ImageWing
 	 * @param key
-	 * 			the name of the property
+	 *            the name of the property
 	 * @param value
-	 * 			the new value of the property
+	 *            the new value of the property
 	 * 
 	 * 
 	 * @see ImageWing
 	 */
 	public static void setProperties(ImageWing image, String key, String value) {
-		Facade.undo.add(currentProject.clonage());	
+		Facade.undo.add(currentProject.clonage());
 		image.getProperties().replace(key, value);
 
 	}
@@ -274,19 +260,18 @@ public class Facade {
 	 * Add a property to image as passed in parameter
 	 * 
 	 * @param image
-	 * 			the ImageWing
+	 *            the ImageWing
 	 * @param key
-	 * 			the name of the new property
+	 *            the name of the new property
 	 * @param value
-	 * 			the value of the new property
+	 *            the value of the new property
 	 * 
 	 * 
 	 * @see ImageWing
 	 */
 	public static void addProperties(ImageWing image, String key, String value) {
-		Facade.undo.add(currentProject.clonage());	
+		Facade.undo.add(currentProject.clonage());
 		image.getProperties().put(key, value);
-
 
 	}
 
@@ -294,7 +279,7 @@ public class Facade {
 	 * Return if image has landmarks or not
 	 * 
 	 * @param image
-	 * 			the ImageWing
+	 *            the ImageWing
 	 * 
 	 * @return boolean, true if the image as landmarks
 	 * 
@@ -308,9 +293,9 @@ public class Facade {
 	 * Return the X value in percent of the landmark passed in parameter
 	 * 
 	 * @param landmark
-	 * 			the landmark
+	 *            the landmark
 	 * @param im
-	 * 			the ImageWing
+	 *            the ImageWing
 	 * 
 	 * @return double with the X value in percent
 	 * 
@@ -321,16 +306,16 @@ public class Facade {
 		double a = landmark.getPosX();
 		double b = Double.parseDouble(im.getProperties().get("WIDTH"));
 
-		return a/b;
+		return a / b;
 	}
 
 	/**
 	 * Return the Y value in percent of the landmark passed in parameter
 	 * 
 	 * @param landmark
-	 * 			the landmark
+	 *            the landmark
 	 * @param im
-	 * 			the ImageWing
+	 *            the ImageWing
 	 * 
 	 * @return double with the Y value in percent
 	 * 
@@ -341,9 +326,13 @@ public class Facade {
 		double a = landmark.getPosY();
 		double b = Double.parseDouble(im.getProperties().get("HEIGHT"));
 
-		return a/b;
+		return a / b;
 	}
 
+	public static boolean getIsLandmark(Landmark landmark, ImageWing im) {
+		boolean isLandMark = landmark.getIsLandmark();
+		return isLandMark;
+	}
 
 	public static void clearHistoric() {
 	}
@@ -352,13 +341,12 @@ public class Facade {
 	 * Return the metadata of the file passed in parameter
 	 * 
 	 * @param file
-	 * 			the file
+	 *            the file
 	 * 
 	 * @return HashMap with metadata
 	 * 
 	 */
-	public static HashMap<String, String> metadataExtractor(File file)
-	{
+	public static HashMap<String, String> metadataExtractor(File file) {
 		return MetadataExtractor.metadataExtractor(file);
 	}
 
@@ -366,22 +354,19 @@ public class Facade {
 	 * Add a new folder to folder as passed in parameter
 	 * 
 	 * @param string
-	 * 			name of the folder
+	 *            name of the folder
 	 * @param fold
-	 * 			the the parent folder of the new folder
+	 *            the the parent folder of the new folder
 	 * 
 	 * 
 	 * @see Folder
 	 */
 	public static void addFolder(String string, Folder fold) {
-		Facade.undo.add(currentProject.clonage());	
-		if(fold == null)
-		{
+		Facade.undo.add(currentProject.clonage());
+		if (fold == null) {
 			Folder folder = new Folder(string, null);
 			Facade.currentProject.getFolders().add(folder);
-		}
-		else
-		{
+		} else {
 			Folder folder = new Folder(string, fold);
 			fold.addFolder(folder);
 		}
@@ -391,21 +376,18 @@ public class Facade {
 	 * Remove the folder as passed in parameter to the current one
 	 * 
 	 * @param current
-	 * 			the current folder
+	 *            the current folder
 	 * @param folder
-	 * 			the deleted folder
+	 *            the deleted folder
 	 * 
 	 * 
 	 * @see Folder
 	 */
 	public static void deleteFolder(Folder current, Folder folder) {
-		Facade.undo.add(currentProject.clonage());	
-		if(current == null)
-		{
+		Facade.undo.add(currentProject.clonage());
+		if (current == null) {
 			Facade.currentProject.getFolders().remove(folder);
-		}
-		else
-		{
+		} else {
 			current.deleteFolder(folder);
 		}
 	}
@@ -414,17 +396,16 @@ public class Facade {
 	 * Remove a landmark to image as passed in parameter
 	 * 
 	 * @param im
-	 * 			the ImageWing who is concerned by the deleted landmark
+	 *            the ImageWing who is concerned by the deleted landmark
 	 * @param land
-	 * 			the deleted landmark
+	 *            the deleted landmark
 	 * 
 	 * 
 	 * @see ImageWing
 	 * @see Landmark
 	 */
-	public static void deleteLandmark(ImageWing im, Landmark land)
-	{
-		Facade.undo.add(currentProject.clonage());	
+	public static void deleteLandmark(ImageWing im, Landmark land) {
+		Facade.undo.add(currentProject.clonage());
 		im.deleteLandmark(land);
 		landmarkFile.saveImage(im);
 	}
@@ -433,14 +414,13 @@ public class Facade {
 	 * Set the landmark to image as passed in parameter
 	 * 
 	 * @param im
-	 * 			the ImageWing who is concerned by the edited landmark
+	 *            the ImageWing who is concerned by the edited landmark
 	 * 
 	 * 
 	 * @see ImageWing
 	 * @see Landmark
 	 */
-	public static void editLandmark(ImageWing im)
-	{
+	public static void editLandmark(ImageWing im) {
 
 		landmarkFile.saveImage(im);
 	}
@@ -450,15 +430,13 @@ public class Facade {
 		String originalPath = new java.io.File("").getAbsolutePath();
 		String pathAPI = originalPath + separator + "binary.exe";
 
-		for(int i = 0; i<listPath.size(); i++)
-		{
-			ProcessBuilder pb = new ProcessBuilder(pathAPI, listPath.get(i) , threshold , filter , thresholdType);
+		for (int i = 0; i < listPath.size(); i++) {
+			ProcessBuilder pb = new ProcessBuilder(pathAPI, listPath.get(i), threshold, filter, thresholdType);
 			Process process;
 			try {
 				process = pb.start();
-				BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream())); 
+				BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
 				String line = null;
-
 
 				while ((line = stdInput.readLine()) != null) {
 					Facade.activeView.writeConsole(line, "Binary");
@@ -476,22 +454,19 @@ public class Facade {
 
 	}
 
-
 	public static void skeletonPP(String length) {
 		String separator = System.getProperty("file.separator");
 		String originalPath = new java.io.File("").getAbsolutePath();
 		String pathAPI = originalPath + separator + "skeleton.exe";
 
-		for(int i = 0; i<listPath.size(); i++)
-		{
+		for (int i = 0; i < listPath.size(); i++) {
 
 			ProcessBuilder pb = new ProcessBuilder(pathAPI, listPath.get(i), length);
 			Process process;
 			try {
 				process = pb.start();
-				BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream())); 
+				BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
 				String line = null;
-
 
 				while ((line = stdInput.readLine()) != null) {
 					Facade.activeView.writeConsole(line, "Skeleton");
@@ -508,33 +483,28 @@ public class Facade {
 		Facade.activeView.refresh();
 	}
 
-
-	public static void landmarkDetection(ArrayList<String> listPath, HashMap<String, ImageWing> listImW, String features, String neighbor) {
-		Facade.undo.add(currentProject.clonage());	
+	public static void landmarkDetection(ArrayList<String> listPath, HashMap<String, ImageWing> listImW,
+			String features, String neighbor) {
+		Facade.undo.add(currentProject.clonage());
 		String separator = System.getProperty("file.separator");
 		String originalPath = new java.io.File("").getAbsolutePath();
-		String pathAPI = originalPath + separator +  "landmarkPrediction.exe";
+		String pathAPI = originalPath + separator + "landmarkPrediction.exe";
 		Facade.activeView.writeConsole(pathAPI, "TEST");
-		for(int i = 0; i<listPath.size(); i++)
-		{
+		for (int i = 0; i < listPath.size(); i++) {
 
-			ProcessBuilder pb = new ProcessBuilder(pathAPI, listPath.get(i) , features , neighbor);
+			ProcessBuilder pb = new ProcessBuilder(pathAPI, listPath.get(i), features, neighbor);
 			Process process;
 			try {
 				process = pb.start();
-				BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream())); 
+				BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
 				String line = null;
-
-
 				while ((line = stdInput.readLine()) != null) {
 					Facade.activeView.writeConsole(line, "Image Preprocessing");
 					String[] tab = line.split(" ");
 					Boolean b;
-					if(tab[2] == "true"){
+					if (tab[2] == "true") {
 						b = true;
-					}
-					else
-					{
+					} else {
 						b = false;
 					}
 					Landmark l = new Landmark(Float.parseFloat(tab[0]), Float.parseFloat(tab[1]), b);
@@ -555,15 +525,14 @@ public class Facade {
 
 	}
 
-
 	/**
 	 * Add a new landmark to image as passed in parameter
 	 * 
 	 * @param im
-	 * 			ImageWing concerned by the edition
-	 * 			
+	 *            ImageWing concerned by the edition
+	 * 
 	 * @param listLandark
-	 * 			ArrayList of landmarks
+	 *            ArrayList of landmarks
 	 * 
 	 * @see ImageWing
 	 * @see Landmark
@@ -572,24 +541,19 @@ public class Facade {
 		landmarkFile.saveImage(im);
 	}
 
-
-	public static void undo()
-	{
-		if(undo.size() > 0 )
-		{
+	public static void undo() {
+		if (undo.size() > 0) {
 			Facade.redo.add(currentProject.clonage());
-			Facade.currentProject = Facade.undo.get(undo.size()-1);
-			Facade.undo.remove(undo.size()-1);
+			Facade.currentProject = Facade.undo.get(undo.size() - 1);
+			Facade.undo.remove(undo.size() - 1);
 		}
 	}
 
-	public static void redo()
-	{
-		if(redo.size() > 0 )
-		{
+	public static void redo() {
+		if (redo.size() > 0) {
 			Facade.undo.add(currentProject.clonage());
-			Facade.currentProject = Facade.redo.get(redo.size()-1);
-			Facade.redo.remove(redo.size()-1);
+			Facade.currentProject = Facade.redo.get(redo.size() - 1);
+			Facade.redo.remove(redo.size() - 1);
 		}
 	}
 
@@ -599,17 +563,15 @@ public class Facade {
 		String originalPath = new java.io.File("").getAbsolutePath();
 		String pathAPI = originalPath + separator + "randomForest.exe";
 
-		for(int i = 0; i<listPath.size(); i++)
-		{
+		for (int i = 0; i < listPath.size(); i++) {
 
-			ProcessBuilder pb = new ProcessBuilder(pathAPI, listPath.get(i) , ntree , proximity);
+			ProcessBuilder pb = new ProcessBuilder(pathAPI, listPath.get(i), ntree, proximity);
 
 			Process process;
 			try {
 				process = pb.start();
-				BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream())); 
+				BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
 				String line = null;
-
 
 				while ((line = stdInput.readLine()) != null) {
 					Facade.activeView.writeConsole(line, "RandomForest");
@@ -627,23 +589,20 @@ public class Facade {
 
 	}
 
-
 	public static void SVM(String kernel, String cost, String gamma, String cross) {
 
 		String separator = System.getProperty("file.separator");
 		String originalPath = new java.io.File("").getAbsolutePath();
 		String pathAPI = originalPath + separator + "svm.exe";
 
-		for(int i = 0; i<listPath.size(); i++)
-		{
+		for (int i = 0; i < listPath.size(); i++) {
 
-			ProcessBuilder pb = new ProcessBuilder(pathAPI, listPath.get(i) , kernel , cost , gamma, cross);
+			ProcessBuilder pb = new ProcessBuilder(pathAPI, listPath.get(i), kernel, cost, gamma, cross);
 			Process process;
 			try {
 				process = pb.start();
-				BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream())); 
+				BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
 				String line = null;
-
 
 				while ((line = stdInput.readLine()) != null) {
 					Facade.activeView.writeConsole(line, "SVM");
@@ -662,52 +621,52 @@ public class Facade {
 	}
 
 	public static void rgb2() {
-		String separator = System.getProperty("file.separator");
-		String originalPath = new java.io.File("").getAbsolutePath();
-		String pathAPI = originalPath + separator + "rgb2.exe";
+		// String separator = System.getProperty("file.separator");
+		// String originalPath = new java.io.File("").getAbsolutePath();
+		// #Calling rgb2.exe: not working outside window
+		// String pathAPI = originalPath + separator + "rgb2.exe";
 
-		for(int i = 0; i<listPath.size(); i++)
-		{
-
-			ProcessBuilder pb = new ProcessBuilder(pathAPI, listPath.get(i));
-			Process process;
-			try {
-				process = pb.start();
-				BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream())); 
-				String line = null;
-
-
-				while ((line = stdInput.readLine()) != null) {
-					Facade.activeView.writeConsole(line, "RGB2");
-				}
-			} catch (IOException e) {
-				Alert alert = new Alert(AlertType.WARNING);
-				alert.setTitle("Error");
-				alert.setHeaderText("function not available");
-				alert.setContentText(e.getMessage());
-				alert.showAndWait();
-				e.printStackTrace();
-			}
+		for (int i = 0; i < listPath.size(); i++) {
+			// #Calling rgb2.exe: not working outside window
+			//
+			// ProcessBuilder pb = new ProcessBuilder(pathAPI, listPath.get(i));
+			// Process process;
+			// try {
+			// process = pb.start();
+			// BufferedReader stdInput = new BufferedReader(new
+			// InputStreamReader(process.getInputStream()));
+			// String line = null;
+			//
+			//
+			// while ((line = stdInput.readLine()) != null) {
+			// Facade.activeView.writeConsole(line, "RGB2");
+			// }
+			// } catch (IOException e) {
+			// Alert alert = new Alert(AlertType.WARNING);
+			// alert.setTitle("Error");
+			// alert.setHeaderText("function not available");
+			// alert.setContentText(e.getMessage());
+			// alert.showAndWait();
+			// e.printStackTrace();
+			// }
+			myImgProc.rgb2gray(listPath.get(i));
 		}
 		Facade.activeView.refresh();
 	}
-
 
 	public static void dotAndNoise(String dotSize) {
 		String separator = System.getProperty("file.separator");
 		String originalPath = new java.io.File("").getAbsolutePath();
 		String pathAPI = originalPath + separator + "dotAndNoise.exe";
 
-		for(int i = 0; i<listPath.size(); i++)
-		{
+		for (int i = 0; i < listPath.size(); i++) {
 
-			ProcessBuilder pb = new ProcessBuilder(pathAPI, listPath.get(i) , dotSize);
+			ProcessBuilder pb = new ProcessBuilder(pathAPI, listPath.get(i), dotSize);
 			Process process;
 			try {
 				process = pb.start();
-				BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream())); 
+				BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
 				String line = null;
-
 
 				while ((line = stdInput.readLine()) != null) {
 					Facade.activeView.writeConsole(line, "Dot & noise remover");
@@ -720,41 +679,34 @@ public class Facade {
 				alert.showAndWait();
 				e.printStackTrace();
 			}
-
 		}
 		Facade.activeView.refresh();
-
 	}
 
-
-	public static void crossPointDetection(ArrayList<String> listPath, HashMap<String, ImageWing> listImW, String windowSize, String neighbor) {
-		Facade.undo.add(currentProject.clonage());	
+	public static void crossPointDetection(ArrayList<String> listPath, HashMap<String, ImageWing> listImW,
+			String windowSize, String neighbor) {
+		Facade.undo.add(currentProject.clonage());
 		String separator = System.getProperty("file.separator");
 		String originalPath = new java.io.File("").getAbsolutePath();
 		String pathAPI = originalPath + separator + "crossPointDetection.exe";
 
-		for(int i = 0; i<listPath.size(); i++)
-		{
-
-			ProcessBuilder pb = new ProcessBuilder(pathAPI, listPath.get(i) , neighbor , windowSize);
+		for (int i = 0; i < listPath.size(); i++) {
+			ProcessBuilder pb = new ProcessBuilder(pathAPI, listPath.get(i), neighbor, windowSize);
 			Process process;
 			try {
 				process = pb.start();
-				BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream())); 
+				BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
 				String line = null;
-
-
 				while ((line = stdInput.readLine()) != null) {
 					Facade.activeView.writeConsole(line, "Cross Point Detection");
 					String[] tab = line.split(" ");
 					Boolean b;
-					if(tab[2] == "true"){
+					if (tab[2] == "true") {
 						b = true;
-					}
-					else
-					{
+					} else {
 						b = false;
 					}
+
 					Landmark l = new Landmark(Float.parseFloat(tab[0]), Float.parseFloat(tab[1]), b);
 					ImageWing imW = listImW.get(listPath.get(i));
 					imW.addLandmark(l);
@@ -772,17 +724,12 @@ public class Facade {
 		Facade.activeView.refresh();
 	}
 
-
-
-	public static void saveOrignal(ImageWing imW, boolean b) throws IOException
-	{
+	public static void saveOrignal(ImageWing imW, boolean b) throws IOException {
 		String separator = System.getProperty("file.separator");
 		String original = imW.getProperties().get("ORIGINAL");
-		if((original.compareTo("TRUE") == 0) || b)
-		{
+		if ((original.compareTo("TRUE") == 0) || b) {
 			String version = "original.tif";
-			if(b)
-			{
+			if (b) {
 				Date d = new Date();
 				SimpleDateFormat formatter;
 				formatter = new SimpleDateFormat("yyyy_MM_dd_HH-mm");
@@ -790,23 +737,22 @@ public class Facade {
 				version = date + ".version.tif";
 			}
 
-			File f=new File(imW.getPath());
-			FileReader fr=new FileReader(f);
+			File f = new File(imW.getPath());
+			FileReader fr = new FileReader(f);
 			String path = imW.getPath();
-			File dir = new File (path + ".version");
+			File dir = new File(path + ".version");
 			dir.mkdirs();
-			File f2=new File(path + ".version" + separator + version);
-			FileWriter fw=new FileWriter(f2);
+			File f2 = new File(path + ".version" + separator + version);
+			FileWriter fw = new FileWriter(f2);
 			int a;
-			while((a=fr.read()) !=-1) 
-			{
+			while ((a = fr.read()) != -1) {
 				fw.write(a);
 			}
 			fw.close();
 			fr.close();
 		}
 	}
-	 
+
 	public static void lectureEXE(String[] commande) {
 
 		System.out.println("Debut du programme");
@@ -823,38 +769,30 @@ public class Facade {
 
 			new Thread(fluxErreur).start();
 
-			//p.waitFor();
-			
-			
+			// p.waitFor();
+
 		} catch (IOException e) {
 			e.printStackTrace();
-		}/* catch (InterruptedException e) {
-            e.printStackTrace();
-        }*/
-		
-		//Facade.activeView.refresh();
-		
+		} /*
+			 * catch (InterruptedException e) { e.printStackTrace(); }
+			 */
+
+		// Facade.activeView.refresh();
+
 		System.out.println("Fin du programme");
 	}
 
-
-
 	public static void landmarkPrediction(String[] commande) {
-
 		System.out.println("Debut du programme");
-
 		try {
 
 			Process p = Runtime.getRuntime().exec(commande);
 
 			LandmarkPrediction fluxSortie = new LandmarkPrediction(p.getInputStream());
-
 			LandmarkPrediction fluxErreur = new LandmarkPrediction(p.getErrorStream());
 
 			new Thread(fluxSortie).start();
-
 			new Thread(fluxErreur).start();
-
 
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -862,77 +800,120 @@ public class Facade {
 		System.out.println("Fin du programme");
 	}
 
-	public static Mat bufferedImageToMat(BufferedImage in, ImageWing im) {
+	public static BufferedImage convert2Gray(Mat mat2, BufferedImage img) {
+		try {
+			Mat mat1 = mat2;
+			Imgproc.cvtColor(mat2, mat1, Imgproc.COLOR_RGB2GRAY);
+			byte[] data1 = new byte[mat1.rows() * mat1.cols() * (int) (mat1.elemSize())];
+			mat1.get(0, 0, data1);
+			BufferedImage image1 = Facade.matToBufferedImage(mat1, img);
+			System.out.println(mat1.depth());
+			return image1;
 
-		String test = im.getProperties().get("WIDTH");
-		String test2 = im.getProperties().get("HEIGHT");
-		
-		float WIDTH = Float.parseFloat(test);
-		float HEIGHT = Float.parseFloat(test2);
-		Mat out;
-		byte[] data;
-		int r, g, b;
-		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
-		
-		if(in.getType() == BufferedImage.TYPE_INT_RGB)
-		{
-			out = new Mat((int) WIDTH, (int)HEIGHT, CvType.CV_8UC3);
-			data = new byte[(int) WIDTH * (int) HEIGHT* (int)out.elemSize()];
-			int[] dataBuff = in.getRGB(0, 0,(int) WIDTH,(int) HEIGHT, null, 0, (int) WIDTH);
-			for(int i = 0; i < dataBuff.length; i++)
-			{
-				data[i*3] = (byte) ((dataBuff[i] >> 16) & 0xFF);
-				data[i*3 + 1] = (byte) ((dataBuff[i] >> 8) & 0xFF);
-				data[i*3 + 2] = (byte) ((dataBuff[i] >> 0) & 0xFF);
-			}
+		} catch (Exception e) {
+			System.out.println("Error: " + e.getMessage());
 		}
-		else
-		{
-			out = new Mat((int) WIDTH, (int)HEIGHT, CvType.CV_8UC1);
-			data = new byte[(int) WIDTH * (int) HEIGHT* (int)out.elemSize()];
-			int[] dataBuff = in.getRGB(0, 0, (int)WIDTH, (int) HEIGHT, null, 0, (int)WIDTH);
-			for(int i = 0; i < dataBuff.length; i++)
-			{
-				r = (byte) ((dataBuff[i] >> 16) & 0xFF);
-				g = (byte) ((dataBuff[i] >> 8) & 0xFF);
-				b = (byte) ((dataBuff[i] >> 0) & 0xFF);
-				data[i] = (byte)((0.21 * r) + (0.71 * g) + (0.07 * b)); //luminosity
-			}
-		}
-		out.put(0, 0, data);
-
-		return out;
-
-
-
-		//return mat;
+		return null;
 	}
 
-	public static BufferedImage mat2Img(Mat in, ImageWing im)
-	{
-		String test = im.getProperties().get("WIDTH");
-		String test2 = im.getProperties().get("HEIGHT");
-		
-		float WIDTH = Float.parseFloat(test);
-		float HEIGHT = Float.parseFloat(test2);
-		
-		BufferedImage out;
-		byte[] data = new byte[(int) WIDTH * (int) HEIGHT * (int)in.elemSize()];
-		int type;
-		in.get(0, 0, data);
-
-		if(in.channels() == 1)
-			type = BufferedImage.TYPE_BYTE_GRAY;
-		else
-			type = BufferedImage.TYPE_3BYTE_BGR;
-
-		out = new BufferedImage((int) WIDTH, (int) HEIGHT, type);
-
-		out.getRaster().setDataElements(0, 0, (int) WIDTH, (int) HEIGHT, data);
+	public static BufferedImage convert2Bin(BufferedImage in) {
+		Mat input = img2Mat(in);
+		if (in.getType() == 1)
+			convert2Gray(input, in);
+		Mat output = new Mat();
+		Imgproc.adaptiveThreshold(input, output, 255, Imgproc.ADAPTIVE_THRESH_MEAN_C, Imgproc.THRESH_BINARY_INV, 7, 5);
+		BufferedImage out = Facade.matToBufferedImage(output, in);
 		return out;
-	} 
+	}
 
+	public static ArrayList<String> Harris(ImageWing im, int thresh) {
+		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
+		BufferedImage grayImage = null;
+		try {
+			grayImage = Facade.convert2Gray(Highgui.imread(im.path), ImageIO.read(new File(im.path)));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		ArrayList<String> cornerList = new ArrayList<String>();
 
+		Mat inputMat = img2Mat(grayImage);
+		Mat Scene = new Mat(inputMat.rows(), inputMat.cols(), CvType.CV_8UC1);
+		Scene.convertTo(inputMat, CvType.CV_8UC1);
+		// This function implements the Harris Corner detection. The corners at
+		// intensity > thresh
+		// are drawn.
+		Mat Harris_scene = new Mat(inputMat.rows(), inputMat.cols(), CvType.CV_8UC1);
+
+		Mat harris_scene_norm = new Mat(), harris_scene_scaled = new Mat();
+		int blockSize = 15;
+		int apertureSize = 5;
+		double k = 0.1;
+		Imgproc.cornerHarris(Scene, Harris_scene, blockSize, apertureSize, k);
+		Core.normalize(Harris_scene, harris_scene_norm, 0, 255, Core.NORM_MINMAX, CvType.CV_32FC1, new Mat());
+		Core.convertScaleAbs(harris_scene_norm, harris_scene_scaled);
+
+		for (int j = 0; j < harris_scene_norm.rows(); j++) {
+			for (int i = 0; i < harris_scene_norm.cols(); i++) {
+				if ((int) harris_scene_norm.get(j, i)[0] > thresh) {
+					cornerList.add(i + " " + j);
+				}
+			}
+		}
+		return cornerList;
+	}
+
+	public static Mat img2Mat(BufferedImage in) {
+		Mat out;
+		out = new Mat(in.getHeight(), in.getWidth(), CvType.CV_8UC3);
+		byte[] data = new byte[in.getWidth() * in.getHeight() * (int) out.elemSize()];
+		int[] dataBuff = in.getRGB(0, 0, in.getWidth(), in.getHeight(), null, 0, in.getWidth());
+		for (int i = 0; i < dataBuff.length; i++) {
+			data[i * 3] = (byte) ((dataBuff[i]));
+			data[i * 3 + 1] = (byte) ((dataBuff[i]));
+			data[i * 3 + 2] = (byte) ((dataBuff[i]));
+		}
+		out.put(0, 0, data);
+		return out;
+	}
+
+	public static BufferedImage matToBufferedImage(Mat matrix, BufferedImage mat2) {
+		if (matrix != null) {
+			int cols = matrix.cols();
+			int rows = matrix.rows();
+			int elemSize = (int) matrix.elemSize();
+			byte[] data = new byte[cols * rows * elemSize];
+			int type;
+			matrix.get(0, 0, data);
+			System.out.println("image channel = " + matrix.channels());
+			switch (matrix.channels()) {
+			case 1:
+				type = BufferedImage.TYPE_BYTE_GRAY;
+				break;
+			case 3:
+				type = BufferedImage.TYPE_3BYTE_BGR;
+				// bgr to rgb
+				byte b;
+				for (int i = 0; i < data.length; i = i + 3) {
+					b = data[i];
+					data[i] = data[i + 2];
+					data[i + 2] = b;
+				}
+				break;
+			default:
+				return null;
+			}
+
+			// Reuse existing BufferedImage if possible
+			if (mat2 == null || mat2.getWidth() != cols || mat2.getHeight() != rows || mat2.getType() != type) {
+				mat2 = new BufferedImage(cols, rows, type);
+			}
+			mat2.getRaster().setDataElements(0, 0, cols, rows, data);
+		} else { // mat was null
+			mat2 = null;
+		}
+		return mat2;
+	}
 
 	public static boolean resizeIfNeeded(Mat img, int desiredWidth, int desiredHeight) {
 		Size size = img.size();

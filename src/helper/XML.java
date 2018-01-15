@@ -11,10 +11,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-
-import org.jdom2.*;
+import org.jdom2.Attribute;
+import org.jdom2.Element;
+import org.jdom2.JDOMException;
 import org.jdom2.input.SAXBuilder;
-import org.jdom2.output.*;
+import org.jdom2.output.Format;
+import org.jdom2.output.XMLOutputter;
 
 import businesslogic.Folder;
 import businesslogic.ImageWing;
@@ -33,14 +35,14 @@ public class XML {
 	/**
 	 * Create a new project XML file with all informations about the project.
 	 * 
-	 * @param p 
-	 * 			The project to be saved
+	 * @param p
+	 *            The project to be saved
 	 * 
 	 * @return true if the save is ok
 	 * 
 	 * @see Project
 	 */
-	public static boolean saveProject(Project p){
+	public static boolean saveProject(Project p) {
 
 		ArrayList<Folder> folders = p.getFolders();
 		Iterator<Folder> f = folders.iterator();
@@ -48,45 +50,40 @@ public class XML {
 		Iterator<ImageWing> im = images.iterator();
 		String pathProject = p.getPathProject();
 
-
 		org.jdom2.Element project = new org.jdom2.Element("project");
 		org.jdom2.Document document = new org.jdom2.Document(project);
 
-		Attribute projectName = new Attribute("name",p.getName());
+		Attribute projectName = new Attribute("name", p.getName());
 		Date d = new Date();
 		SimpleDateFormat sm = new SimpleDateFormat("dd/MM/yyyy HH:mm");
-		Attribute projectLastSave = new Attribute("lastsave",sm.format(d));
+		Attribute projectLastSave = new Attribute("lastsave", sm.format(d));
 		project.setAttribute(projectName);
 		project.setAttribute(projectLastSave);
 
-		while(f.hasNext())
-		{
+		while (f.hasNext()) {
 			org.jdom2.Element folder = new org.jdom2.Element("folder");
 			folder = writeFolder(folder, f.next());
 			project.addContent(folder);
 		}
 
-		while(im.hasNext())
-		{
+		while (im.hasNext()) {
 			ImageWing im1 = im.next();
 			org.jdom2.Element image = new org.jdom2.Element("image");
-			Attribute pathImage = new Attribute("path",im1.getPath());
+			Attribute pathImage = new Attribute("path", im1.getPath());
 			image.setAttribute(pathImage);
 
-			for (Map.Entry<String, String> entry : im1.getProperties().entrySet())
-			{
+			for (Map.Entry<String, String> entry : im1.getProperties().entrySet()) {
 				org.jdom2.Element property = new org.jdom2.Element("property");
-				Attribute keyProperty = new Attribute("key",entry.getKey());
+				Attribute keyProperty = new Attribute("key", entry.getKey());
 				property.setAttribute(keyProperty);
-				Attribute valueProperty = new Attribute("value",entry.getValue());
+				Attribute valueProperty = new Attribute("value", entry.getValue());
 				property.setAttribute(valueProperty);
 				image.addContent(property);
 			}
 
 			ArrayList<Landmark> landmarks = im1.getLandmarks();
 			Iterator<Landmark> land = landmarks.iterator();
-			while(land.hasNext())
-			{
+			while (land.hasNext()) {
 				Landmark land1 = land.next();
 				org.jdom2.Element landmark = new org.jdom2.Element("landmark");
 				Attribute posXLandmark = new Attribute("posX", Float.toString(land1.getPosX()));
@@ -101,66 +98,60 @@ public class XML {
 			project.addContent(image);
 		}
 
-		try
-		{
+		try {
 
 			XMLOutputter sortie = new XMLOutputter(Format.getPrettyFormat());
 			sortie.output(document, new FileOutputStream(pathProject));
 			editLastSave(pathProject, sm.format(d));
 			return true;
+		} catch (java.io.IOException e) {
+			return false;
 		}
-		catch (java.io.IOException e){ return false; }
 	}
-
 
 	/**
 	 * Recursively called function for save folder
 	 * 
-	 * @param folderParent 
-	 * 			The parent folder
-	 * @param folder2 
-	 * 			The folder to be saved
+	 * @param folderParent
+	 *            The parent folder
+	 * @param folder2
+	 *            The folder to be saved
 	 * 
 	 * @see Folder
 	 */
-	private static org.jdom2.Element writeFolder(org.jdom2.Element folderParent, Folder folder2)
-	{
+	private static org.jdom2.Element writeFolder(org.jdom2.Element folderParent, Folder folder2) {
 		ArrayList<Folder> folders = folder2.getFolders();
 		Iterator<Folder> f = folders.iterator();
 		ArrayList<ImageWing> images = folder2.getImages();
 		Iterator<ImageWing> im = images.iterator();
 
-		Attribute folderName = new Attribute("name",folder2.getName());
+		Attribute folderName = new Attribute("name", folder2.getName());
 		folderParent.setAttribute(folderName);
 
-		while(f.hasNext())
-		{
+		while (f.hasNext()) {
 			org.jdom2.Element folder = new org.jdom2.Element("folder");
 			folder = writeFolder(folder, f.next());
 			folderParent.addContent(folder);
 		}
 
-		while(im.hasNext())
-		{
+		while (im.hasNext()) {
 			ImageWing im1 = im.next();
 			org.jdom2.Element image = new org.jdom2.Element("image");
-			Attribute pathImage = new Attribute("path",im1.getPath());
+			Attribute pathImage = new Attribute("path", im1.getPath());
 			image.setAttribute(pathImage);
 
-			for (Map.Entry<String, String> entry : im1.getProperties().entrySet())
-			{
+			for (Map.Entry<String, String> entry : im1.getProperties().entrySet()) {
 				org.jdom2.Element property = new org.jdom2.Element("property");
-				Attribute keyProperty = new Attribute("key",entry.getKey());
+				Attribute keyProperty = new Attribute("key", entry.getKey());
 				property.setAttribute(keyProperty);
-				Attribute valueProperty = new Attribute("value",entry.getValue());
+				Attribute valueProperty = new Attribute("value", entry.getValue());
 				property.setAttribute(valueProperty);
 				image.addContent(property);
 			}
 
 			ArrayList<Landmark> landmarks = im1.getLandmarks();
 			Iterator<Landmark> land = landmarks.iterator();
-			while(land.hasNext())
-			{
+			while (land.hasNext()) {
 				Landmark land1 = land.next();
 				org.jdom2.Element landmark = new org.jdom2.Element("landmark");
 				Attribute posXLandmark = new Attribute("posX", Float.toString(land1.getPosX()));
@@ -178,18 +169,17 @@ public class XML {
 		return folderParent;
 	}
 
-
 	/**
 	 * Read an existing project XML file with all informations about the project.
 	 * 
-	 * @param file 
-	 * 			The file to be read
+	 * @param file
+	 *            The file to be read
 	 * 
 	 * @return An existing project
 	 * 
 	 * @see Project
 	 */
-	public static Project readProject(File file){
+	public static Project readProject(File file) {
 
 		SAXBuilder sxb = new SAXBuilder();
 
@@ -201,11 +191,10 @@ public class XML {
 		ArrayList<Folder> folders = new ArrayList<Folder>();
 		ArrayList<ImageWing> images = new ArrayList<ImageWing>();
 
-		try
-		{
+		try {
 			document = sxb.build(file);
+		} catch (Exception e) {
 		}
-		catch(Exception e){}
 
 		project = document.getRootElement();
 
@@ -218,16 +207,14 @@ public class XML {
 		Iterator<org.jdom2.Element> itF = listFolders.iterator();
 		Iterator<org.jdom2.Element> itI = listImages.iterator();
 
-		while(itF.hasNext())
-		{
-			org.jdom2.Element folder = (org.jdom2.Element)itF.next();
+		while (itF.hasNext()) {
+			org.jdom2.Element folder = itF.next();
 			Folder f = readFolder(folder, null);
 			folders.add(f);
 		}
 
-		while(itI.hasNext())
-		{
-			org.jdom2.Element image = (org.jdom2.Element)itI.next();
+		while (itI.hasNext()) {
+			org.jdom2.Element image = itI.next();
 			String imagePath = image.getAttributeValue("path");
 			ArrayList<Landmark> lnds = new ArrayList<Landmark>();
 			HashMap<String, String> ppts = new HashMap<String, String>();
@@ -236,20 +223,17 @@ public class XML {
 			Iterator<org.jdom2.Element> itL = listLandmarks.iterator();
 			Iterator<org.jdom2.Element> itP = listProperties.iterator();
 
-			while(itL.hasNext())
-			{
-				org.jdom2.Element landmark = (org.jdom2.Element)itL.next();
+			while (itL.hasNext()) {
+				org.jdom2.Element landmark = itL.next();
 				Float posX = Float.parseFloat(landmark.getAttributeValue("posX"));
 				Float posY = Float.parseFloat(landmark.getAttributeValue("posY"));
 				Boolean isLandmark = Boolean.parseBoolean(landmark.getAttributeValue("isLandmark"));
 				Landmark ld = new Landmark(posX, posY, isLandmark);
 				lnds.add(ld);
-
 			}
 
-			while(itP.hasNext())
-			{
-				org.jdom2.Element landmark = (org.jdom2.Element)itP.next();
+			while (itP.hasNext()) {
+				org.jdom2.Element landmark = itP.next();
 				String key = landmark.getAttributeValue("key");
 				String value = landmark.getAttributeValue("value");
 				ppts.put(key, value);
@@ -263,19 +247,17 @@ public class XML {
 
 	}
 
-	
 	/**
 	 * Recursively called function for read folder
 	 * 
-	 * @param folder2 
-	 * 			The folder to be saved
-	 * @param parent 
-	 * 			The parent folder
+	 * @param folder2
+	 *            The folder to be saved
+	 * @param parent
+	 *            The parent folder
 	 * 
 	 * @see Folder
 	 */
-	private static Folder readFolder(org.jdom2.Element folder2, Folder parent) 
-	{
+	private static Folder readFolder(org.jdom2.Element folder2, Folder parent) {
 		Folder ret = new Folder(null, parent);
 		String name = folder2.getAttributeValue("name");
 		ArrayList<Folder> folders = new ArrayList<Folder>();
@@ -287,16 +269,14 @@ public class XML {
 		Iterator<org.jdom2.Element> itF = listFolders.iterator();
 		Iterator<org.jdom2.Element> itI = listImages.iterator();
 
-		while(itF.hasNext())
-		{
-			org.jdom2.Element folder = (org.jdom2.Element)itF.next();
+		while (itF.hasNext()) {
+			org.jdom2.Element folder = itF.next();
 			Folder f = readFolder(folder, ret);
 			folders.add(f);
 		}
 
-		while(itI.hasNext())
-		{
-			org.jdom2.Element image = (org.jdom2.Element)itI.next();
+		while (itI.hasNext()) {
+			org.jdom2.Element image = itI.next();
 			String imagePath = image.getAttributeValue("path");
 			ArrayList<Landmark> lnds = new ArrayList<Landmark>();
 			HashMap<String, String> ppts = new HashMap<String, String>();
@@ -305,9 +285,8 @@ public class XML {
 			Iterator<org.jdom2.Element> itL = listLandmarks.iterator();
 			Iterator<org.jdom2.Element> itP = listProperties.iterator();
 
-			while(itL.hasNext())
-			{
-				org.jdom2.Element landmark = (org.jdom2.Element)itL.next();
+			while (itL.hasNext()) {
+				org.jdom2.Element landmark = itL.next();
 				Float posX = Float.parseFloat(landmark.getAttributeValue("posX"));
 				Float posY = Float.parseFloat(landmark.getAttributeValue("posY"));
 				Boolean isLandmark = Boolean.parseBoolean(landmark.getAttributeValue("isLandmark"));
@@ -316,9 +295,8 @@ public class XML {
 
 			}
 
-			while(itP.hasNext())
-			{
-				org.jdom2.Element landmark = (org.jdom2.Element)itP.next();
+			while (itP.hasNext()) {
+				org.jdom2.Element landmark = itP.next();
 				String key = landmark.getAttributeValue("key");
 				String value = landmark.getAttributeValue("value");
 				ppts.put(key, value);
@@ -332,11 +310,9 @@ public class XML {
 		ret.setImages(images);
 		return ret;
 
-
 	}
 
-
-	private static void editLastSave(String path, String dateSave){
+	private static void editLastSave(String path, String dateSave) {
 		String separator = System.getProperty("file.separator");
 		org.jdom2.Document document;
 		org.jdom2.Element racine;
@@ -346,36 +322,25 @@ public class XML {
 			document = sxb.build(new File("lastSave"));
 			racine = document.getRootElement();
 
-
 			List<Element> listProject = racine.getChildren("project");
 			Iterator<Element> i = listProject.iterator();
-			while(i.hasNext() && !stop)
-			{
-
+			while (i.hasNext() && !stop) {
 				org.jdom2.Element courant = i.next();
-				System.out.println(courant.getAttributeValue("path")+ " = "+path);
-				if(courant.getAttributeValue("path").equals(path))
-				{
+				System.out.println(courant.getAttributeValue("path") + " = " + path);
+				if (courant.getAttributeValue("path").equals(path)) {
 					System.out.println("2");
 					courant.getAttribute("dateSave").setValue(dateSave);
 					stop = true;
 				}
 			}
-			if(!stop)
-			{
+			if (!stop) {
 				org.jdom2.Element project = new org.jdom2.Element("project");
 				Attribute pathAtt = new Attribute("path", path);
 				project.setAttribute(pathAtt);
 				Attribute dateAtt = new Attribute("dateSave", dateSave);
 				project.setAttribute(dateAtt);
 				racine.addContent(project);
-
 			}
-
-
-
-
-
 			XMLOutputter sortie = new XMLOutputter(Format.getPrettyFormat());
 			sortie.output(document, new FileOutputStream("lastSave"));
 
@@ -397,43 +362,34 @@ public class XML {
 			}
 		}
 
-
 	}
 
-	public static ArrayList<Project> readHist()
-	{
+	public static ArrayList<Project> readHist() {
 		ArrayList<Project> listP = new ArrayList<Project>();
 		String separator = System.getProperty("file.separator");
 		String originalPath = new java.io.File("").getAbsolutePath();
-		String pathFile = originalPath + separator +  "lastSave";
-
+		String pathFile = originalPath + separator + "lastSave";
 		org.jdom2.Document document;
 		org.jdom2.Element racine;
 		SAXBuilder sxb = new SAXBuilder();
-
 		try {
 			document = sxb.build(new File(pathFile));
-
 			racine = document.getRootElement();
-
-
 			List<Element> listProject = racine.getChildren("project");
 			Iterator<Element> i = listProject.iterator();
-			while(i.hasNext())
-			{
-				org.jdom2.Element courant = (Element)i.next();
+			while (i.hasNext()) {
+				org.jdom2.Element courant = i.next();
 				String path = courant.getAttributeValue("path");
-				System.out.println(path);
+				// System.out.println(path);
 				String dateSave = courant.getAttributeValue("dateSave");
-
-				String name = path;
-
-
+				String name = (String) path.subSequence(path.lastIndexOf(File.separator) + 1, path.lastIndexOf("."));
 				listP.add(new Project(name, path, dateSave));
 			}
-		} catch (JDOMException | IOException e) {
+		} catch (IOException e) {
+			System.out.println("lastSave is missing");
+		} catch (JDOMException jdome) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			jdome.printStackTrace();
 		}
 
 		return listP;

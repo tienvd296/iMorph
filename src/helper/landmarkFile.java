@@ -12,26 +12,22 @@ public class landmarkFile {
 	{
 		String separator = System.getProperty("file.separator");
 		String originalPath = System.getProperty("user.dir");
-
 		String dataSave = "";
 
 		if(!im.getLandmarks().isEmpty())
 		{
 			Iterator<Landmark> it = im.getLandmarks().iterator();
-
 			while(it.hasNext())
 			{
 				Landmark land = it.next();
 				dataSave = dataSave + land.getPosX() + " " + land.getPosY() + "\n";
 			}
-
 		}
 
 		BufferedWriter writer = null;
 		try {
 			//create a temporary file
 			File logFile = new File(im.getPath() + ".TPS");
-
 			writer = new BufferedWriter(new FileWriter(logFile));
 			writer.write(dataSave);	
 		} catch (Exception e) {
@@ -45,5 +41,4 @@ public class landmarkFile {
 		}
 
 	}
-
 }
