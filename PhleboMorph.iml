@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="JAVA_MODULE" version="4">
+  <component name="EclipseModuleManager">
+    <libelement value="jar://$MODULE_DIR$/lib/IJ/ij.jar!/" />
+    <libelement value="jar://$MODULE_DIR$/lib/metadata-extractor-2.9.1.jar!/" />
+    <libelement value="jar://$MODULE_DIR$/lib/xmpcore-5.1.2.jar!/" />
+    <libelement value="jar://$MODULE_DIR$/lib/jdom-2.0.6.jar!/" />
+    <libelement value="jar://$MODULE_DIR$/lib/opencv/build/java/opencv-2413.jar!/" />
+    <libelement value="jar://$MODULE_DIR$/lib/weka.jar!/" />
+    <libelement value="jar://$MODULE_DIR$/jgoodies-forms-1.8.0.jar!/" />
+    <libelement value="jar://$MODULE_DIR$/lib/jfoenix-9.0.1.jar!/" />
+    <conelement value="org.eclipse.fx.ide.jdt.core.JAVAFX_CONTAINER" />
+    <src_description expected_position="0">
+      <src_folder value="file://$MODULE_DIR$/src" expected_position="0" />
+      <src_folder value="file://$MODULE_DIR$/assets" expected_position="1" />
+    </src_description>
+  </component>
+  <component name="NewModuleRootManager">
+    <output url="file://$MODULE_DIR$/bin" />
+    <exclude-output />
+    <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/assets" isTestSource="false" />
+    </content>
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module-library" exported="">
+      <library name="ij.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/IJ/ij.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="file://$MODULE_DIR$/lib/IJ" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="metadata-extractor-2.9.1.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/metadata-extractor-2.9.1.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="xmpcore-5.1.2.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/xmpcore-5.1.2.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="jdom-2.0.6.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/jdom-2.0.6.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="module-library">
+      <library name="opencv-2413.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/opencv/build/java/opencv-2413.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <NATIVE>
+          <root url="file://PM/lib/opencv/build/java/x64" />
+        </NATIVE>
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="weka.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/weka.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="jgoodies-forms-1.8.0.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/jgoodies-forms-1.8.0.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$MODULE_DIR$/jgoodies-forms-1.8.0-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="library" name="org.eclipse.fx.ide.jdt.core.JAVAFX_CONTAINER" level="application" />
+    <orderEntry type="module-library">
+      <library name="jfoenix-9.0.1.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/jfoenix-9.0.1.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+  </component>
+</module>

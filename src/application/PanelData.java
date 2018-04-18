@@ -57,21 +57,21 @@ public class PanelData extends JPanel implements ActionListener, TableModelListe
 		this.setComponentPopupMenu(tableOption);
 		if (!tableData.isEmpty()) {
 			tableDataSize = tableData.size();
-			// createTable(tableData);
+			createTable(tableData);
 		}
 	}
 
 	public void createTable(ArrayList<Landmark> tmpLandmarkList) {
-		landmarkTable = new JTable(4, 0);
+		landmarkTable = new JTable(3, 0);
 		tableData = tmpLandmarkList;
 		landmarkData = tmpLandmarkList;
-		String[] header = { "X", "Y", "Type", "Status" };
+		String[] header = { "X", "Y", "Type" };
 		Object[][] data = new Object[tmpLandmarkList.size()][];
 		for (int i = 0; i < tmpLandmarkList.size(); i++) {
 			String x = tmpLandmarkList.get(i).getPosX() + "";
 			String y = tmpLandmarkList.get(i).getPosY() + "";
 			String typeOfLandmark = tmpLandmarkList.get(i).getIsLandmark().toString();
-			Object[] rowData = { x, y, typeOfLandmark, "Loaded" };
+			Object[] rowData = { x, y, typeOfLandmark };
 			data[i] = rowData;
 		}
 		model = new DefaultTableModel(data, header) {
@@ -79,11 +79,12 @@ public class PanelData extends JPanel implements ActionListener, TableModelListe
 			 * 
 			 */
 			private static final long serialVersionUID = 1L;
-			public Class[] types = new Class[] { java.lang.Object.class, java.lang.Object.class, java.lang.Object.class,
+			@SuppressWarnings("rawtypes")
+			public Class[] types = new Class[] { java.lang.Object.class, java.lang.Object.class,
 					java.lang.Object.class };
 
 			@Override
-			public Class getColumnClass(int columnIndex) {
+			public Class<?> getColumnClass(int columnIndex) {
 				return types[columnIndex];
 			}
 
@@ -152,8 +153,8 @@ public class PanelData extends JPanel implements ActionListener, TableModelListe
 			for (int i : selRows) {
 				float x = Float.parseFloat(model.getValueAt(i, 0).toString());
 				float y = Float.parseFloat(model.getValueAt(i, 1).toString());
-				for (int j = 0; j < Affichage.ListLandmark.size(); j++) {
-					Landmark l = Affichage.ListLandmark.get(j);
+				for (int j = 0; j < Affichage.listLandmark.size(); j++) {
+					Landmark l = Affichage.listLandmark.get(j);
 					if (x == l.getPosX() && y == l.getPosY()) {
 						Affichage.selLandmark.add(j);
 						break;
@@ -166,7 +167,7 @@ public class PanelData extends JPanel implements ActionListener, TableModelListe
 				for (int i = 0; i < Affichage.selLandmark.size(); i++) {
 					model.removeRow(i);
 					int item = Affichage.selLandmark.get(i);
-					Affichage.ListLandmark.remove(item);
+					Affichage.listLandmark.remove(item);
 					this.revalidate();
 					this.repaint();
 				}
@@ -181,8 +182,8 @@ public class PanelData extends JPanel implements ActionListener, TableModelListe
 		// If landmark is changed
 		super.paintComponent(g);
 		if (!tableData.isEmpty()) {
-			if (tableData.size() != Affichage.ListLandmark.size()) {
-				for (Landmark l : Affichage.ListLandmark) {
+			if (tableData.size() != Affichage.listLandmark.size()) {
+				for (Landmark l : Affichage.listLandmark) {
 					boolean isExist = false;
 					for (Landmark k : tableData) {
 						if (l.getPosX() == k.getPosX() && l.getPosY() == k.getPosY()) {

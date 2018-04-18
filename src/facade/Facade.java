@@ -1,6 +1,7 @@
 package facade;
 
 import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferByte;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -17,9 +18,11 @@ import javax.imageio.ImageIO;
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
+import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.highgui.Highgui;
 import org.opencv.imgproc.Imgproc;
+import org.opencv.photo.Photo;
 
 import application.AfficheurFlux;
 import application.ControlDashboard;
@@ -97,6 +100,25 @@ public class Facade {
 	public static void addImage(String path, double height, double width, Folder fold) {
 
 		ImageWing image = new ImageWing(path);
+		ArrayList<Landmark> tmpListLandmark = new ArrayList<Landmark>();
+		try {
+			BufferedReader br = new BufferedReader(new FileReader(path + ".csv"));
+			String line;
+			while ((line = br.readLine()) != null) {
+				String[] pos = line.split(",");
+				if (!pos[0].trim().toLowerCase().equals("x")) {
+					int posX = Integer.parseInt(pos[0]);
+					int posY = Integer.parseInt(pos[1]);
+					Landmark tmpLandmark = new Landmark(posX, posY, true);
+					tmpListLandmark.add(tmpLandmark);
+				}
+			}
+			br.close();
+			image.setLandmarks(tmpListLandmark);
+		} catch (IOException ioe) {
+
+		}
+
 		image.getProperties().put("HEIGHT", Double.toString(height));
 		image.getProperties().put("WIDTH", Double.toString(width));
 		image.getProperties().put("ORIGINAL", "TRUE");
@@ -483,6 +505,101 @@ public class Facade {
 		Facade.activeView.refresh();
 	}
 
+	public static boolean isGrayScale(BufferedImage image) {
+		// Test the type
+		if (image.getType() == BufferedImage.TYPE_BYTE_GRAY)
+			return true;
+		if (image.getType() == BufferedImage.TYPE_USHORT_GRAY)
+			return true;
+		// Test the number of channels / bands
+		if (image.getRaster().getNumBands() == 1)
+			return true; // Single channel => gray scale
+
+		// Multi-channels image; then you have to test the color for each pixel.
+		for (int y = 0; y < image.getHeight(); y++)
+			for (int x = 0; x < image.getWidth(); x++)
+				for (int c = 1; c < image.getRaster().getNumBands(); c++)
+					if (image.getRaster().getSample(x, y, c - 1) != image.getRaster().getSample(x, y, c))
+						return false;
+
+		return true;
+	}
+
+	public static Mat gray2bin(Mat in) {
+		Mat out = new Mat();
+		Imgproc.adaptiveThreshold(in, out, 255, Imgproc.ADAPTIVE_THRESH_MEAN_C, Imgproc.THRESH_BINARY_INV, 11, 2);
+		return out;
+	}
+
+	public static Mat rgb2gray(BufferedImage image) {
+		try {
+			Mat mat1 = img2Mat(image);
+			Imgproc.cvtColor(mat1, mat1, Imgproc.COLOR_RGB2GRAY);
+			System.out.println(mat1.empty());
+			return mat1;
+
+		} catch (Exception e) {
+			System.out.println("Error: " + e.getMessage());
+		}
+		return null;
+	}
+
+	public static Mat findSkeleton(ImageWing im) {
+		BufferedImage img;
+		try {
+			img = ImageIO.read(new File(im.path));
+			byte[] data = ((DataBufferByte) img.getRaster().getDataBuffer()).getData();
+			Mat in = new Mat(img.getHeight(), img.getWidth(), CvType.CV_8UC3);
+			in.put(0, 0, data);
+			Mat matOfImg = new Mat(img.getHeight(), img.getWidth(), CvType.CV_8UC1);
+			Imgproc.cvtColor(in, matOfImg, Imgproc.COLOR_RGB2GRAY);
+			byte[] data1 = new byte[matOfImg.rows() * matOfImg.cols() * (int) (matOfImg.elemSize())];
+			matOfImg.get(0, 0, data1);
+
+			BufferedImage image1 = new BufferedImage(matOfImg.cols(), matOfImg.rows(), BufferedImage.TYPE_BYTE_GRAY);
+			image1.getRaster().setDataElements(0, 0, matOfImg.cols(), matOfImg.rows(), data1);
+			Imgproc.GaussianBlur(matOfImg, matOfImg, new Size(3, 3), 1);
+			Highgui.imwrite("img_gray.tif", matOfImg);
+
+			Photo.fastNlMeansDenoising(matOfImg, matOfImg, 10, 7, 21);
+			Mat imgBin = new Mat();
+			Imgproc.adaptiveThreshold(matOfImg, imgBin, 255, Imgproc.ADAPTIVE_THRESH_MEAN_C, Imgproc.THRESH_BINARY_INV,
+					11, 2);
+			Highgui.imwrite("img_bin.tif", imgBin);
+
+			Imgproc.dilate(imgBin, imgBin, Imgproc.getStructuringElement(Imgproc.MORPH_CROSS, new Size(9, 9)));
+			Mat skel = new Mat(imgBin.height(), imgBin.width(), CvType.CV_8UC1, Scalar.all(0));
+			Mat kernel = Imgproc.getStructuringElement(Imgproc.MORPH_CROSS, new Size(3, 3));
+			Mat image_inv = imgBin;
+			Highgui.imwrite("Pre-Skeleton.tif", image_inv);
+
+			boolean isFinished = false;
+			while (!isFinished) {
+				Mat eroded = new Mat();
+				Mat temp = new Mat();
+				Imgproc.erode(image_inv, eroded, kernel);
+				Imgproc.dilate(eroded, temp, kernel);
+				Core.subtract(image_inv, temp, temp);
+				Core.bitwise_or(skel, temp, skel);
+				eroded.copyTo(image_inv);
+				if (Core.countNonZero(image_inv) == 0) {
+					isFinished = true;
+				}
+			}
+			Highgui.imwrite("test_landmark.tif", skel);
+			// Mat kernel2 = Mat.ones(new Size(5, 5), CvType.CV_8UC1);
+			// Imgproc.dilate(skel, skel, kernel2);
+			// Imgproc.erode(skel, skel, kernel2);
+			// Highgui.imwrite("test_landmark_find_holes.tif", skel);
+			return skel;
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+
+	}
+
 	public static void landmarkDetection(ArrayList<String> listPath, HashMap<String, ImageWing> listImW,
 			String features, String neighbor) {
 		Facade.undo.add(currentProject.clonage());
@@ -821,7 +938,7 @@ public class Facade {
 		if (in.getType() == 1)
 			convert2Gray(input, in);
 		Mat output = new Mat();
-		Imgproc.adaptiveThreshold(input, output, 255, Imgproc.ADAPTIVE_THRESH_MEAN_C, Imgproc.THRESH_BINARY_INV, 7, 5);
+		Imgproc.adaptiveThreshold(input, output, 200, Imgproc.ADAPTIVE_THRESH_MEAN_C, Imgproc.THRESH_BINARY_INV, 15, 1);
 		BufferedImage out = Facade.matToBufferedImage(output, in);
 		return out;
 	}
@@ -885,7 +1002,7 @@ public class Facade {
 			byte[] data = new byte[cols * rows * elemSize];
 			int type;
 			matrix.get(0, 0, data);
-			System.out.println("image channel = " + matrix.channels());
+			System.out.println("channels : " + img2Mat(mat2).channels());
 			switch (matrix.channels()) {
 			case 1:
 				type = BufferedImage.TYPE_BYTE_GRAY;

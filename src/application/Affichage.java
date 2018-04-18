@@ -1,6 +1,9 @@
 package application;
 
+import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Composite;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -54,25 +57,30 @@ public class Affichage extends JPanel implements MouseListener, ActionListener, 
 	public JMenuItem delLandmark = new JMenuItem("Delete Landmark");
 
 	// NOTE: ArrayList Init
-	public static ArrayList<Landmark> ListLandmark = new ArrayList<Landmark>();
+	public static ArrayList<Landmark> listLandmark = new ArrayList<Landmark>();
 	public static List<Integer> selLandmark = new ArrayList<>();
 	public static List<Graphics> graphic = new LinkedList<Graphics>();
 	// Utile pour eliminer les doublons
-	public static ArrayList<drawCircle> ListCircle = new ArrayList<drawCircle>();
+	public static ArrayList<drawCircle> listCircle = new ArrayList<drawCircle>();
 	public static ArrayList<drawCircle> ListTempCircle = new ArrayList<drawCircle>();
 	public static ArrayList<ArrayList<Landmark>> undoList = new ArrayList<>();
 	public static List<String> undoListCommand = new ArrayList<>();
 	public static ArrayList<ArrayList<Landmark>> redoList = new ArrayList<>();
-	public static List<String> redoListCommand = new ArrayList();
+	public static List<String> redoListCommand = new ArrayList<String>();
 
 	// NOTE: Static Global Variable
+	public static float resizeRatioHeight = 0;
+	public static float resizeRatioWidth = 0;
 	public static int currWidth = 0;
 	public static int currHeight = 0;
 	public static int displayLandmark = 0;
 	public static int nbTempUndoList = 0;
 	public static int cursorSize = 0;
 
+	public static int listLandmarkSize = 0;
+
 	public static final Cursor DEF_CURSOR = new Cursor(Cursor.DEFAULT_CURSOR);
+
 	// NOTE: Non-static Global Variables
 	public int onlyOnceForconnection = 0;
 	public int posMouseOverLandmark;
@@ -82,8 +90,8 @@ public class Affichage extends JPanel implements MouseListener, ActionListener, 
 	// public float width2;
 	// public float height2;
 	public float temp = 0;
-	public static float defWidth = 0;
-	public static float defHeight = 0;
+	public static float DEFAULT_WIDTH = 0;
+	public static float DEFAULT_HEIGHT = 0;
 	private double X = 0;
 	private double Y = 0;
 
@@ -94,11 +102,13 @@ public class Affichage extends JPanel implements MouseListener, ActionListener, 
 	public boolean areaSelected = false;
 	public BufferedImage preferedArea;
 	BufferedImage draggedRectangle;
-	Graphics2D g2d;
+	public BufferedImage myGroupingImage;
 	// NOTE: Other init
 	public int draggedLandmark;
 	private ImageWing im;
-
+	Graphics2D g2d;
+	public Rectangle rect = new Rectangle();
+	BufferedImage monImageDef;
 	BufferedImage monImage;
 	BufferedImage imgOriginal;
 	public BufferedImage backUpImage;
@@ -106,9 +116,10 @@ public class Affichage extends JPanel implements MouseListener, ActionListener, 
 
 	// Init
 	public Affichage(ImageWing im) {
-		this.im = im;
-		defWidth = Float.parseFloat(im.getProperties().get("WIDTH"));
-		defHeight = Float.parseFloat(im.getProperties().get("HEIGHT"));
+
+		this.setIm(im);
+		DEFAULT_WIDTH = Float.parseFloat(im.getProperties().get("WIDTH"));
+		DEFAULT_HEIGHT = Float.parseFloat(im.getProperties().get("HEIGHT"));
 		setCursor(Cursor.getDefaultCursor());
 		this.setFocusable(true);
 		this.requestFocusInWindow();
@@ -142,20 +153,22 @@ public class Affichage extends JPanel implements MouseListener, ActionListener, 
 					if (preferedArea != null && areaSelected) {
 						preferedArea = null;
 						areaSelected = !areaSelected;
+						Cadre2.cursorShapeType = null;
+						setCursor(DEF_CURSOR);
 					}
 				}
 			}
 		});
 		this.setPreferredSize(new Dimension((int) Float.parseFloat(im.getProperties().get("HEIGHT")),
 				(int) Float.parseFloat(im.getProperties().get("WIDTH"))));
-		ListLandmark = im.getLandmarks();
+		listLandmark = im.getLandmarks();
 		addTrueLandmark.addActionListener(this);
 		addFalseLandmark.addActionListener(this);
 		setLandmarkTrue.addActionListener(this);
 		setLandmarkFalse.addActionListener(this);
 		delLandmark.addActionListener(this);
 		setLayout(null);
-
+		listLandmarkSize = listLandmark.size();
 	}
 
 	int noOfRepaint = 0;
@@ -164,22 +177,25 @@ public class Affichage extends JPanel implements MouseListener, ActionListener, 
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		g.drawImage(monImage, 0, 0, null);
-		currWidth = monImage.getWidth();
-		currHeight = monImage.getHeight();
+
 		// Reduce size of image until it fit with Display Window
 		if (onlyOnceForconnection == 0) {
+			currWidth = (int) DEFAULT_WIDTH;
+			currHeight = (int) DEFAULT_HEIGHT;
 			while (currWidth > Cadre2.windowWidth || currHeight > Cadre2.windowHeight) {
 				zoomOut();
 				currWidth = monImage.getWidth();
 				currHeight = monImage.getHeight();
 			}
 			onlyOnceForconnection = 1;
+			resizeRatioHeight = currHeight / DEFAULT_HEIGHT;
+			resizeRatioWidth = currWidth / DEFAULT_WIDTH;
 		}
-		if (ListLandmark.size() != 0) {
-			for (int i = 0; i < ListLandmark.size(); i++) {
+		if (listLandmark.size() != 0) {
+			for (int i = 0; i < listLandmark.size(); i++) {
 				// get absolute position of landmark
-				float XX = ListLandmark.get(i).getPosX();
-				float YY = ListLandmark.get(i).getPosY();
+				float posX = listLandmark.get(i).getPosX();
+				float posY = listLandmark.get(i).getPosY();
 				// Recuperer le poucentage de difference entre l'image redimensionne et l'image
 				// originale
 				boolean isSelected = false;
@@ -192,24 +208,23 @@ public class Affichage extends JPanel implements MouseListener, ActionListener, 
 					}
 				}
 				// Get the ratio between image and window
-				float widthRatio = currWidth / defWidth;
-				float heightRatio = currHeight / defHeight;
+
 				// Correct the coordinates
-				XX = XX * widthRatio; // Utile pour conserver les position malgre un redimensionnement
-				YY = YY * heightRatio;
-				boolean isLandmark = ListLandmark.get(i).getIsLandmark();
+				posX = posX * resizeRatioWidth; // Utile pour conserver les position malgre un redimensionnement
+				posY = posY * resizeRatioHeight;
+				boolean isLandmark = listLandmark.get(i).getIsLandmark();
 				// Add to ListTempCircle
 				if (!isSelected)
-					ListTempCircle
-							.add(new drawCircle(g, (int) XX, (int) YY, circleSize(), isLandmark, 0, displayLandmark));
+					ListTempCircle.add(
+							new drawCircle(g, (int) posX, (int) posY, circleSize(), isLandmark, 0, displayLandmark));
 				else
-					ListTempCircle
-							.add(new drawCircle(g, (int) XX, (int) YY, circleSize(), isLandmark, 1, displayLandmark));
+					ListTempCircle.add(
+							new drawCircle(g, (int) posX, (int) posY, circleSize(), isLandmark, 1, displayLandmark));
 				// Remove the duplicate points
 				HashSet<drawCircle> set = new HashSet<drawCircle>();
 				set.addAll(ListTempCircle);
 				set.clone();
-				ListCircle = new ArrayList<drawCircle>(set);
+				listCircle = new ArrayList<drawCircle>(set);
 				repaint();
 			}
 		}
@@ -272,30 +287,23 @@ public class Affichage extends JPanel implements MouseListener, ActionListener, 
 		String result = fichierImage.getAbsolutePath().toString();
 		ImagePlus imagePlus = new Opener().openImage(result, "");
 		BufferedImage bufferedImage = imagePlus.getBufferedImage();
-		System.out.println("Chargement image dans la fonction Ajouter Image");
-		System.out.println("File printImageOnScreen : " + fichierImage);
 		monImage = bufferedImage;
-		imgOriginal = monImage;
+		imgOriginal = bufferedImage;
+		monImageDef = bufferedImage;
 	}
 
 	public void showPopupMenu(MouseEvent event) {
 		if (event.isPopupTrigger()) {
 			jpm.removeAll();
 			isMouseOverLandmark = false;
-			if (currWidth == 0 || currHeight == 0) {
-				currWidth = monImage.getWidth();
-				currHeight = monImage.getHeight();
-			}
-			float width = currWidth / defWidth;
-			float height = currHeight / defHeight;
-			float startX = (event.getX() - circleSize() - 2) / width;
-			float endX = (event.getX() + circleSize() + 2) / width;
-			float startY = (event.getY() - circleSize() - 2) / height;
-			float endY = (event.getY() + circleSize() + 2) / height;
-			for (Landmark l : ListLandmark) {
+			float startX = (event.getX() - circleSize() - 2) / resizeRatioHeight;
+			float endX = (event.getX() + circleSize() + 2) / resizeRatioWidth;
+			float startY = (event.getY() - circleSize() - 2) / resizeRatioHeight;
+			float endY = (event.getY() + circleSize() + 2) / resizeRatioWidth;
+			for (Landmark l : listLandmark) {
 				if (l.getPosX() > startX && l.getPosX() < endX && l.getPosY() > startY && l.getPosY() < endY) {
 					isMouseOverLandmark = true;
-					posMouseOverLandmark = ListLandmark.indexOf(l);
+					posMouseOverLandmark = listLandmark.indexOf(l);
 					X = l.getPosX();
 					Y = l.getPosY();
 					break;
@@ -340,7 +348,8 @@ public class Affichage extends JPanel implements MouseListener, ActionListener, 
 		}
 		if (Cadre2.cursorShapeType.toLowerCase().trim().equals("square")) {
 			// Avoid out of bound
-			if (startX >= 0 && startY >= 0) {
+			if (startX >= 0 && startY >= 0 && startX + Cadre2.cursorSize < currWidth
+					&& startY + Cadre2.cursorSize < currHeight) {
 				// CHange cursor when mouse moved and user haven't selected their prefered area
 				if (!areaSelected) {
 					cursorSize = Cadre2.cursorSize;
@@ -374,10 +383,21 @@ public class Affichage extends JPanel implements MouseListener, ActionListener, 
 		return currCursor;
 	}
 
+	private AlphaComposite makeComposite(float alpha) {
+		int type = AlphaComposite.SRC_OVER;
+		return (AlphaComposite.getInstance(type, alpha));
+	}
+
+	private void drawRect(Graphics2D g2d, Rectangle rect, float alpha) {
+		Composite originalComposite = g2d.getComposite();
+		g2d.setComposite(makeComposite(alpha));
+		g2d.setPaint(Color.blue);
+		g2d.fill(rect);
+		g2d.setComposite(originalComposite);
+	}
+
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		currWidth = monImage.getWidth();
-		currHeight = monImage.getHeight();
 		// Les donnees sont des String donc on les convertis
 		if (e.getSource().equals(addTrueLandmark) || e.getSource().equals(addFalseLandmark)) {
 			// TODO: Add New landmark
@@ -389,23 +409,22 @@ public class Affichage extends JPanel implements MouseListener, ActionListener, 
 				JOptionPane.showMessageDialog(null, "You are not on the image", "Attention",
 						JOptionPane.WARNING_MESSAGE);
 			} else if ((X / currWidth) <= 1 || (Y / currHeight) <= 1) {
-				if (currWidth != defWidth && currHeight != defHeight) {
-					float tempX = currWidth / defWidth;
-					float tempY = currHeight / defHeight;
-					X = X / tempX;
-					Y = Y / tempY;
-					ListLandmark.add(new Landmark((float) X, (float) Y, setLandmarkType));
-					ListCircle.add(new drawCircle(this.getGraphics(), (int) X, (int) Y, circleSize(), setLandmarkType,
+				if (currWidth != DEFAULT_WIDTH && currHeight != DEFAULT_HEIGHT) {
+					X = X / resizeRatioWidth;
+					Y = Y / resizeRatioHeight;
+					listLandmark.add(new Landmark((float) X, (float) Y, setLandmarkType));
+					listCircle.add(new drawCircle(this.getGraphics(), (int) X, (int) Y, circleSize(), setLandmarkType,
 							0, displayLandmark));
 					// NOTE: Add landmark without save option
-					// Facade.addLandmark(im, ListLandmark);
-					PanelData.model.insertRow(0, new Object[] { X, Y, setLandmarkType, "NEW" });
+					// Facade.addLandmark(im, listLandmark);
+
+					PanelData.model.insertRow(0, new Object[] { X, Y, setLandmarkType });
 				} else {
-					ListLandmark.add(new Landmark((float) X, (float) Y, setLandmarkType));
-					PanelData.model.insertRow(0, new Object[] { X, Y, setLandmarkType, "NEW" });
-					ListCircle.add(new drawCircle(this.getGraphics(), (int) X, (int) Y, circleSize(), setLandmarkType,
+					listLandmark.add(new Landmark((float) X, (float) Y, setLandmarkType));
+					PanelData.model.insertRow(0, new Object[] { X, Y, setLandmarkType });
+					listCircle.add(new drawCircle(this.getGraphics(), (int) X, (int) Y, circleSize(), setLandmarkType,
 							0, displayLandmark));
-					// Facade.addLandmark(im, ListLandmark);
+					// Facade.addLandmark(im, listLandmark);
 				}
 			}
 		} else if (e.getSource().equals(setLandmarkTrue) || e.getSource().equals(setLandmarkFalse)) {
@@ -414,20 +433,19 @@ public class Affichage extends JPanel implements MouseListener, ActionListener, 
 			if (e.getSource().equals(setLandmarkTrue))
 				setTrueLandmark = true;
 			if (isMouseOverLandmark) {
-				ListLandmark.get(posMouseOverLandmark).setIsLandmark(setTrueLandmark);
+				listLandmark.get(posMouseOverLandmark).setIsLandmark(setTrueLandmark);
 				selLandmark.add(posMouseOverLandmark);
 			}
 			if (!selLandmark.isEmpty()) {
 				ArrayList<Landmark> temp = new ArrayList<Landmark>();
 				for (int pos : selLandmark) {
-					ListLandmark.get(pos).setIsLandmark(setTrueLandmark);
-					temp.add(ListLandmark.get(pos));
+					listLandmark.get(pos).setIsLandmark(setTrueLandmark);
+					temp.add(listLandmark.get(pos));
 					for (int i = 0; i < PanelData.model.getRowCount(); i++) {
 						float curX = Float.parseFloat(PanelData.model.getValueAt(i, 0).toString());
 						float curY = Float.parseFloat(PanelData.model.getValueAt(i, 1).toString());
-						if (curX == ListLandmark.get(pos).getPosX() && curY == ListLandmark.get(pos).getPosY()) {
+						if (curX == listLandmark.get(pos).getPosX() && curY == listLandmark.get(pos).getPosY()) {
 							PanelData.model.setValueAt(setTrueLandmark, i, 2);
-							PanelData.model.setValueAt("EDITED", i, 3);
 							PanelData.model.moveRow(i, i, 0);
 						}
 					}
@@ -453,15 +471,14 @@ public class Affichage extends JPanel implements MouseListener, ActionListener, 
 				for (int j = 0; j < PanelData.model.getRowCount(); j++) {
 					float tempX = Float.parseFloat(PanelData.model.getValueAt(j, 0).toString());
 					float tempY = Float.parseFloat(PanelData.model.getValueAt(j, 1).toString());
-					// System.out.println(tempX + " - " + tempY);
-					if (tempX == ListLandmark.get(selPos).getPosX() && tempY == ListLandmark.get(selPos).getPosY()) {
+					if (tempX == listLandmark.get(selPos).getPosX() && tempY == listLandmark.get(selPos).getPosY()) {
 						PanelData.model.removeRow(j);
 						break;
 					}
 				}
-				temp.add(ListLandmark.get(selPos));
-				ListLandmark.remove(selPos);
-				ListCircle.remove(selPos);
+				temp.add(listLandmark.get(selPos));
+				listLandmark.remove(selPos);
+				listCircle.remove(selPos);
 			}
 			undoListCommand.add("DELETE");
 			undoList.add(temp);
@@ -494,17 +511,18 @@ public class Affichage extends JPanel implements MouseListener, ActionListener, 
 			Y = e.getY();
 			showPopupMenu(e);
 		} else {
+			monImage.getGraphics().drawImage(myGroupingImage, rect.x, rect.y, null);
 			isMousePressed = false;
 			dragTo = new Point(e.getX(), e.getY());
 			if (dragFrom != null && dragTo != null) {
 				// monImage = backUpImage;
-				int startX = (int) (dragFrom.getX() / (currWidth / defWidth));
-				int startY = (int) (dragFrom.getY() / (currWidth / defWidth));
-				int endX = (int) (dragTo.getX() / (currWidth / defWidth));
-				int endY = (int) (dragTo.getY() / (currWidth / defWidth));
-				for (int i = 0; i < ListLandmark.size(); i++) {
-					if (ListLandmark.get(i).getPosX() < endX && ListLandmark.get(i).getPosY() < endY
-							&& ListLandmark.get(i).getPosX() > startX && ListLandmark.get(i).getPosY() > startY) {
+				int startX = (int) (dragFrom.getX() / resizeRatioWidth);
+				int startY = (int) (dragFrom.getY() / resizeRatioHeight);
+				int endX = (int) (dragTo.getX() / resizeRatioWidth);
+				int endY = (int) (dragTo.getY() / resizeRatioHeight);
+				for (int i = 0; i < listLandmark.size(); i++) {
+					if (listLandmark.get(i).getPosX() < endX && listLandmark.get(i).getPosY() < endY
+							&& listLandmark.get(i).getPosX() > startX && listLandmark.get(i).getPosY() > startY) {
 						boolean isExisted = false;
 						for (int selected : selLandmark) {
 							if (selected == i) {
@@ -519,6 +537,7 @@ public class Affichage extends JPanel implements MouseListener, ActionListener, 
 				dragFrom = null;
 				dragTo = null;
 				draggedRectangle = null;
+				// g2d.drawImage(monImage, 0, 0, null);
 				// monImage.getGraphics().clearRect(0, 0, getWidth(), getHeight());
 				repaint();
 			}
@@ -527,40 +546,34 @@ public class Affichage extends JPanel implements MouseListener, ActionListener, 
 
 	@Override
 	public void mouseDragged(MouseEvent e) {
-		int posX = (int) (e.getX() / (currWidth / defWidth));
-		int posY = (int) (e.getY() / (currHeight / defHeight));
+		int posX = (int) (e.getX() / resizeRatioWidth);
+		int posY = (int) (e.getY() / resizeRatioHeight);
 		if (isMousePressed) {
-			PanelData.model.setValueAt("MOVING", 0, 3);
 			PanelData.model.setValueAt(posX, 0, 0);
 			PanelData.model.setValueAt(posY, 0, 1);
-			ListCircle.get(draggedLandmark).setxCenter(posX);
-			ListCircle.get(draggedLandmark).setyCenter(posY);
-			ListLandmark.get(draggedLandmark).setPosX(posX);
-			ListLandmark.get(draggedLandmark).setPosY(posY);
-			System.out.println("Current : " + e.getX() + " " + e.getY());
+			listCircle.get(draggedLandmark).setxCenter(posX);
+			listCircle.get(draggedLandmark).setyCenter(posY);
+			listLandmark.get(draggedLandmark).setPosX(posX);
+			listLandmark.get(draggedLandmark).setPosY(posY);
 			repaint();
 		} else if (isShiftDown && !Cadre2.isToolbarEnabled) {
 			dragTo = new Point(e.getX(), e.getY());
 			if (backUpImage == null) {
 				backUpImage = monImage;
 			}
-			// System.out.println(backUpImage.getHeight() + " " + backUpImage.getWidth());
-			// g2d.drawImage(backUpImage, 0, 0, null);
-			// draggedRectangle = backUpImage.getSubimage((int) dragFrom.getX(), (int)
-			// dragFrom.getY(),
-			// (int) (dragTo.getX() - dragFrom.getX()), (int) (dragTo.getX() -
-			// dragFrom.getX()));
-			// drawDashedLine(g2d, (int) dragFrom.getX(), (int) dragFrom.getY(), (int)
-			// dragTo.getX(),
-			// (int) dragFrom.getY());
-			// drawDashedLine(g2d, (int) dragFrom.getX(), (int) dragFrom.getY(), (int)
-			// dragFrom.getX(),
-			// (int) dragTo.getY());
-			// drawDashedLine(g2d, (int) dragFrom.getX(), (int) dragTo.getY(), (int)
-			// dragTo.getX(), (int) dragTo.getY());
-			// drawDashedLine(g2d, (int) dragTo.getX(), (int) dragFrom.getY(), (int)
-			// dragTo.getX(), (int) dragTo.getY());
-			repaint();
+			// g2d.clearRect(rect.x, rect.y, rect.width, rect.height);
+			// if (myGroupingImage != null) {
+			// System.out.println(myGroupingImage.getWidth() + " " + rect.getWidth());
+			// g2d.drawImage(myGroupingImage, rect.x, rect.y, null);
+			// }
+			// rect = new Rectangle(dragFrom.x, dragFrom.y, e.getX() - dragFrom.x, e.getY()
+			// - dragFrom.y);
+			// myGroupingImage = backUpImage.getSubimage(rect.x, rect.y, e.getX() -
+			// dragFrom.x, e.getY() - dragFrom.y);
+			//
+			// g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.CLEAR));
+			// g2d.fillRect(rect.x, rect.y, rect.width, rect.height);
+			// repaint();
 		}
 
 	}
@@ -573,31 +586,25 @@ public class Affichage extends JPanel implements MouseListener, ActionListener, 
 			showPopupMenu(e);
 		} else {
 			if (isShiftDown) {
-				// int posX = (int) (e.getX() / (currWidth / defWidth));
-				// int posY = (int) (e.getY() / (currHeight / defHeight));
 				g2d = (Graphics2D) monImage.getGraphics();
 				dragFrom = new Point(e.getX(), e.getY());
 			} else {
-				float width = currWidth / defWidth;
-				float height = currHeight / defHeight;
-				float startX = (e.getX() - circleSize() - 2) / width;
-				float endX = (e.getX() + circleSize() + 2) / width;
-				float startY = (e.getY() - circleSize() - 2) / height;
-				float endY = (e.getY() + circleSize() + 2) / height;
-				for (int i = 0; i < ListLandmark.size(); i++) {
-					float pointX = ListLandmark.get(i).getPosX();
-					float pointY = ListLandmark.get(i).getPosY();
+				float startX = (e.getX() - circleSize() - 2) / resizeRatioHeight;
+				float endX = (e.getX() + circleSize() + 2) / resizeRatioWidth;
+				float startY = (e.getY() - circleSize() - 2) / resizeRatioHeight;
+				float endY = (e.getY() + circleSize() + 2) / resizeRatioWidth;
+				for (int i = 0; i < listLandmark.size(); i++) {
+					float pointX = listLandmark.get(i).getPosX();
+					float pointY = listLandmark.get(i).getPosY();
 					if (startX < pointX && pointX < endX && startY < pointY && pointY < endY) {
-						Landmark tempLM = ListLandmark.get(i);
 						if (isCtrlDown) {
 							// NOTE: Check if the landmark has already been selected.
-							// nbTempUndoList = ListLandmark.size();
+							// nbTempUndoList = listLandmark.size();
 							selLandmark.add(i);
 
 						} else {
-							System.out.println("Start: " + e.getX() + " " + e.getY());
 							ArrayList<Landmark> temp = new ArrayList<Landmark>();
-							temp.add(new Landmark(pointX, pointY, ListLandmark.get(i).isLandmark));
+							temp.add(new Landmark(pointX, pointY, listLandmark.get(i).isLandmark));
 							undoList.add(temp);
 							undoListCommand.add("MOVE");
 							draggedLandmark = i;
@@ -621,7 +628,7 @@ public class Affichage extends JPanel implements MouseListener, ActionListener, 
 	public void mouseMoved(MouseEvent e) {
 		// TODO Auto-generated method stub
 		// Check if user want to edit image
-		if (Cadre2.cursorShapeType != null && Cadre2.isToolbarEnabled) {
+		if (Cadre2.cursorShapeType != null && Cadre2.cursorShapeType != "") {
 			setCursor(changeCursor(e.getX(), e.getY()));
 			// ELSE: Capture area of image based on size and shape which user defined
 		} else {
@@ -639,5 +646,13 @@ public class Affichage extends JPanel implements MouseListener, ActionListener, 
 	public void mouseExited(MouseEvent e) {
 		// TODO Auto-generated method stub
 
+	}
+
+	public ImageWing getIm() {
+		return im;
+	}
+
+	public void setIm(ImageWing im) {
+		this.im = im;
 	}
 }

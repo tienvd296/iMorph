@@ -179,7 +179,17 @@ public class ControlDashboard {
 
 	@FXML
 	void newProject(ActionEvent event) {
-
+		FileChooser chooser = new FileChooser();
+		chooser.setTitle("Open File");
+		File file = chooser.showSaveDialog(new Stage());
+		if (file == null)
+			System.out.println("You cancelled the choice");
+		else {
+			String path = file.getAbsolutePath() + ".project";
+			Facade.newProject(path);
+			// Facade.loadProject(new File(path));
+			this.reloadView();
+		}
 	}
 
 	@FXML
@@ -253,8 +263,8 @@ public class ControlDashboard {
 
 	@FXML
 	void startView(MouseEvent event) {
-		this.view(4);
-		this.currentView = 16;
+		this.view(2);
+		this.currentView = 4;
 		this.page = 0;
 	}
 
@@ -653,19 +663,14 @@ public class ControlDashboard {
 			column = new ColumnConstraints();
 			column.setPercentWidth(50);
 			grid.getColumnConstraints().add(column);
-
 			grid.setPrefSize(this.propertiesPane.getWidth(), this.propertiesPane.getHeight()); // Default width and
 																								// height
-
 			for (Map.Entry<String, String> entry : image.getProperties().entrySet()) {
-
 				Label key = new Label(entry.getKey());
 				Label value = new Label(entry.getValue());
 				value.setOnMouseClicked(e -> propertiesEditor(image, entry.getKey()));
-
 				grid.add(key, 0, i);
 				grid.add(value, 1, i);
-
 				i++;
 
 			}
@@ -739,6 +744,7 @@ public class ControlDashboard {
 		String path = this.imageViewToPath.get(imV);
 		ImageWing imW = this.pathToImageWing.get(path);
 		new Cadre2(new File(path), imW, true);
+
 	}
 
 	private void propertiesAdd(ImageWing image) {
